@@ -13,4 +13,5 @@ public interface QuestionService {
     Page<QuestionDTO> getAllQuestions(Pageable pageable);
     void deleteQuestion(Long id);
     QuestionDTO createQuestion(QuestionDTO questionDTO);
+    QuestionDTO getQuestionById(Long id);
 }

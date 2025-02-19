@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -52,6 +53,7 @@ public class QuestionServiceImpl implements QuestionService {
         if (questionDTO.getTags() != null) {
             for (String tagName : questionDTO.getTags()) {
                 if (tagName != null && !tagName.trim().isEmpty()) {
+//                    System.out.println("Tag Name--->"+tagName);
                     Tag tag = tagService.findOrCreateTag(tagName);
                     tags.add(tag);
                 }
@@ -63,6 +65,14 @@ public class QuestionServiceImpl implements QuestionService {
 
         return convertToDTO(savedQuestion);
     }
+
+    @Override
+    public QuestionDTO getQuestionById(Long id) {
+        Optional<Question> question = questionRepository.findById(id);
+        QuestionDTO questionDTO = modelMapper.map(question,QuestionDTO.class);
+        return questionDTO;
+    }
+
     @Override
     public Page<QuestionDTO> getAllQuestions(Pageable pageable) {
         Page<Question> questions = questionRepository.findAll(pageable);

@@ -21,6 +21,7 @@ public class TagServiceImpl implements TagService {
         // If tag doesn't exist, create new one
         if (tag == null) {
             tag = new Tag();
+            //System.out.println();
             tag.setName(tagName.trim().toLowerCase());
             tag = tagRepository.save(tag);
         }

@@ -28,7 +28,6 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
-
     @GetMapping
     public ResponseEntity<Page<QuestionDTO>> getAllQuestions(
             @RequestParam(defaultValue = "0") int page,
@@ -41,5 +40,10 @@ public class QuestionController {
 
         Page<QuestionDTO> questions = questionService.getAllQuestions(pageRequest);
         return ResponseEntity.ok(questions);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<QuestionDTO> viewQuestion(@PathVariable Long id){
+        QuestionDTO questionDTO = questionService.getQuestionById(id);
+        return ResponseEntity.ok(questionDTO);
     }
 }
