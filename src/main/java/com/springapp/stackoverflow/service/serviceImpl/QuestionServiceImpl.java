@@ -85,6 +85,7 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDTO edit(Long questionID, QuestionDTO questionDTO) {
         Optional<Question> questionOptional = questionRepository.findById(questionID);
         Question editedQuestion = questionOptional.get();
+        editedQuestion.setTitle(questionDTO.getTitle());
         editedQuestion.setContent(questionDTO.getContent());
         editedQuestion.setUpdatedAt(questionDTO.getUpdatedAt());
         editedQuestion.setExcerpt(questionDTO.getExcerpt());
@@ -101,6 +102,7 @@ public class QuestionServiceImpl implements QuestionService {
                 }
             }
         }
+        editedQuestion.setViewsCount(questionDTO.getViewsCount());
         editedQuestion.setTags(tags);
         questionRepository.save(editedQuestion);
         return questionToquestionDto(editedQuestion);
