@@ -35,7 +35,7 @@
     </style>
 </head>
 <body class="bg-gray-50">
-<!-- Navigation remains the same as your original template -->
+<!-- Navigation -->
 <nav class="bg-white border-b border-gray-300 fixed w-full top-0 z-50">
     <div class="max-w-full mx-auto px-4">
         <div class="flex justify-between items-center h-14">
@@ -64,7 +64,7 @@
             <a href="#" class="sidebar-item">
                 <span class="mr-2">🏠</span> Home
             </a>
-            <a href="#" class="sidebar-item active">
+            <a href="/questions" class="sidebar-item">
                 <span class="mr-2">❓</span> Questions
             </a>
             <a href="#" class="sidebar-item">
@@ -104,13 +104,13 @@
                         <button type="button" class="p-1 hover:bg-gray-200 rounded">I</button>
                         <button type="button" class="p-1 hover:bg-gray-200 rounded">{}</button>
                     </div>
-                    <textarea th:field="*{body}" class="editor-content w-full"></textarea>
+                    <textarea th:field="*{content}" class="editor-content w-full"></textarea>
                 </div>
 
                 <div class="mb-6">
                     <label class="block font-bold mb-2">What did you try and what were you expecting?</label>
                     <p class="text-gray-600 text-sm mb-2">Describe what you tried, what you expected to happen, and what actually resulted. Minimum 20 characters.</p>
-                    <textarea th:field="*{attempts}" class="editor-content w-full"></textarea>
+                    <textarea th:field="*{excerpt}" class="editor-content w-full"></textarea>
                 </div>
 
                 <div>
