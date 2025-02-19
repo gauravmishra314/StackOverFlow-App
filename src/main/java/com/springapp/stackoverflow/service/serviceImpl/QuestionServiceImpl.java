@@ -44,7 +44,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public QuestionDTO createQuestion(QuestionDTO questionDTO) {
+    public QuestionDTO createQuestion(QuestionDTO questionDTO, String imageUrl) {
         Question question = new Question();
         question.setTitle(questionDTO.getTitle());
         question.setContent(questionDTO.getContent());
@@ -57,7 +57,7 @@ public class QuestionServiceImpl implements QuestionService {
         LocalDateTime now = LocalDateTime.now();
         question.setCreatedAt(now);
         question.setUpdatedAt(now);
-
+        question.setImageURL(imageUrl);
         question.setVoteCount(0);
         question.setAnswerCount(0);
         question.setViewsCount(0);

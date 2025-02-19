@@ -25,7 +25,7 @@ public class Question {
     private int viewsCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
+    private String imageURL;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User user;

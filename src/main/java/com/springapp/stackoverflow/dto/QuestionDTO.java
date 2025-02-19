@@ -18,4 +18,5 @@ public class QuestionDTO {
     private LocalDateTime updatedAt;
     private UserDTO user;
     private List<String> tags;
+    private String imageURL;
 }

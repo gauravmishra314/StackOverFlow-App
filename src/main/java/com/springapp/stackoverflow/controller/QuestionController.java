@@ -1,6 +1,7 @@
 package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.QuestionDTO;
+import com.springapp.stackoverflow.service.CloudinaryService;
 import com.springapp.stackoverflow.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,20 +12,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/questions")
 public class QuestionController {
+
+    private final CloudinaryService cloudinaryService;
     private final QuestionService questionService;
+
     @Autowired
-    public QuestionController(QuestionService questionService){
+    public QuestionController(CloudinaryService cloudinaryService, QuestionService questionService) {
+        this.cloudinaryService = cloudinaryService;
         this.questionService = questionService;
     }
 
     @PostMapping("/")
-    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO){
-        QuestionDTO question = questionService.createQuestion(questionDTO);
-        return ResponseEntity.ok(question);
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO, @RequestParam("file") MultipartFile file){
+        try {
+            String imageUrl = cloudinaryService.uploadImage(file);
+            QuestionDTO question = questionService.createQuestion(questionDTO, imageUrl);
+            return ResponseEntity.ok(question);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")
