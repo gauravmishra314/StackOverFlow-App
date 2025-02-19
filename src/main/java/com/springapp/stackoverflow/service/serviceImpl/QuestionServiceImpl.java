@@ -6,43 +6,62 @@ import com.springapp.stackoverflow.model.Tag;
 import com.springapp.stackoverflow.repository.QuestionRepository;
 import com.springapp.stackoverflow.repository.TagRepository;
 import com.springapp.stackoverflow.service.QuestionService;
+import com.springapp.stackoverflow.service.TagService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class QuestionServiceImpl implements QuestionService {
     private final QuestionRepository questionRepository;
     private ModelMapper modelMapper;
     private TagRepository tagRepository;
+    private TagService tagService;
 
     public QuestionServiceImpl(QuestionRepository questionRepository,
                                ModelMapper modelMapper,
-                               TagRepository tagRepository){
+                               TagRepository tagRepository,
+                               TagService tagService) {
         this.questionRepository = questionRepository;
         this.modelMapper=modelMapper;
         this.tagRepository = tagRepository;
+        this.tagService=tagService;
     }
+
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
-        Question question = modelMapper.map(questionDTO , Question.class);
-        question.setCreatedAt(LocalDateTime.now());
-        question.setUpdatedAt(LocalDateTime.now());
+        Question question = new Question();
+        question.setTitle(questionDTO.getTitle());
+        question.setContent(questionDTO.getContent());
+        question.setExcerpt(questionDTO.getExcerpt());
+
+        LocalDateTime now = LocalDateTime.now();
+        question.setCreatedAt(now);
+        question.setUpdatedAt(now);
+
+        question.setVoteCount(0);
+        question.setAnswerCount(0);
+        question.setViewsCount(0);
+
         List<Tag> tags = new ArrayList<>();
-        String[] tagList = questionDTO.getTagList().split(",");
-        for(String tag:tagList){
-            Tag currTag= new Tag();
-            currTag.setName(tag);
-            tagRepository.save(currTag);
-            tags.add(currTag);
+        if (questionDTO.getTags() != null) {
+            for (String tagName : questionDTO.getTags()) {
+                if (tagName != null && !tagName.trim().isEmpty()) {
+                    Tag tag = tagService.findOrCreateTag(tagName);
+                    tags.add(tag);
+                }
+            }
         }
         question.setTags(tags);
-        questionRepository.save(question);
-        QuestionDTO questionDto = modelMapper.map(question,QuestionDTO.class);
-        return questionDto;
+
+        Question savedQuestion = questionRepository.save(question);
+
+        return convertToDTO(savedQuestion);
     }
     @Override
     public Page<QuestionDTO> getAllQuestions(Pageable pageable) {

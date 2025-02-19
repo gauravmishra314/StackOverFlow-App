@@ -1,8 +1,8 @@
 package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.QuestionDTO;
-import com.springapp.stackoverflow.model.Question;
 import com.springapp.stackoverflow.service.QuestionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/questions")
 public class QuestionController {
     private final QuestionService questionService;
+    @Autowired
     public QuestionController(QuestionService questionService){
         this.questionService = questionService;
     }
