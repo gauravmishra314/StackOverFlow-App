@@ -14,6 +14,6 @@ public interface QuestionService {
     void deleteQuestion(Long id);
     QuestionDTO createQuestion(QuestionDTO questionDTO);
     QuestionDTO getQuestionById(Long id);
-
     QuestionDTO edit(Long questionID, QuestionDTO questionDTO);
+    long getTotalQuestions();
 }

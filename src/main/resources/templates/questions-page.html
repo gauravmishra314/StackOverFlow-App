@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Newest Questions - Stack Overflow</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <style>
+    .sidebar-item {
+      padding: 8px 16px;
+      color: #535a60;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .sidebar-item:hover {
+      background-color: #f8f9f9;
+    }
+    .active {
+      background-color: #f8f9f9;
+      border-right: 3px solid #f48225;
+      font-weight: bold;
+      color: black;
+    }
+    .tag {
+      background-color: #e1ecf4;
+      color: #39739d;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .tag:hover {
+      background-color: #d0e3f1;
+    }
+    .filter-button.active {
+      background-color: #e3e6e8;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+<!-- Top Navigation -->
+<nav class="bg-white border-b border-gray-300 fixed w-full top-0 z-50">
+  <div class="max-w-full mx-auto px-4">
+    <div class="flex justify-between items-center h-14">
+      <div class="flex items-center space-x-4">
+        <img src="/api/placeholder/150/30" alt="Stack Overflow" class="h-8">
+        <a href="#" class="text-gray-600">Products</a>
+        <a href="#" class="text-gray-600">OverflowAI</a>
+      </div>
+      <div class="flex-1 max-w-xl px-4">
+        <input type="text" placeholder="Search..." class="w-full px-4 py-1 border border-gray-300 rounded-md">
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-500">1</span>
+        <span class="text-gray-500">📫</span>
+        <span class="text-gray-500">🏆</span>
+        <span class="text-gray-500">❓</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="flex mt-14">
+  <!-- Sidebar -->
+  <div class="w-52 fixed h-full border-r border-gray-300">
+    <nav class="pt-4">
+      <a href="#" class="sidebar-item">
+        <span class="mr-2">🏠</span> Home
+      </a>
+      <a href="#" class="sidebar-item active">
+        <span class="mr-2">❓</span> Questions
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="mr-2">🏷️</span> Tags
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="mr-2">📑</span> Saves
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="mr-2">👥</span> Users
+      </a>
+      <a href="#" class="sidebar-item">
+        <span class="mr-2">🏢</span> Companies
+      </a>
+    </nav>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="ml-52 p-6 flex-1">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Newest Questions</h1>
+      <button class="bg-blue-500 text-white px-4 py-2 rounded-md">Ask Question</button>
+    </div>
+
+    <div class="text-gray-600 mb-4" th:text="${totalQuestions + ' questions'}">24,251,273 questions</div>
+
+    <!-- Filter Buttons -->
+    <div class="flex items-center gap-2 mb-6">
+      <button class="px-3 py-1 rounded-full border filter-button active">Newest</button>
+      <button class="px-3 py-1 rounded-full border filter-button">Active</button>
+      <button class="px-3 py-1 rounded-full border filter-button">
+        Bountied <span class="bg-blue-500 text-white px-1 rounded text-xs">65</span>
+      </button>
+      <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
+      <button class="px-3 py-1 rounded-full border filter-button">More</button>
+      <button class="ml-auto px-3 py-1 rounded-full border">Filter</button>
+    </div>
+
+    <!-- Questions List -->
+    <div class="space-y-4">
+      <div th:each="question : ${questions}" class="bg-white p-4 rounded-lg border border-gray-200">
+        <div class="flex">
+          <!-- Vote stats -->
+          <div class="text-center mr-4 text-gray-600 text-sm">
+            <div th:text="${question.voteCount + ' votes'}" class="mb-1">0 votes</div>
+            <div th:text="${question.answerCount + ' answers'}" class="mb-1">0 answers</div>
+            <div th:text="${question.viewsCount + ' views'}">2 views</div>
+          </div>
+
+          <!-- Question content -->
+          <div class="flex-1">
+            <h2 class="text-lg mb-2">
+              <a th:href="@{'/questions/' + ${question.id}}"
+                 th:text="${question.title}"
+                 class="text-blue-600 hover:text-blue-800">
+              </a>
+            </h2>
+            <p class="text-gray-600 mb-3" th:text="${question.excerpt}"></p>
+
+            <!-- Tags -->
+            <div class="flex items-center justify-between">
+              <div class="flex gap-2">
+                <a th:each="tag : ${question.tags}"
+                   th:href="@{'/tags/' + ${tag}}"
+                   th:text="${tag}"
+                   class="tag">
+                </a>
+              </div>
+
+              <!-- User info -->
+              <div class="flex items-center text-sm">
+                <div th:if="${question.user != null}" class="flex items-center text-sm">
+                  <a th:href="@{'/users/' + ${question.user.id}}"
+                     th:text="${question.user.username}"
+                     class="text-blue-600 hover:text-blue-800">
+                  </a>
+                  <span class="ml-2 text-gray-600"
+                        th:text="${'asked ' + question.createdAt}">
+    </span>
+                </div>
+                <div th:unless="${question.user != null}" class="text-sm text-gray-600">
+                  Posted anonymously
+                  <span class="ml-2" th:text="${'asked ' + question.createdAt}"></span>
+                </div>
+                <span class="ml-2 text-gray-600"
+                      th:text="${'asked ' + question.createdAt}">
+                                    </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="w-80 ml-4 fixed right-0 p-4">
+    <!-- The Overflow Blog -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+      <h2 class="font-bold mb-3">The Overflow Blog</h2>
+      <div class="space-y-2">
+        <div class="flex items-start">
+          <span class="text-gray-600 mr-2">✏️</span>
+          <a href="#" class="text-gray-700 hover:text-blue-600">
+            Why is it so hard for companies to protect your privacy?
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured on Meta -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+      <h2 class="font-bold mb-3">Featured on Meta</h2>
+      <div class="space-y-2">
+        <div class="flex items-start">
+          <span class="text-gray-600 mr-2">📢</span>
+          <a href="#" class="text-gray-700 hover:text-blue-600">
+            Join us for our first community-wide AMA
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Filters -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4 mb-4">
+      <h2 class="font-bold mb-3">Custom Filters</h2>
+      <a href="#" class="text-blue-600 hover:text-blue-800">Create a custom filter</a>
+    </div>
+
+    <!-- Watched Tags -->
+    <div class="bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-bold">Watched Tags</h2>
+        <a href="#" class="text-blue-600 text-sm">edit</a>
+      </div>
+      <div class="flex gap-2">
+        <a href="#" class="tag">database</a>
+        <a href="#" class="tag">java</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

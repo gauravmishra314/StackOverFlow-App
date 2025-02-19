@@ -3,6 +3,7 @@ package com.springapp.stackoverflow.service.serviceImpl;
 import com.springapp.stackoverflow.dto.QuestionDTO;
 import com.springapp.stackoverflow.model.Question;
 import com.springapp.stackoverflow.model.Tag;
+import com.springapp.stackoverflow.model.User;
 import com.springapp.stackoverflow.repository.QuestionRepository;
 import com.springapp.stackoverflow.repository.TagRepository;
 import com.springapp.stackoverflow.service.QuestionService;
@@ -48,6 +49,10 @@ public class QuestionServiceImpl implements QuestionService {
         question.setTitle(questionDTO.getTitle());
         question.setContent(questionDTO.getContent());
         question.setExcerpt(questionDTO.getExcerpt());
+
+        if (questionDTO.getUser() != null) {
+            question.setUser(modelMapper.map(questionDTO.getUser(), User.class));
+        }
 
         LocalDateTime now = LocalDateTime.now();
         question.setCreatedAt(now);
@@ -134,5 +139,10 @@ public class QuestionServiceImpl implements QuestionService {
         dto.setTags(tagNames);
 
         return dto;
+    }
+
+    @Override
+    public long getTotalQuestions() {
+        return questionRepository.count();
     }
 }
