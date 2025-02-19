@@ -7,6 +7,8 @@ import com.springapp.stackoverflow.repository.QuestionRepository;
 import com.springapp.stackoverflow.repository.TagRepository;
 import com.springapp.stackoverflow.service.QuestionService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,5 +43,32 @@ public class QuestionServiceImpl implements QuestionService {
         questionRepository.save(question);
         QuestionDTO questionDto = modelMapper.map(question,QuestionDTO.class);
         return questionDto;
+    }
+    @Override
+    public Page<QuestionDTO> getAllQuestions(Pageable pageable) {
+        Page<Question> questions = questionRepository.findAll(pageable);
+        return questions.map(this::convertToDTO);
+    }
+
+    @Override
+    public void deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
+
+        questionRepository.delete(question);
+    }
+
+    private QuestionDTO convertToDTO(Question question) {
+        QuestionDTO dto = modelMapper.map(question, QuestionDTO.class);
+
+        List<String> tagNames = new ArrayList<>();
+        if (question.getTags() != null) {
+            for (var tag : question.getTags()) {
+                tagNames.add(tag.getName());
+            }
+        }
+        dto.setTags(tagNames);
+
+        return dto;
     }
 }
