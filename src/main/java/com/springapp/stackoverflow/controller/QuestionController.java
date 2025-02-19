@@ -18,7 +18,7 @@ public class QuestionController {
         this.questionService = questionService;
     }
     @PostMapping("/")
-    public ResponseEntity<QuestionDTO> createQuestion(QuestionDTO questionDTO){
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO){
         QuestionDTO question = questionService.createQuestion(questionDTO);
         return ResponseEntity.ok(question);
     }
