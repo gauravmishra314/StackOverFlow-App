@@ -34,6 +34,14 @@ public class QuestionServiceImpl implements QuestionService {
         this.tagService=tagService;
     }
 
+    private Question questiondtoToQuestion(QuestionDTO questionDTO) {
+        return this.modelMapper.map(questionDTO, Question.class);
+    }
+
+    private QuestionDTO questionToquestionDto(Question question) {
+        return this.modelMapper.map(question, QuestionDTO.class);
+    }
+
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO) {
         Question question = new Question();
@@ -71,6 +79,31 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<Question> question = questionRepository.findById(id);
         QuestionDTO questionDTO = modelMapper.map(question,QuestionDTO.class);
         return questionDTO;
+    }
+
+    @Override
+    public QuestionDTO edit(Long questionID, QuestionDTO questionDTO) {
+        Optional<Question> questionOptional = questionRepository.findById(questionID);
+        Question editedQuestion = questionOptional.get();
+        editedQuestion.setContent(questionDTO.getContent());
+        editedQuestion.setUpdatedAt(questionDTO.getUpdatedAt());
+        editedQuestion.setExcerpt(questionDTO.getExcerpt());
+
+        List<String> stringTag = questionDTO.getTags();
+        List<Tag> tags = new ArrayList<>();
+
+        if (questionDTO.getTags() != null) {
+            for (String tagName : questionDTO.getTags()) {
+                if (tagName != null && !tagName.trim().isEmpty()) {
+//                    System.out.println("Tag Name--->"+tagName);
+                    Tag tag = tagService.findOrCreateTag(tagName);
+                    tags.add(tag);
+                }
+            }
+        }
+        editedQuestion.setTags(tags);
+        questionRepository.save(editedQuestion);
+        return questionToquestionDto(editedQuestion);
     }
 
     @Override
