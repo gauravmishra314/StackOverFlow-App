@@ -27,7 +27,7 @@ public class Question {
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToMany(fetch = FetchType.LAZY)
