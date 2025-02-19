@@ -18,10 +18,8 @@ public class TagServiceImpl implements TagService {
     public Tag findOrCreateTag(String tagName){
         Tag tag = tagRepository.findByName(tagName.trim().toLowerCase());
 
-        // If tag doesn't exist, create new one
         if (tag == null) {
             tag = new Tag();
-            //System.out.println();
             tag.setName(tagName.trim().toLowerCase());
             tag = tagRepository.save(tag);
         }

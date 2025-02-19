@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,11 @@ public class QuestionRestController {
     public ResponseEntity<QuestionDTO> viewQuestion(@PathVariable Long id){
         QuestionDTO questionDTO = questionService.getQuestionById(id);
         return ResponseEntity.ok(questionDTO);
+    }
+
+    @PutMapping("/{questionID}")
+    public ResponseEntity<QuestionDTO> editQuestion(@PathVariable Long questionID, @RequestBody QuestionDTO questionDTO){
+        QuestionDTO questionDTOEdited = questionService.edit(questionID,questionDTO);
+        return new ResponseEntity<>(questionDTOEdited, HttpStatus.OK);
     }
 }

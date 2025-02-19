@@ -95,13 +95,10 @@ public class QuestionServiceImpl implements QuestionService {
         editedQuestion.setUpdatedAt(questionDTO.getUpdatedAt());
         editedQuestion.setExcerpt(questionDTO.getExcerpt());
 
-        List<String> stringTag = questionDTO.getTags();
         List<Tag> tags = new ArrayList<>();
-
         if (questionDTO.getTags() != null) {
             for (String tagName : questionDTO.getTags()) {
                 if (tagName != null && !tagName.trim().isEmpty()) {
-//                    System.out.println("Tag Name--->"+tagName);
                     Tag tag = tagService.findOrCreateTag(tagName);
                     tags.add(tag);
                 }
