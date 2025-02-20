@@ -450,9 +450,9 @@
 
             <!-- Tags -->
             <div class="post-tags">
-              <a th:each="tag : ${question.tags}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag" th:text="${tag}">postgresql</a>
-              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>
-              <a href="/tags/hibernate" class="post-tag">hibernate</a>
+              <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag" th:text="${tag.name}">postgresql</a>
+<!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
+<!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
             </div>
 
             <!-- Question actions -->

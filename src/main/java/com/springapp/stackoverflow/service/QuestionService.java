@@ -1,6 +1,7 @@
 package com.springapp.stackoverflow.service;
 
 import com.springapp.stackoverflow.dto.QuestionDTO;
+import com.springapp.stackoverflow.model.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +22,5 @@ public interface QuestionService {
     void deleteQuestion(Long id);
 
     long getTotalQuestions();
+    List<Tag> findTagsByQuestionId(Long id);
 }

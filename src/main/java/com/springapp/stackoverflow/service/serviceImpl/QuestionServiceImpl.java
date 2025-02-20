@@ -160,4 +160,10 @@ public class QuestionServiceImpl implements QuestionService {
     public long getTotalQuestions() {
         return questionRepository.count();
     }
+
+    @Override
+    public List<Tag> findTagsByQuestionId(Long id) {
+        List<Tag> tagList = questionRepository.findTagsByQuestionId(id);
+        return tagList;
+    }
 }

@@ -2,6 +2,7 @@ package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.ContentBlockDTO;
 import com.springapp.stackoverflow.dto.QuestionDTO;
+import com.springapp.stackoverflow.model.Tag;
 import com.springapp.stackoverflow.service.CloudinaryService;
 import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
@@ -148,7 +149,9 @@ public class QuestionController {
     @GetMapping("/{id}")
     public String viewQuestion(@PathVariable Long id, Model model) {
         QuestionDTO questionDTO = questionService.getQuestionById(id);
+        List<Tag> tag = questionService.findTagsByQuestionId(id);
         model.addAttribute("question", questionDTO);
+        model.addAttribute("tag",tag);
         return "question-details";
     }
 
