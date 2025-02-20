@@ -9,6 +9,8 @@ import com.springapp.stackoverflow.repository.TagRepository;
 import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class QuestionServiceImpl implements QuestionService {
     private ModelMapper modelMapper;
     private TagRepository tagRepository;
     private TagService tagService;
+    private static final Logger logger = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     public QuestionServiceImpl(QuestionRepository questionRepository,
                                ModelMapper modelMapper,
@@ -55,6 +58,10 @@ public class QuestionServiceImpl implements QuestionService {
         question.setContent(questionDTO.getContent());
         question.setExcerpt(questionDTO.getExcerpt());
 
+        // Explicitly set the image URL
+        question.setImageURL(mainImageUrl);
+        logger.info("Setting main image URL: {}", mainImageUrl);
+
         if (questionDTO.getUser() != null) {
             question.setUser(modelMapper.map(questionDTO.getUser(), User.class));
         }
@@ -62,17 +69,18 @@ public class QuestionServiceImpl implements QuestionService {
         LocalDateTime now = LocalDateTime.now();
         question.setCreatedAt(now);
         question.setUpdatedAt(now);
-        question.setImageURL(mainImageUrl);
 
-        // Set additional content images if provided
+        // Set content images if provided
         if (contentImageUrls != null && !contentImageUrls.isEmpty()) {
             question.setContentImages(contentImageUrls);
+            logger.info("Setting {} content images", contentImageUrls.size());
         }
 
         question.setVoteCount(0);
         question.setAnswerCount(0);
         question.setViewsCount(0);
 
+        // Process tags
         List<Tag> tags = new ArrayList<>();
         if (questionDTO.getTags() != null) {
             for (String tagName : questionDTO.getTags()) {
@@ -85,10 +93,10 @@ public class QuestionServiceImpl implements QuestionService {
         question.setTags(tags);
 
         Question savedQuestion = questionRepository.save(question);
+        logger.info("Question saved with ID: {} and image URL: {}", savedQuestion.getId(), savedQuestion.getImageURL());
 
         return convertToDTO(savedQuestion);
     }
-
     @Override
     public QuestionDTO getQuestionById(Long id) {
         Optional<Question> question = questionRepository.findById(id);

@@ -18,23 +18,23 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
 
-    @Lob
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(columnDefinition = "TEXT")
     private String excerpt;
+
     private int voteCount;
     private int answerCount;
     private int viewsCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    // The main image URL for the question
     private String imageURL;
 
-    // For storing additional images in the content
     @ElementCollection
     @CollectionTable(name = "question_images", joinColumns = @JoinColumn(name = "question_id"))
     @Column(name = "image_url")

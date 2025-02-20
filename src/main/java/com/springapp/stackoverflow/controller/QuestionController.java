@@ -2,10 +2,11 @@ package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.ContentBlockDTO;
 import com.springapp.stackoverflow.dto.QuestionDTO;
-import com.springapp.stackoverflow.dto.UserDTO;
 import com.springapp.stackoverflow.service.CloudinaryService;
 import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +32,8 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagService tagService;
     private final CloudinaryService cloudinaryService;
+    private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
+
 
     @Autowired
     public QuestionController(
@@ -54,58 +58,63 @@ public class QuestionController {
             @RequestParam(value = "file", required = false) MultipartFile mainImage,
             @RequestParam(value = "contentBlocks[0].image", required = false) MultipartFile[] contentImages,
             BindingResult bindingResult,
-            Model model) {
+            Model model,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "ask-question-page";
         }
 
-        // Process tags if they came as a comma-separated string
-        if (questionDTO.getTags() != null && questionDTO.getTags().size() == 1 && questionDTO.getTags().get(0).contains(",")) {
-            String tagString = questionDTO.getTags().get(0);
-            List<String> tagList = Arrays.stream(tagString.split(","))
-                    .map(String::trim)
-                    .filter(tag -> !tag.isEmpty())
-                    .collect(Collectors.toList());
-            questionDTO.setTags(tagList);
-        }
-
-        // Upload main image if provided
-        String mainImageUrl = null;
         try {
+            // Process main image first
+            String mainImageUrl = null;
             if (mainImage != null && !mainImage.isEmpty()) {
-                mainImageUrl = cloudinaryService.uploadImage(mainImage);
+                try {
+                    mainImageUrl = cloudinaryService.uploadImage(mainImage);
+                    logger.info("Main image uploaded successfully: {}", mainImageUrl);
+                } catch (IOException e) {
+                    logger.error("Failed to upload main image", e);
+                    redirectAttributes.addFlashAttribute("error", "Failed to upload main image");
+                    return "redirect:/questions/ask";
+                }
             }
 
-            // Handle content blocks with images
+            // Process content and content images
+            StringBuilder contentBuilder = new StringBuilder();
             List<String> contentImageUrls = new ArrayList<>();
-            if (contentImages != null) {
-                for (MultipartFile imgFile : contentImages) {
-                    if (imgFile != null && !imgFile.isEmpty()) {
-                        String imageUrl = cloudinaryService.uploadImage(imgFile);
-                        contentImageUrls.add(imageUrl);
 
-                        // Replace image placeholders in content with actual image URLs
-                        if (questionDTO.getContent() != null) {
-                            for (int i = 0; i < contentImageUrls.size(); i++) {
-                                String placeholder = "[IMAGE_PLACEHOLDER_" + i + "]";
-                                String imageHtml = "![Image " + (i+1) + "](" + contentImageUrls.get(i) + ")";
-                                questionDTO.setContent(questionDTO.getContent().replace(placeholder, imageHtml));
+            if (contentBlocks != null) {
+                for (int i = 0; i < contentBlocks.size(); i++) {
+                    ContentBlockDTO block = contentBlocks.get(i);
+                    if ("text".equals(block.getType())) {
+                        contentBuilder.append(block.getText()).append("\n\n");
+                    } else if ("image".equals(block.getType()) && contentImages != null && i < contentImages.length) {
+                        MultipartFile image = contentImages[i];
+                        if (image != null && !image.isEmpty()) {
+                            try {
+                                String imageUrl = cloudinaryService.uploadImage(image);
+                                contentImageUrls.add(imageUrl);
+                                contentBuilder.append("![Image ").append(i + 1).append("](").append(imageUrl).append(")\n\n");
+                                logger.info("Content image uploaded successfully: {}", imageUrl);
+                            } catch (IOException e) {
+                                logger.error("Failed to upload content image", e);
                             }
                         }
                     }
                 }
             }
 
+            questionDTO.setContent(contentBuilder.toString());
+            // Explicitly set the image URL
+            questionDTO.setImageURL(mainImageUrl);
+
             QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, mainImageUrl, contentImageUrls);
             return "redirect:/questions/" + savedQuestion.getId();
 
-        } catch (IOException e) {
-            model.addAttribute("error", "Failed to upload image. Please try again.");
-            return "ask-question-page";
         } catch (Exception e) {
-            model.addAttribute("error", "An error occurred: " + e.getMessage());
-            return "ask-question-page";
+            logger.error("Error creating question", e);
+            redirectAttributes.addFlashAttribute("error", "Failed to create question: " + e.getMessage());
+            return "redirect:/questions/ask";
         }
     }
 
