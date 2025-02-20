@@ -1,4 +1,4 @@
-package com.springapp.stackoverflow.config;
+package com.springapp.stackoverflow.configuration;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
