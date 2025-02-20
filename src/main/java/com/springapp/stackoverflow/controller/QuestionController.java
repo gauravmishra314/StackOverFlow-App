@@ -71,7 +71,7 @@ public class QuestionController {
             if (mainImage != null && !mainImage.isEmpty()) {
                 try {
                     System.out.println("Image from the view ----" + mainImage);
-                    mainImageUrl = cloudinaryService.uploadImage(mainImage);
+                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/"+cloudinaryService.uploadImage(mainImage);
                     logger.info("Main image uploaded successfully: {}", mainImageUrl);
                 } catch (IOException e) {
                     logger.error("Failed to upload main image", e);

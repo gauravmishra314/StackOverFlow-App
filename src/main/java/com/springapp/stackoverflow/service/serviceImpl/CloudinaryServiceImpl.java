@@ -60,7 +60,7 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             logger.info("this is my url---",cloudinary.url().secure(true).generate("public_id"));
 
             logger.info("Successfully uploaded to Cloudinary. Secure URL: {}", secureUrl);
-            return "https://res.cloudinary.com/dqmjfe5mg/image/upload/stackoverflow/"+secureUrl;
+            return secureUrl;
         } catch (Exception e) {
             logger.error("Error uploading to Cloudinary: {}", e.getMessage(), e);
             throw new RuntimeException("Cloudinary upload failed", e);
