@@ -54,9 +54,9 @@ public class QuestionController {
     @PostMapping("/ask")
     public String submitQuestion(
             @ModelAttribute("questionDTO") QuestionDTO questionDTO,
-            @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
             @RequestParam(value = "file", required = false) MultipartFile mainImage,
-            @RequestParam(value = "contentBlocks[0].image", required = false) MultipartFile[] contentImages,
+            @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
+            @RequestParam(value = "contentBlocks[].image", required = false) MultipartFile[] contentImages,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -84,12 +84,12 @@ public class QuestionController {
             StringBuilder contentBuilder = new StringBuilder();
             List<String> contentImageUrls = new ArrayList<>();
 
-            if (contentBlocks != null) {
+            if (contentBlocks != null && contentImages != null) {
                 for (int i = 0; i < contentBlocks.size(); i++) {
                     ContentBlockDTO block = contentBlocks.get(i);
                     if ("text".equals(block.getType())) {
                         contentBuilder.append(block.getText()).append("\n\n");
-                    } else if ("image".equals(block.getType()) && contentImages != null && i < contentImages.length) {
+                    } else if ("image".equals(block.getType()) && i < contentImages.length) {
                         MultipartFile image = contentImages[i];
                         if (image != null && !image.isEmpty()) {
                             try {
@@ -106,7 +106,6 @@ public class QuestionController {
             }
 
             questionDTO.setContent(contentBuilder.toString());
-            // Explicitly set the image URL
             questionDTO.setImageURL(mainImageUrl);
 
             QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, mainImageUrl, contentImageUrls);
