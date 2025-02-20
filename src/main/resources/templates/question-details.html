@@ -1,20 +1,550 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Question Details</title>
-    <!-- Include your CSS and other head elements -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Base styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #232629;
+      background-color: #fff;
+    }
+
+    /* Container layout */
+    .container {
+      max-width: 1264px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .page-container {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+      gap: 24px;
+      margin-top: 50px;
+    }
+
+    @media (min-width: 1100px) {
+      .page-container {
+        grid-template-columns: 164px 1fr 300px;
+      }
+    }
+
+    /* Header styles */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      height: 50px;
+      background-color: #f8f9f9;
+      border-top: 3px solid #f48024;
+      border-bottom: 1px solid #e3e6e8;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      padding: 0 8px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 30px;
+    }
+
+    .search-container {
+      flex-grow: 1;
+      max-width: 700px;
+      margin: 0 8px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 8px 8px 32px;
+      border: 1px solid #babfc4;
+      border-radius: 3px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23838C95" d="M12.2 13.6a7 7 0 1 1 1.4-1.4l3.1 3.1a1 1 0 1 1-1.4 1.4l-3.1-3.1zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z"/></svg>');
+      background-position: 8px center;
+      background-repeat: no-repeat;
+    }
+
+    /* Question header */
+    .question-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e3e6e8;
+    }
+
+    .question-header h1 {
+      font-size: 27px;
+      margin-bottom: 8px;
+      font-weight: 400;
+      color: #242729;
+    }
+
+    .question-metadata {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      color: #6a737c;
+      margin-bottom: 8px;
+    }
+
+    .ask-button {
+      margin-left: auto;
+    }
+
+    .button {
+      background-color: #0a95ff;
+      color: white;
+      border: 1px solid #0a95ff;
+      padding: 8px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .button:hover {
+      background-color: #0074cc;
+    }
+
+    /* Question layout */
+    .post-layout {
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      gap: 16px;
+    }
+
+    /* Vote controls */
+    .vote-cell {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #6a737c;
+    }
+
+    .vote-cell button {
+      background: none;
+      border: none;
+      color: #babfc4;
+      font-size: 30px;
+      cursor: pointer;
+      padding: 0;
+      margin: 2px 0;
+    }
+
+    .vote-cell button:hover {
+      color: #838c95;
+    }
+
+    .vote-count {
+      font-size: 21px;
+      color: #6a737c;
+      margin: 2px 0;
+    }
+
+    .bookmark-button, .history-button {
+      font-size: 16px !important;
+      margin-top: 8px !important;
+    }
+
+    /* Post content */
+    .post-text {
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-wrap: break-word;
+      margin-bottom: 24px;
+    }
+
+    /* Code blocks */
+    .post-text pre {
+      background-color: #f6f6f6;
+      padding: 12px;
+      border-radius: 3px;
+      overflow-x: auto;
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      margin: 16px 0;
+    }
+
+    .post-text code {
+      background-color: #f6f6f6;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: 13px;
+    }
+
+    /* Tags */
+    .post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 12px;
+    }
+
+    .post-tag {
+      background-color: #e1ecf4;
+      color: #39739d;
+      padding: 4px 6px;
+      border-radius: 3px;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .post-tag:hover {
+      background-color: #d0e3f1;
+      color: #2c5877;
+    }
+
+    /* Post actions */
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: #6a737c;
+      margin-bottom: 16px;
+    }
+
+    .post-menu {
+      display: flex;
+      gap: 12px;
+    }
+
+    .post-menu a {
+      color: #6a737c;
+      text-decoration: none;
+    }
+
+    .post-menu a:hover {
+      color: #0074cc;
+    }
+
+    /* User card */
+    .user-info {
+      display: flex;
+      align-items: center;
+      padding: 5px 6px 7px 7px;
+      background-color: #f8f9f9;
+      border-radius: 3px;
+    }
+
+    .user-action-time {
+      color: #6a737c;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+
+    .user-gravatar {
+      margin-right: 8px;
+    }
+
+    .user-gravatar img {
+      width: 32px;
+      height: 32px;
+      border-radius: 3px;
+    }
+
+    .user-details {
+      font-size: 12px;
+    }
+
+    .user-details a {
+      color: #0074cc;
+      text-decoration: none;
+    }
+
+    .user-reputation {
+      font-weight: bold;
+      color: #6a737c;
+    }
+
+    /* Answers section */
+    .answers-header {
+      font-size: 19px;
+      font-weight: 400;
+      margin: 20px 0;
+      padding-top: 20px;
+      border-top: 1px solid #e3e6e8;
+    }
+
+    /* Answer form */
+    .post-form h2 {
+      font-size: 19px;
+      font-weight: 400;
+      margin: 20px 0;
+      padding-top: 20px;
+      border-top: 1px solid #e3e6e8;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #babfc4;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 15px;
+      resize: vertical;
+    }
+
+    /* Delete modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 3px;
+      max-width: 400px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .danger-button {
+      background-color: #d0393e;
+      border-color: #d0393e;
+    }
+
+    .danger-button:hover {
+      background-color: #c23030;
+    }
+
+    .secondary-button {
+      background-color: #f8f9f9;
+      color: #3b4045;
+      border-color: #d6d9dc;
+    }
+
+    .secondary-button:hover {
+      background-color: #e3e6e8;
+    }
+
+    .login-prompt {
+      margin: 20px 0;
+      padding: 16px;
+      background-color: #fdf7e3;
+      border: 1px solid #e6dcae;
+      border-radius: 3px;
+    }
+
+    .login-prompt a {
+      color: #0074cc;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-<div th:if="${question}">
-    <h1 th:text="${question.title}">Question Title</h1>
-    <div th:if="${question.imageURL}">
-        <img th:src="${question.imageURL}" alt="Question Image"/>
+<header class="top-bar">
+  <div class="logo">
+    <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
+  </div>
+  <div class="search-container">
+    <input type="text" placeholder="Search..." class="search-input">
+  </div>
+  <div class="user-nav">
+    <!-- User navigation would go here -->
+  </div>
+</header>
+
+<div class="container">
+  <div class="page-container">
+    <!-- Left Sidebar -->
+    <div class="left-sidebar">
+      <nav>
+        <ul style="list-style-type: none;">
+          <li><a href="/" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
+            <i class="fas fa-home" style="margin-right: 8px;"></i> Home
+          </a></li>
+          <li><a href="/questions" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px; font-weight: bold; background-color: #f1f2f3;">
+            <i class="fas fa-question" style="margin-right: 8px;"></i> Questions
+          </a></li>
+          <li><a href="/tags" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
+            <i class="fas fa-tag" style="margin-right: 8px;"></i> Tags
+          </a></li>
+        </ul>
+      </nav>
     </div>
-    <div th:utext="${question.content}">Question Content</div>
-    <!-- Add other question details like tags, author, etc. -->
+
+    <!-- Main Content -->
+    <div class="content">
+      <div class="question-header">
+        <h1 th:text="${question.title}">Question Title</h1>
+        <div class="question-metadata">
+          <span class="asked">Asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
+          <span class="modified" th:if="${question.updatedAt != question.createdAt}">Modified <span th:text="${#temporals.format(question.updatedAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
+          <span class="viewed">Viewed <span th:text="${question.viewsCount}">6</span> times</span>
+        </div>
+        <div class="ask-button">
+          <a href="/questions/ask" class="button">Ask Question</a>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <div class="question-body">
+        <div class="post-layout">
+          <!-- Vote controls -->
+          <div class="vote-cell">
+            <button class="vote-up-button" th:attr="data-question-id=${question.id}">
+              <i class="fas fa-caret-up"></i>
+            </button>
+            <div class="vote-count" th:text="${question.voteCount}">0</div>
+            <button class="vote-down-button" th:attr="data-question-id=${question.id}">
+              <i class="fas fa-caret-down"></i>
+            </button>
+            <button class="bookmark-button" th:attr="data-question-id=${question.id}">
+              <i class="far fa-bookmark"></i>
+            </button>
+            <button class="history-button" th:if="${question.updatedAt != question.createdAt}">
+              <i class="fas fa-history"></i>
+            </button>
+          </div>
+
+          <!-- Question content -->
+          <div class="post-cell">
+            <!-- Main question image if present -->
+            <div class="post-image" th:if="${question.imageURL != null}">
+              <img th:src="${question.imageURL}" alt="Question image" style="max-width: 100%; margin-bottom: 16px;">
+            </div>
+
+            <!-- Question content -->
+            <div class="post-text" th:utext="${question.content}">
+              <!-- Content rendered from Markdown -->
+              <p>We are using an Azure postgresql flexible server DB for doing our performance testing. On max load of around 50 tps, all our queries are failing with</p>
+              <pre><code>Could not execute statement. [Hint: You might need to increase max_pred_locks_per_transaction.] [n/a].</code></pre>
+            </div>
+
+            <!-- Tags -->
+            <div class="post-tags">
+              <a th:each="tag : ${question.tags}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag" th:text="${tag}">postgresql</a>
+              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>
+              <a href="/tags/hibernate" class="post-tag">hibernate</a>
+            </div>
+
+            <!-- Question actions -->
+            <div class="post-actions">
+              <div class="post-menu">
+                <a href="#" class="share-link">Share</a>
+                <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
+                <a href="#" class="follow-link">Follow</a>
+                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>
+              </div>
+
+              <!-- User card -->
+              <div class="user-info" th:if="${question.user != null}">
+                <div class="user-action-time">
+                  asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                </div>
+                <div class="user-gravatar">
+                  <a th:href="@{/users/{id}(id=${question.user.id})}">
+                    <img th:src="${question.user.avatarUrl ?: '/images/default-avatar.png'}" alt="User avatar">
+                  </a>
+                </div>
+                <div class="user-details">
+                  <a th:href="@{/users/{id}(id=${question.user.id})}" th:text="${question.user.displayName}">Username</a>
+                  <div class="user-reputation" th:text="${question.user.reputation}">123</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Answer count -->
+      <h2 class="answers-header">
+        <span th:text="${question.answerCount}">0</span> Answers
+      </h2>
+
+      <!-- Answers would be here -->
+      <div id="answers">
+        <!-- This would be populated dynamically or from a fragment -->
+      </div>
+
+      <!-- Answer form -->
+      <div class="post-form">
+        <h2>Your Answer</h2>
+        <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post">
+          <div class="form-group">
+            <textarea id="answer-content" name="content" rows="10"
+                      placeholder="Write your answer here. Support Markdown formatting."></textarea>
+          </div>
+          <button type="submit" class="button">Post Your Answer</button>
+        </form>
+
+        <!-- Login prompt if not authenticated -->
+        <div class="login-prompt" style="display: none;">
+          <p>You must <a th:href="@{/login}">log in</a> to answer this question.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="right-sidebar">
+      <div style="background-color: #fdf7e3; padding: 16px; border-radius: 3px; margin-bottom: 16px;">
+        <h3 style="font-size: 15px; margin-bottom: 8px;">The Overflow Blog</h3>
+        <ul style="list-style-type: none; margin-left: 20px;">
+          <li style="display: flex; margin-bottom: 8px;">
+            <i class="fas fa-pencil-alt" style="margin-right: 8px; margin-left: -20px;"></i>
+            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Why is it so hard for companies to protect your privacy?</a>
+          </li>
+        </ul>
+
+        <h3 style="font-size: 15px; margin: 16px 0 8px 0;">Featured on Meta</h3>
+        <ul style="list-style-type: none; margin-left: 20px;">
+          <li style="display: flex; margin-bottom: 8px;">
+            <i class="fab fa-stack-overflow" style="color: #0086d8; margin-right: 8px; margin-left: -20px;"></i>
+            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Join us for our first community-wide AMA</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
-<div th:unless="${question}">
-    <h2>Question not found</h2>
+
+<!-- Delete confirmation modal -->
+<div id="delete-modal" class="modal">
+  <div class="modal-content">
+    <h3>Delete Question</h3>
+    <p>Are you sure you want to delete this question? This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button id="confirm-delete" class="button danger-button">Delete</button>
+      <button id="cancel-delete" class="button secondary-button">Cancel</button>
+    </div>
+  </div>
 </div>
 </body>
 </html>
