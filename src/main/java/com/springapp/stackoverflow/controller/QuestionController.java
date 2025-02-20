@@ -28,7 +28,7 @@ public class QuestionController {
 
     @PostMapping("/")
     public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO){
-        QuestionDTO question = questionService.createQuestion(questionDTO);
+        QuestionDTO question = questionService.createQuestion(questionDTO,null);
         return ResponseEntity.ok(question);
     }
 
