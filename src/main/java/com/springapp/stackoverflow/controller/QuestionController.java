@@ -118,7 +118,6 @@ public class QuestionController {
         }
     }
 
-    // Other methods remain unchanged
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
@@ -143,7 +142,7 @@ public class QuestionController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", questions.getTotalPages());
 
-        return "questions-page";
+        return "questions-page"; // This will look for questions.html in your templates folder
     }
 
     @GetMapping("/{id}")
@@ -154,8 +153,8 @@ public class QuestionController {
     }
 
     @PutMapping("/{questionID}")
-    public ResponseEntity<QuestionDTO> editQuestion(@PathVariable Long questionID, @RequestBody QuestionDTO questionDTO) {
-        QuestionDTO questionDTOEdited = questionService.edit(questionID, questionDTO);
+    public ResponseEntity<QuestionDTO> editQuestion(@PathVariable Long questionID, @RequestBody QuestionDTO questionDTO){
+        QuestionDTO questionDTOEdited = questionService.edit(questionID,questionDTO);
         return new ResponseEntity<>(questionDTOEdited, HttpStatus.OK);
     }
 
