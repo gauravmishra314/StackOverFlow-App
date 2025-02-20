@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,14 +19,27 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
+
+    @Lob
+    @Column(length = 10000)
     private String content;
+
     private String excerpt;
     private int voteCount;
     private int answerCount;
     private int viewsCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    // The main image URL for the question
     private String imageURL;
+
+    // For storing additional images in the content
+    @ElementCollection
+    @CollectionTable(name = "question_images", joinColumns = @JoinColumn(name = "question_id"))
+    @Column(name = "image_url")
+    private List<String> contentImages = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User user;

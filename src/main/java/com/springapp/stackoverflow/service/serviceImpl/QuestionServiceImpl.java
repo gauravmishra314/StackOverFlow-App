@@ -45,6 +45,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO createQuestion(QuestionDTO questionDTO, String imageUrl) {
+        return createQuestion(questionDTO, imageUrl, new ArrayList<>());
+    }
+
+    @Override
+    public QuestionDTO createQuestion(QuestionDTO questionDTO, String mainImageUrl, List<String> contentImageUrls) {
         Question question = new Question();
         question.setTitle(questionDTO.getTitle());
         question.setContent(questionDTO.getContent());
@@ -57,7 +62,13 @@ public class QuestionServiceImpl implements QuestionService {
         LocalDateTime now = LocalDateTime.now();
         question.setCreatedAt(now);
         question.setUpdatedAt(now);
-        question.setImageURL(imageUrl);
+        question.setImageURL(mainImageUrl);
+
+        // Set additional content images if provided
+        if (contentImageUrls != null && !contentImageUrls.isEmpty()) {
+            question.setContentImages(contentImageUrls);
+        }
+
         question.setVoteCount(0);
         question.setAnswerCount(0);
         question.setViewsCount(0);
@@ -66,7 +77,6 @@ public class QuestionServiceImpl implements QuestionService {
         if (questionDTO.getTags() != null) {
             for (String tagName : questionDTO.getTags()) {
                 if (tagName != null && !tagName.trim().isEmpty()) {
-//                    System.out.println("Tag Name--->"+tagName);
                     Tag tag = tagService.findOrCreateTag(tagName);
                     tags.add(tag);
                 }
