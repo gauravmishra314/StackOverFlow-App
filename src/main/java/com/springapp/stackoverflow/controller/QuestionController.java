@@ -70,6 +70,7 @@ public class QuestionController {
             String mainImageUrl = null;
             if (mainImage != null && !mainImage.isEmpty()) {
                 try {
+                    System.out.println("Image from the view ----"+mainImage);
                     mainImageUrl = cloudinaryService.uploadImage(mainImage);
                     logger.info("Main image uploaded successfully: {}", mainImageUrl);
                 } catch (IOException e) {

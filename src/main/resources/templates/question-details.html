@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Question Details</title>
+    <!-- Include your CSS and other head elements -->
+</head>
+<body>
+<div th:if="${question}">
+    <h1 th:text="${question.title}">Question Title</h1>
+    <div th:if="${question.imageURL}">
+        <img th:src="${question.imageURL}" alt="Question Image"/>
+    </div>
+    <div th:utext="${question.content}">Question Content</div>
+    <!-- Add other question details like tags, author, etc. -->
+</div>
+<div th:unless="${question}">
+    <h2>Question not found</h2>
+</div>
+</body>
+</html>

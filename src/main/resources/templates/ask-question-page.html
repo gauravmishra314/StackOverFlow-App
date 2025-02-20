@@ -190,6 +190,11 @@
                         <textarea name="contentBlocks[0].text" class="editor-content w-full" required></textarea>
                         <input type="hidden" name="contentBlocks[0].type" value="text">
                         <div class="content-actions">
+                            <div class="mb-6">
+                                <label class="block font-bold mb-2">Main Image (Optional)</label>
+                                <p class="text-gray-600 text-sm mb-2">Add a main image for your question</p>
+                                <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-md" accept="image/*">
+                            </div>
                             <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
                             <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
                         </div>
