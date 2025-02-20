@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ask a Question - Stack Overflow</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .sidebar-item {
+            padding: 8px 16px;
+            color: #535a60;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .editor-toolbar {
+            border: 1px solid #d6d9dc;
+            border-bottom: none;
+            border-radius: 3px 3px 0 0;
+            background-color: #f8f9f9;
+            padding: 8px;
+        }
+        .editor-content {
+            border: 1px solid #d6d9dc;
+            border-radius: 0 0 3px 3px;
+            min-height: 200px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+<!-- Navigation -->
+<nav class="bg-white border-b border-gray-300 fixed w-full top-0 z-50">
+    <div class="max-w-full mx-auto px-4">
+        <div class="flex justify-between items-center h-14">
+            <div class="flex items-center space-x-4">
+                <img src="/api/placeholder/150/30" alt="Stack Overflow" class="h-8">
+                <a href="#" class="text-gray-600">Products</a>
+                <a href="#" class="text-gray-600">OverflowAI</a>
+            </div>
+            <div class="flex-1 max-w-xl px-4">
+                <input type="text" placeholder="Search..." class="w-full px-4 py-1 border border-gray-300 rounded-md">
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-500">1</span>
+                <span class="text-gray-500">📫</span>
+                <span class="text-gray-500">🏆</span>
+                <span class="text-gray-500">❓</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="flex mt-14">
+    <!-- Left Sidebar -->
+    <div class="w-52 fixed h-full border-r border-gray-300">
+        <nav class="pt-4">
+            <a href="#" class="sidebar-item">
+                <span class="mr-2">🏠</span> Home
+            </a>
+            <a href="/questions" class="sidebar-item">
+                <span class="mr-2">❓</span> Questions
+            </a>
+            <a href="#" class="sidebar-item">
+                <span class="mr-2">🏷️</span> Tags
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="ml-52 p-6 flex-1 max-w-4xl">
+        <h1 class="text-2xl font-bold mb-4">Ask a question</h1>
+
+        <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
+            <h2 class="font-bold text-lg mb-2">Writing a good question</h2>
+            <p class="text-gray-700">Steps to help you write a good question:</p>
+            <ul class="list-disc ml-6 mt-2">
+                <li>Summarize your problem in a one-line title</li>
+                <li>Describe your problem in detail</li>
+                <li>Describe what you tried and what you expected to happen</li>
+                <li>Add "tags" to help others find and answer your question</li>
+            </ul>
+        </div>
+
+        <form th:action="@{/questions/ask}" th:object="${questionDTO}" method="post" class="space-y-6">
+            <div class="bg-white p-6 rounded-lg border border-gray-200">
+                <div class="mb-6">
+                    <label class="block font-bold mb-2">Title</label>
+                    <p class="text-gray-600 text-sm mb-2">Be specific and imagine you're asking a question to another person.</p>
+                    <input type="text" th:field="*{title}" class="w-full p-2 border border-gray-300 rounded-md"/>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-bold mb-2">What are the details of your problem?</label>
+                    <p class="text-gray-600 text-sm mb-2">Introduce the problem and expand on what you put in the title. Minimum 20 characters.</p>
+                    <div class="editor-toolbar flex gap-2">
+                        <button type="button" class="p-1 hover:bg-gray-200 rounded">B</button>
+                        <button type="button" class="p-1 hover:bg-gray-200 rounded">I</button>
+                        <button type="button" class="p-1 hover:bg-gray-200 rounded">{}</button>
+                    </div>
+                    <textarea th:field="*{content}" class="editor-content w-full"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-bold mb-2">What did you try and what were you expecting?</label>
+                    <p class="text-gray-600 text-sm mb-2">Describe what you tried, what you expected to happen, and what actually resulted. Minimum 20 characters.</p>
+                    <textarea th:field="*{excerpt}" class="editor-content w-full"></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-bold mb-2">Tags</label>
+                    <p class="text-gray-600 text-sm mb-2">Add up to 5 tags to describe what your question is about</p>
+                    <input type="text" th:field="*{tags}" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., (javascript sql-server)"/>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Review your question</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

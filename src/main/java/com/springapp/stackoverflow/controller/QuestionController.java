@@ -11,8 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/questions")
@@ -28,7 +31,7 @@ public class QuestionController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO, @RequestParam("file") MultipartFile file){
+    public ResponseEntity<QuestionDTO> createQuestion(@RequestBody QuestionDTO questionDTO, @RequestParam("file") MultipartFile file) {
         try {
             String imageUrl = cloudinaryService.uploadImage(file);
             QuestionDTO question = questionService.createQuestion(questionDTO, imageUrl);
@@ -36,6 +39,30 @@ public class QuestionController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }
+
+    @GetMapping("/ask")
+    public String showAskQuestionForm(Model model) {
+        model.addAttribute("questionDTO", new QuestionDTO());
+        return "ask-question-page";
+    }
+
+    @PostMapping("/ask")
+    public String submitQuestion(@ModelAttribute("questionDTO") QuestionDTO questionDTO,
+                                 BindingResult bindingResult,
+                                 Model model,
+                                 @RequestParam("file") MultipartFile file) {
+        if (bindingResult.hasErrors()) {
+            return "ask-question-page";
+        }
+        String imageUrl = null;
+        try {
+            imageUrl = cloudinaryService.uploadImage(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        QuestionDTO savedQuestion = questionService.createQuestion(questionDTO,imageUrl);
+        return "redirect:/questions/" + savedQuestion.getId();
     }
 
     @DeleteMapping("/{id}")
