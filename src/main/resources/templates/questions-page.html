@@ -46,7 +46,7 @@
 <!--        <img src="/api/placeholder/150/30" alt="Stack Overflow" class="h-8">-->
 <!--        <img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Stack_Overflow_icon.svg"-->
 <!--             alt="Stack Overflow" class="h-8 w-8">-->
-        <img src="static/images/stackoverflow-logo.png" alt="Stack Overflow" class="h-8">
+        <img src="images/stackoverflow-logo.png" alt="Stack Overflow" class="h-8">
 
 
         <a href="#" class="text-gray-600">Products</a>
@@ -70,8 +70,8 @@
   <!-- Sidebar -->
   <div class="w-52 fixed h-full border-r border-gray-300">
     <nav class="pt-4">
-      <a href="#" class="sidebar-item">
-        <span class="mr-2">🏠</span> Home
+      <a th:href="@{/questions/home}" class="sidebar-item">
+        <span class="mr-2" >🏠</span> Home
       </a>
       <a href="#" class="sidebar-item active">
         <span class="mr-2">❓</span> Questions

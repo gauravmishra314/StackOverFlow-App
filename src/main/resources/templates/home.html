@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Overflow Clone - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+
+    <style>
+
+    .sidebar-item {
+      padding: 8px 16px;
+      color: #535a60;
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+    }
+    .sidebar-item:hover {
+      background-color: #f8f9f9;
+    }
+    .active {
+      background-color: #f8f9f9;
+      border-right: 3px solid #f48225;
+      font-weight: bold;
+      color: black;
+    }
+    .tag {
+      background-color: #e1ecf4;
+      color: #39739d;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      text-decoration: none;
+    }
+    .tag:hover {
+      background-color: #d0e3f1;
+    }
+    .filter-button.active {
+      background-color: #e3e6e8;
+    }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f6f6f6;
+        }
+
+        .header {
+            background-color: #fff;
+            border-top: 3px solid #f48024;
+            border-bottom: 1px solid #e4e6e8;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 30px;
+            margin-right: 20px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 15px;
+            margin-right: auto;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            max-width: 700px;
+            margin: 0 15px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+        }
+
+        .icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .sidebar {
+            width: 200px;
+            padding: 20px 0;
+            background-color: #fafafa;
+            border-right: 1px solid #e4e6e8;
+            float: left;
+            height: calc(100vh - 50px);
+        }
+
+        .sidebar-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-item.active {
+            background-color: #eff0f1;
+            font-weight: bold;
+            border-right: 3px solid #f48024;
+        }
+
+        .main-content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome-hand {
+            font-size: 30px;
+            margin-right: 10px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            padding: 15px;
+        }
+
+        .reputation-card .number {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #6a37be;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+
+        .posts-section h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .post-subtitle {
+            color: #6a737c;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .post-item {
+            background-color: #fff;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+        }
+
+        .vote-count {
+            background-color: #f6f6f6;
+            text-align: center;
+            padding: 5px 10px;
+            margin-right: 15px;
+            border-radius: 3px;
+            min-width: 60px;
+        }
+
+        .post-content {
+            flex-grow: 1;
+        }
+
+        .post-title {
+            color: #0074cc;
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .post-tags {
+            margin-top: 10px;
+        }
+
+        .sidebar-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e4e6e8;
+        }
+
+        .sidebar-section-header {
+            padding: 0 20px;
+            font-size: 11px;
+            font-weight: bold;
+            color: #6a737c;
+            margin-bottom: 10px;
+        }
+
+        .right-sidebar {
+            width: 300px;
+            float: right;
+            padding: 20px;
+        }
+
+        .ask-button {
+            background-color: #0095ff;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 3px;
+            border: none;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .gear-icon {
+            color: #6a737c;
+            cursor: pointer;
+            float: right;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #0074cc;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #e4e6e8;
+            margin: 0 4px;
+            border-radius: 3px;
+        }
+
+        .pagination a.active {
+            background-color: #0074cc;
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #f6f6f6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 0;
+            color: #6a737c;
+        }
+    </style>
+</head>
+<body>
+<!-- Header with navigation -->
+<div class="header">
+    <img src="https://stackoverflow.design/assets/img/logos/so/logo-stackoverflow.svg" alt="Stack Overflow" class="logo">
+    <div class="nav-items">
+        <span>Products</span>
+        <span>OverflowAI</span>
+    </div>
+    <div class="search-bar">
+        <form th:action="@{/search}" method="get">
+            <input type="text" name="q" placeholder="Search..." th:value="${param.q}">
+        </form>
+    </div>
+    <div class="icons">
+        <span th:if="${user != null}" th:text="${'🔶 ' + user.reputation}">🔶 1</span>
+        <span th:unless="${user != null}">🔶 0</span>
+        <span>📩</span>
+        <span>🏆</span>
+        <span>❓</span>
+        <span>☰</span>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-item active">
+        <span>🏠</span><a th:href="@{/}" style="text-decoration: none; color: inherit;">Home</a>
+    </div>
+    <div class="sidebar-item">
+        <span>❓</span><a th:href="@{/questions}" style="text-decoration: none; color: inherit;">Questions</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🏷️</span><a th:href="@{/tags}" style="text-decoration: none; color: inherit;">Tags</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🔖</span><a th:href="@{/saves}" style="text-decoration: none; color: inherit;">Saves</a>
+    </div>
+    <div class="sidebar-item">
+        <span>👥</span><a th:href="@{/users}" style="text-decoration: none; color: inherit;">Users</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🏢</span><a th:href="@{/companies}" style="text-decoration: none; color: inherit;">Companies</a>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">LABS</div>
+        <div class="sidebar-item">
+            <span>💬</span><a th:href="@{/discussions}" style="text-decoration: none; color: inherit;">Discussions</a>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">COLLECTIVES</div>
+        <div class="sidebar-item">
+            Communities for your favorite technologies.
+            <a th:href="@{/collectives}">Explore all collectives</a>
+        </div>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">TEAMS</div>
+        <div class="sidebar-item">
+            Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
+            <a th:href="@{/teams}">Explore Teams</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<div class="main-content">
+    <!-- Welcome section -->
+    <div class="welcome-section">
+        <div class="welcome-hand">👋</div>
+        <div>
+            <h1 th:if="${user != null}" th:text="'Welcome back, ' + ${user.username}">Welcome back, User</h1>
+            <h1 th:unless="${user != null}">Welcome to Stack Overflow Clone</h1>
+            <p>Find answers to your technical questions and help others answer theirs.</p>
+        </div>
+        <a th:href="@{/questions/ask}">
+            <button class="ask-button">Ask Question</button>
+        </a>
+    </div>
+
+    <!-- Dashboard cards -->
+<!--    <div class="grid-container">-->
+<!--        <div class="card reputation-card">-->
+<!--            <h3>Reputation</h3>-->
+<!--            <div class="number" th:text="${user != null ? user.reputation : '0'}">1</div>-->
+<!--            <p>Earn reputation by <a th:href="@{/help/reputation#asking}">Asking</a>,-->
+<!--                <a th:href="@{/help/reputation#answering}">Answering</a> and-->
+<!--                <a th:href="@{/help/reputation#editing}">Editing</a>.</p>-->
+<!--        </div>-->
+
+<!--        <div class="card">-->
+<!--            <h3>Badge progress</h3>-->
+<!--            <p>Take the tour to earn your first badge!</p>-->
+<!--            <a th:href="@{/tour}"><button class="button">Get started here</button></a>-->
+<!--        </div>-->
+
+<!--        <div class="card">-->
+<!--            <h3>Watched tags <span class="gear-icon">⚙️</span></h3>-->
+<!--            <div th:if="${watchedTags != null && !watchedTags.empty}">-->
+<!--                <span th:each="tag : ${watchedTags}" class="tag" th:text="${tag.name}">java</span>-->
+<!--            </div>-->
+<!--            <div th:unless="${watchedTags != null && !watchedTags.empty}">-->
+<!--                <span class="tag">java</span>-->
+<!--            </div>-->
+<!--            <p>Customize your content by watching tags.</p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <!-- Posts section -->
+    <div class="posts-section">
+        <h2>Interesting posts for you</h2>
+        <div class="post-subtitle">Based on your viewing history and watched tags.
+            <a th:href="@{/preferences/feed}">Customize your feed</a>
+        </div>
+
+<!--        &lt;!&ndash; Display questions from Spring controller &ndash;&gt;-->
+<!--        <div th:if="${questions != null && !questions.empty}">-->
+<!--            <div class="post-item" th:each="question : ${questions}">-->
+<!--                <div class="vote-count">-->
+<!--                    <span th:text="${question.voteCount + ' votes'}">0 votes</span><br>-->
+<!--&lt;!&ndash;                    <span style="background-color: #e1ecf4; color: #39739d; padding: 2px 5px;"></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                          th:text="${question.answers.size() + ' answers'}">2 answers</span><br>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span th:text="${question.views + ' views'}">2k views</span>&ndash;&gt;-->
+<!--                </div>-->
+<!--                <div class="post-content">-->
+<!--                    <div class="post-title">-->
+<!--                        <a th:href="@{'/questions/' + ${question.id}}" th:text="${question.title}">Question Title</a>-->
+<!--                    </div>-->
+<!--&lt;!&ndash;                    <p th:text="${#strings.abbreviate(question.body, 200)}">Question content</p>&ndash;&gt;-->
+<!--                    <div class="post-tags">-->
+<!--                        <span class="tag" th:each="tag : ${question.tags}" th:text="${question.tags}">tag</span>-->
+<!--                    </div>-->
+<!--                    <div class="post-meta">-->
+<!--&lt;!&ndash;                        <span th:text="${'👤 ' + question.author.username + ' ' + question.author.reputation}">👤 User 100</span>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <span th:text="${'asked ' + #temporals.format(question.createdAt, 'dd MMM yyyy')}">asked date</span>&ndash;&gt;-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        <!-- Questions List -->
+        <div class="space-y-4">
+            <div th:each="question : ${questions}" class="bg-white p-4 rounded-lg border border-gray-200">
+                <div class="flex">
+                    <!-- Vote stats -->
+                    <div class="text-center mr-4 text-gray-600 text-sm">
+                        <div th:text="${question.voteCount + ' votes'}" class="mb-1">0 votes</div>
+                        <div th:text="${question.answerCount + ' answers'}" class="mb-1">0 answers</div>
+                        <div th:text="${question.viewsCount + ' views'}">2 views</div>
+                    </div>
+
+                    <!-- Question content -->
+                    <div class="flex-1">
+                        <h2 class="text-lg mb-2">
+                            <a th:href="@{'/questions/' + ${question.id}}"
+                               th:text="${question.title}"
+                               class="text-blue-600 hover:text-blue-800">
+                            </a>
+                        </h2>
+                        <p class="text-gray-600 mb-3" th:text="${question.excerpt}"></p>
+
+                        <!-- Tags -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-2">
+                                <a th:each="tag : ${question.tags}"
+                                   th:href="@{'/tags/' + ${tag}}"
+                                   th:text="${tag}"
+                                   class="tag">
+                                </a>
+                            </div>
+
+                            <!-- User info -->
+                            <div class="flex items-center text-sm">
+                                <div th:if="${question.user != null}" class="flex items-center text-sm">
+                                    <a th:href="@{'/users/' + ${question.user.id}}"
+                                       th:text="${question.user.username}"
+                                       class="text-blue-600 hover:text-blue-800">
+                                    </a>
+                                    <span class="ml-2 text-gray-600"
+                                          th:text="${'asked ' + question.createdAt}">
+    </span>
+                                </div>
+                                <div th:unless="${question.user != null}" class="text-sm text-gray-600">
+                                    Posted anonymously
+                                    <span class="ml-2" th:text="${'asked ' + question.createdAt}"></span>
+                                </div>
+                                <span class="ml-2 text-gray-600"
+                                      th:text="${'asked ' + question.createdAt}">
+                                    </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <!-- Pagination -->
+            <div class="pagination" th:if="${totalPages > 1}">
+                <a th:href="@{/(page=0)}">&laquo;</a>
+
+                <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                   th:href="@{/(page=${i})}"
+                   th:text="${i + 1}"
+                   th:class="${currentPage == i ? 'active' : ''}"></a>
+
+                <a th:href="@{/(page=${totalPages-1})}">&raquo;</a>
+            </div>
+        </div>
+
+        <!-- Empty state -->
+        <div class="empty-state" th:if="${questions == null || questions.empty}">
+            <h3>No questions found</h3>
+            <p>Be the first to ask a question!</p>
+            <div style="flex-grow: 1; display: flex; justify-content: flex-end;">
+            <a th:href="@{/questions/ask}">
+                <button class="button">Ask a Question</button>
+            </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Right sidebar -->
+<!--<div class="right-sidebar">-->
+<!--    <div class="card">-->
+<!--        <h3>The Overflow Blog</h3>-->
+<!--        <ul>-->
+<!--            <li>Why is it so hard for companies to protect your privacy?</li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+<!--    <div class="card" style="margin-top: 20px;">-->
+<!--        <h3>Featured on Meta</h3>-->
+<!--        <ul>-->
+<!--            <li>Join us for our first community-wide AMA (Ask Me Anything) with Stack...</li>-->
+<!--            <li>bigbird and Frog have joined us as Community Managers</li>-->
+<!--            <li>Policy: Generative AI (e.g., ChatGPT) is banned</li>-->
+<!--            <li>Is it better to redirect users who attempt to perform actions they can't yet...</li>-->
+<!--            <li>Stacks Editor development and testing</li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+<!--    <div class="card" style="margin-top: 20px;">-->
+<!--        <h3>Hot Meta Posts</h3>-->
+<!--        <ul>-->
+<!--            <li>How can we improve the question asking process on Stack Overflow?</li>-->
+<!--        </ul>-->
+<!--    </div>-->
+
+<!--    <div style="margin-top: 20px;">-->
+<!--        <img src="/api/placeholder/300/250" alt="Advertisement" width="100%">-->
+<!--    </div>-->
+<!--</div>-->
+</body>
+</html>
