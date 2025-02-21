@@ -57,7 +57,7 @@ public class QuestionController {
             @ModelAttribute("questionDTO") QuestionDTO questionDTO,
             @RequestParam(value = "file", required = false) MultipartFile mainImage,
             @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
-            @RequestParam(value = "content", required = false) String content,
+            @RequestParam(value = "contentBlocks[].image", required = false) MultipartFile[] contentImages,
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
@@ -67,11 +67,12 @@ public class QuestionController {
         }
 
         try {
-            // Process main image
+            // Process main image first
             String mainImageUrl = null;
             if (mainImage != null && !mainImage.isEmpty()) {
                 try {
-                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/" + cloudinaryService.uploadImage(mainImage);
+                    System.out.println("Image from the view ----" + mainImage);
+                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/"+cloudinaryService.uploadImage(mainImage);
                     logger.info("Main image uploaded successfully: {}", mainImageUrl);
                 } catch (IOException e) {
                     logger.error("Failed to upload main image", e);
@@ -80,17 +81,35 @@ public class QuestionController {
                 }
             }
 
-            // Ensure content is set properly
-            if (content == null || content.trim().isEmpty()) {
-                logger.warn("No content received from form submission.");
-                redirectAttributes.addFlashAttribute("error", "Content cannot be empty.");
-                return "redirect:/questions/ask";
+            // Process content and content images
+            StringBuilder contentBuilder = new StringBuilder();
+            List<String> contentImageUrls = new ArrayList<>();
+
+            if (contentBlocks != null && contentImages != null) {
+                for (int i = 0; i < contentBlocks.size(); i++) {
+                    ContentBlockDTO block = contentBlocks.get(i);
+                    if ("text".equals(block.getType())) {
+                        contentBuilder.append(block.getText()).append("\n\n");
+                    } else if ("image".equals(block.getType()) && i < contentImages.length) {
+                        MultipartFile image = contentImages[i];
+                        if (image != null && !image.isEmpty()) {
+                            try {
+                                String imageUrl = cloudinaryService.uploadImage(image);
+                                contentImageUrls.add(imageUrl);
+                                contentBuilder.append("![Image ").append(i + 1).append("](").append(imageUrl).append(")\n\n");
+                                logger.info("Content image uploaded successfully: {}", imageUrl);
+                            } catch (IOException e) {
+                                logger.error("Failed to upload content image", e);
+                            }
+                        }
+                    }
+                }
             }
 
-            questionDTO.setContent(content);
+            questionDTO.setContent(contentBuilder.toString());
             questionDTO.setImageURL(mainImageUrl);
 
-            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, mainImageUrl, new ArrayList<>());
+            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, mainImageUrl, contentImageUrls);
             return "redirect:/questions/" + savedQuestion.getId();
 
         } catch (Exception e) {
@@ -99,7 +118,6 @@ public class QuestionController {
             return "redirect:/questions/ask";
         }
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long id) {
@@ -132,7 +150,6 @@ public class QuestionController {
     public String viewQuestion(@PathVariable Long id, Model model) {
         QuestionDTO questionDTO = questionService.getQuestionById(id);
         List<Tag> tag = questionService.findTagsByQuestionId(id);
-        System.out.println("Qustion content: " + questionDTO.getContent());
         model.addAttribute("question", questionDTO);
         model.addAttribute("tag",tag);
         return "question-details";
