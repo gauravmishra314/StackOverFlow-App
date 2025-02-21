@@ -55,11 +55,10 @@ public class QuestionController {
     @PostMapping("/ask")
     public String submitQuestion(
             @ModelAttribute("questionDTO") QuestionDTO questionDTO,
-            @RequestParam(value = "file", required = false) MultipartFile mainImage,
-            @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
-            @RequestParam(value = "content", required = false) String content,
+            @RequestParam(value = "contentBlocksData", required = false) String[] contentBlocksData,
+            @RequestParam(value = "contentBlockTypes", required = false) String[] contentBlockTypes,
+            @RequestParam(value = "contentImages", required = false) MultipartFile[] contentImages,
             BindingResult bindingResult,
-            Model model,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -67,30 +66,44 @@ public class QuestionController {
         }
 
         try {
-            // Process main image
-            String mainImageUrl = null;
-            if (mainImage != null && !mainImage.isEmpty()) {
-                try {
-                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/" + cloudinaryService.uploadImage(mainImage);
-                    logger.info("Main image uploaded successfully: {}", mainImageUrl);
-                } catch (IOException e) {
-                    logger.error("Failed to upload main image", e);
-                    redirectAttributes.addFlashAttribute("error", "Failed to upload main image");
-                    return "redirect:/questions/ask";
+            StringBuilder contentBuilder = new StringBuilder();
+            List<String> contentImageUrls = new ArrayList<>();
+            int imageCounter = 0;
+
+            if (contentBlockTypes != null) {
+                for (int i = 0; i < contentBlockTypes.length; i++) {
+                    String type = contentBlockTypes[i];
+
+                    if ("text".equals(type) && i < contentBlocksData.length) {
+                        String text = contentBlocksData[i];
+                        if (text != null && !text.trim().isEmpty()) {
+                            contentBuilder.append(text).append("\n\n");
+                        }
+                    } else if ("image".equals(type) && contentImages != null && imageCounter < contentImages.length) {
+                        MultipartFile image = contentImages[imageCounter];
+                        if (image != null && !image.isEmpty()) {
+                            try {
+                                // Get the full secure URL from CloudinaryService
+                                String imageUrl = cloudinaryService.uploadImage(image);
+                                contentImageUrls.add(imageUrl);
+                                // Use the full URL in the markdown
+                                contentBuilder.append("![Image ")
+                                        .append(imageCounter + 1)
+                                        .append("](")
+                                        .append(imageUrl)
+                                        .append(")\n\n");
+                                imageCounter++;
+                            } catch (IOException e) {
+                                logger.error("Failed to upload content image", e);
+                                throw new RuntimeException("Failed to upload image", e);
+                            }
+                        }
+                    }
                 }
             }
 
-            // Ensure content is set properly
-            if (content == null || content.trim().isEmpty()) {
-                logger.warn("No content received from form submission.");
-                redirectAttributes.addFlashAttribute("error", "Content cannot be empty.");
-                return "redirect:/questions/ask";
-            }
-
-            questionDTO.setContent(content);
-            questionDTO.setImageURL(mainImageUrl);
-
-            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, mainImageUrl, new ArrayList<>());
+            questionDTO.setContent(contentBuilder.toString());
+            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, null, contentImageUrls);
             return "redirect:/questions/" + savedQuestion.getId();
 
         } catch (Exception e) {

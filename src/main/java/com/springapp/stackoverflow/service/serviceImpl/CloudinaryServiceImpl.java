@@ -27,26 +27,13 @@ public class CloudinaryServiceImpl implements CloudinaryService {
 
     @Override
     public String uploadImage(MultipartFile file) throws IOException {
-        System.out.println("I am inside the uploadImage---" + file);
         if (file == null || file.isEmpty()) {
-            logger.warn("Empty file provided for upload. Filename: {}, Size: {}",
-                    file != null ? file.getOriginalFilename() : "null",
-                    file != null ? file.getSize() : 0);
+            logger.warn("Empty file provided for upload");
             return null;
         }
 
-        logger.info("Attempting to upload file: {}, Size: {}",
-                file.getOriginalFilename(), file.getSize());
-
         try {
-            String folderName = "stackoverflow-clone" ;
-            System.out.println("Cloudinary API Key: " + cloudinary.config.apiKey);
-            Map<String, Object> uploadParams = ObjectUtils.asMap(
-                    "folder", folderName,
-                    "resource_type", "auto"
-            );
-            byte[] bytes = file.getBytes();
-            Map<String, Object> uploadResult = cloudinary.uploader().upload(bytes,
+            Map<String, Object> uploadResult = cloudinary.uploader().upload(file.getBytes(),
                     ObjectUtils.asMap(
                             "folder", "stackoverflow",
                             "resource_type", "auto"));
@@ -55,10 +42,9 @@ public class CloudinaryServiceImpl implements CloudinaryService {
                 logger.error("Upload failed, uploadResult: {}", uploadResult);
                 throw new RuntimeException("Upload failed, no secure_url returned from Cloudinary.");
             }
-            logger.info("uploadResult",uploadResult);
-            String secureUrl = (String) uploadResult.get("public_id");
-            logger.info("this is my url---",cloudinary.url().secure(true).generate("public_id"));
 
+            // Return the secure_url instead of public_id
+            String secureUrl = (String) uploadResult.get("secure_url");
             logger.info("Successfully uploaded to Cloudinary. Secure URL: {}", secureUrl);
             return secureUrl;
         } catch (Exception e) {

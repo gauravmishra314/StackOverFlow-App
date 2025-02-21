@@ -4,10 +4,54 @@
     <meta charset="UTF-8">
     <title th:text="${isEditMode} ? 'Edit Question - Stack Overflow' : 'Ask a Question - Stack Overflow'">Ask a Question - Stack Overflow</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-
     <style>
+        .content-block {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .content-block img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .content-controls {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            background: rgba(255,255,255,0.9);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .content-block:hover .content-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .tag button {
+            margin-left: 6px;
+            color: #39739d;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            padding: 0 2px;
+        }
+
         .sidebar-item {
             padding: 8px 16px;
             color: #535a60;
@@ -15,102 +59,24 @@
             align-items: center;
             text-decoration: none;
         }
-        .tag {
-            background-color: #e1ecf4;
-            color: #39739d;
-            padding: 4px 8px;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-        .editor-toolbar {
-            border: 1px solid #d6d9dc;
-            border-bottom: none;
-            border-radius: 3px 3px 0 0;
-            background-color: #f8f9f9;
-            padding: 8px;
-        }
-        .editor-content {
-            border: 1px solid #d6d9dc;
-            border-radius: 0 0 3px 3px;
-            min-height: 150px;
-            padding: 10px;
-        }
-        .content-block {
-            border: 1px solid #e1e4e8;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            padding: 16px;
-            background-color: white;
-        }
-        .content-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 8px;
-        }
-        .content-block {
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: white;
-        }
 
-        .editor-toolbar {
-            border: 1px solid #e2e8f0;
-            border-bottom: none;
-            border-radius: 0.5rem 0.5rem 0 0;
-            background-color: #f8fafc;
-        }
-
-        .CodeMirror {
-            border: 1px solid #e2e8f0;
-            border-radius: 0 0 0.5rem 0.5rem;
-            height: 200px;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            background-color: #e1ecf4;
-            color: #39739d;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .tag button {
-            color: #39739d;
-            margin-left: 0.5rem;
-            font-size: 0.75rem;
+        .toolbar-button {
+            padding: 6px 10px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
             cursor: pointer;
         }
 
-        .tag button:hover {
-            color: #2c5777;
+        .toolbar-button:hover {
+            background: #e9ecef;
         }
 
-        .error-message {
-            background-color: #fee2e2;
-            border: 1px solid #ef4444;
-            color: #b91c1c;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .loading-spinner {
-            display: none;
-        }
-
-        .loading .loading-spinner {
-            display: inline-block;
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: contain;
+            margin: 8px 0;
         }
     </style>
 </head>
@@ -121,8 +87,7 @@
         <div class="flex justify-between items-center h-14">
             <div class="flex items-center space-x-4">
                 <img src="/api/placeholder/150/30" alt="Stack Overflow" class="h-8">
-                <a href="#" class="text-gray-600">Products</a>
-                <a href="#" class="text-gray-600">OverflowAI</a>
+                <a href="#" class="text-gray-600 hover:text-gray-900">Products</a>
             </div>
             <div class="flex-1 max-w-xl px-4">
                 <input type="text" placeholder="Search..." class="w-full px-4 py-1 border border-gray-300 rounded-md">
@@ -131,7 +96,6 @@
                 <span class="text-gray-500">1</span>
                 <span class="text-gray-500">📫</span>
                 <span class="text-gray-500">🏆</span>
-                <span class="text-gray-500">❓</span>
             </div>
         </div>
     </div>
@@ -139,15 +103,15 @@
 
 <div class="flex mt-14">
     <!-- Left Sidebar -->
-    <div class="w-52 fixed h-full border-r border-gray-300">
+    <div class="w-52 fixed h-full border-r border-gray-300 bg-white">
         <nav class="pt-4">
-            <a href="#" class="sidebar-item">
+            <a href="/" class="sidebar-item">
                 <span class="mr-2">🏠</span> Home
             </a>
             <a href="/questions" class="sidebar-item">
                 <span class="mr-2">❓</span> Questions
             </a>
-            <a href="#" class="sidebar-item">
+            <a href="/tags" class="sidebar-item">
                 <span class="mr-2">🏷️</span> Tags
             </a>
         </nav>
@@ -157,248 +121,433 @@
     <div class="ml-52 p-6 flex-1 max-w-4xl">
         <h1 class="text-2xl font-bold mb-4" th:text="${isEditMode} ? 'Edit Question' : 'Ask a question'">Ask a question</h1>
 
-        <!-- Alert for errors or messages -->
-        <div th:if="${error}" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
-            <span th:text="${error}">Error message</span>
-        </div>
-        <div th:if="${message}" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4" role="alert">
-            <span th:text="${message}">Success message</span>
-        </div>
-
-        <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-6">
-            <h2 class="font-bold text-lg mb-2" th:text="${isEditMode} ? 'Editing your question' : 'Writing a good question'">Writing a good question</h2>
-            <p class="text-gray-700">Steps to help you write a good question:</p>
-            <ul class="list-disc ml-6 mt-2">
-                <li>Summarize your problem in a one-line title</li>
-                <li>Describe your problem in detail</li>
-                <li>Describe what you tried and what you expected to happen</li>
-                <li>Add "tags" to help others find and answer your question</li>
-            </ul>
-        </div>
-
-        <!-- Form action changes based on edit mode -->
         <form id="questionForm"
               th:action="${isEditMode} ? @{/questions/edit/{id}(id=${questionDTO.id})} : @{/questions/ask}"
               th:object="${questionDTO}"
               method="post"
-              class="space-y-6"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data"
+              class="space-y-6">
 
-            <!-- Hidden field for ID if in edit mode -->
-            <input type="hidden" th:if="${isEditMode}" th:field="*{id}" />
+            <!-- Hidden fields for content blocks -->
+            <input type="hidden" name="contentBlocksData" id="contentBlocksData">
+            <input type="hidden" name="contentBlockTypes" id="contentBlockTypes">
+            <input type="hidden" th:if="${isEditMode}" th:field="*{id}">
 
-            <div class="bg-white p-6 rounded-lg border border-gray-200">
-                <div class="mb-6">
-                    <label class="block font-bold mb-2">Title</label>
+            <div class="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
+                <!-- Title -->
+                <div>
+                    <label for="title" class="block font-bold mb-2">Title</label>
                     <p class="text-gray-600 text-sm mb-2">Be specific and imagine you're asking a question to another person.</p>
-                    <input type="text" th:field="*{title}" class="w-full p-2 border border-gray-300 rounded-md" required/>
+                    <input type="text"
+                           id="title"
+                           th:field="*{title}"
+                           class="w-full p-2 border border-gray-300 rounded-md"
+                           required
+                           placeholder="e.g. Why is my React component not rendering?"/>
                 </div>
 
-                <!-- Content blocks container -->
-                <div id="contentBlocks">
-                    <!-- First content block (text) - Always required -->
-                    <div class="content-block" data-type="text">
-                        <label class="block font-bold mb-2">What are the details of your problem?</label>
-                        <p class="text-gray-600 text-sm mb-2">Introduce the problem and expand on what you put in the title. Minimum 20 characters.</p>
-                        <div class="editor-toolbar flex gap-2">
-                            <button type="button" class="p-1 hover:bg-gray-200 rounded">B</button>
-                            <button type="button" class="p-1 hover:bg-gray-200 rounded">I</button>
-                            <button type="button" class="p-1 hover:bg-gray-200 rounded">{}</button>
-                        </div>
-                        <textarea name="contentBlocks[0].text" class="editor-content w-full" required th:text="${questionDTO.content}"></textarea>
-                        <input type="hidden" name="contentBlocks[0].type" value="text">
-                        <div class="content-actions">
-                            <div class="mb-6">
-                                <label class="block font-bold mb-2">Main Image (Optional)</label>
-                                <p class="text-gray-600 text-sm mb-2">Add a main image for your question</p>
-                                <div th:if="${questionDTO.imageURL}" class="mb-3">
-                                    <p class="text-sm text-gray-600">Current image:</p>
-                                    <img th:src="${questionDTO.imageURL}" alt="Current question image" class="max-h-40 rounded-md my-2">
-                                </div>
-                                <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-md" accept="image/*">
-                                <input type="hidden" th:if="${questionDTO.imageURL}" name="currentImageUrl" th:value="${questionDTO.imageURL}">
-                            </div>
-                            <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
-                            <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
-                        </div>
+                <!-- Content Editor -->
+                <div>
+                    <label class="block font-bold mb-2">What are the details of your problem?</label>
+                    <p class="text-gray-600 text-sm mb-2">Introduce the problem and expand on what you put in the title. Minimum 20 characters.</p>
+
+                    <!-- Toolbar -->
+                    <div class="flex gap-2 mb-2">
+                        <button type="button" class="toolbar-button" onclick="addTextBlock()">
+                            Add Text
+                        </button>
+                        <button type="button" class="toolbar-button" onclick="triggerImageUpload()">
+                            Add Image
+                        </button>
+                        <input type="file"
+                               id="imageUpload"
+                               accept="image/*"
+                               style="display: none"
+                               onchange="handleImageUpload(event)">
+                    </div>
+
+                    <!-- Content Blocks Container -->
+                    <div id="contentBlocks" class="border border-gray-300 rounded-md p-4 min-h-[200px]">
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <label class="block font-bold mb-2">What did you try and what were you expecting?</label>
-                    <p class="text-gray-600 text-sm mb-2">Describe what you tried, what you expected to happen, and what actually resulted. Minimum 20 characters.</p>
-                    <textarea th:field="*{excerpt}" class="editor-content w-full" required></textarea>
-                </div>
-
-                <div class="mt-6">
-                    <label class="block font-bold mb-2">Tags</label>
+                <!-- Tags -->
+                <div>
+                    <label for="tagInput" class="block font-bold mb-2">Tags</label>
                     <p class="text-gray-600 text-sm mb-2">Add up to 5 tags to describe what your question is about</p>
-                    <input type="text" id="tagInput" class="w-full p-2 border border-gray-300 rounded-md" placeholder="e.g., (javascript sql-server)"/>
+                    <input type="text"
+                           id="tagInput"
+                           class="w-full p-2 border border-gray-300 rounded-md"
+                           placeholder="Enter tags (press Enter or comma to add)"/>
                     <div id="selectedTags" class="flex flex-wrap gap-2 mt-2"></div>
                     <input type="hidden" id="tagsInput" th:field="*{tags}">
                 </div>
+
+                <!-- Excerpt/Attempts -->
+                <div>
+                    <label for="attempts" class="block font-bold mb-2">What did you try and what were you expecting?</label>
+                    <p class="text-gray-600 text-sm mb-2">Describe what you tried, what you expected to happen, and what actually resulted.</p>
+                    <textarea id="attempts"
+                              th:field="*{excerpt}"
+                              class="w-full p-2 border border-gray-300 rounded-md min-h-[150px]"
+                              required></textarea>
+                </div>
             </div>
 
-            <div class="flex justify-end">
-                <a th:if="${isEditMode}" th:href="@{/questions/{id}(id=${questionDTO.id})}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md mr-2">Cancel</a>
-                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md" th:text="${isEditMode} ? 'Update Question' : 'Post Your Question'">Post Your Question</button>
+            <!-- Submit Buttons -->
+            <div class="flex justify-end gap-4">
+                <button type="submit"
+                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+                    Post Your Question
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-    // Initialize content block counter
-    let blockCounter = 1;
+    // Content Block Management
+    let contentBlocks = [];
+    const contentBlocksContainer = document.getElementById('contentBlocks');
 
-    // Add event listeners for add buttons
-    document.addEventListener('DOMContentLoaded', function() {
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('add-text-btn')) {
-                addTextBlock(e.target.closest('.content-block'));
-            } else if (e.target.classList.contains('add-image-btn')) {
-                addImageBlock(e.target.closest('.content-block'));
-            } else if (e.target.classList.contains('delete-block-btn')) {
-                deleteBlock(e.target.closest('.content-block'));
+    function addTextBlock() {
+        const blockId = `block-${Date.now()}`;
+        const block = {
+            id: blockId,
+            type: 'text',
+            content: ''
+        };
+
+        contentBlocks.push(block);
+
+        const textarea = document.createElement('textarea');
+        textarea.className = 'w-full p-2 border border-gray-300 rounded-md mb-4';
+        textarea.placeholder = 'Enter your text here...';
+        textarea.rows = 4;
+        textarea.id = blockId;
+        textarea.oninput = (e) => updateBlockContent(blockId, e.target.value);
+
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'content-block';
+        blockDiv.appendChild(textarea);
+
+        const controls = createBlockControls(blockId);
+        blockDiv.appendChild(controls);
+
+        contentBlocksContainer.appendChild(blockDiv);
+        textarea.focus();
+    }
+
+    function createBlockControls(blockId) {
+        const controls = document.createElement('div');
+        controls.className = 'content-controls';
+
+        const moveUpBtn = document.createElement('button');
+        moveUpBtn.textContent = '↑';
+        moveUpBtn.className = 'toolbar-button';
+        moveUpBtn.onclick = () => moveBlock(blockId, 'up');
+
+        const moveDownBtn = document.createElement('button');
+        moveDownBtn.textContent = '↓';
+        moveDownBtn.className = 'toolbar-button';
+        moveDownBtn.onclick = () => moveBlock(blockId, 'down');
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = '×';
+        deleteBtn.className = 'toolbar-button';
+        deleteBtn.onclick = () => deleteBlock(blockId);
+
+        controls.appendChild(moveUpBtn);
+        controls.appendChild(moveDownBtn);
+        controls.appendChild(deleteBtn);
+
+        return controls;
+    }
+
+    function triggerImageUpload() {
+        document.getElementById('imageUpload').click();
+    }
+
+    function handleImageUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const blockId = `block-${Date.now()}`;
+        const block = {
+            id: blockId,
+            type: 'image',
+            file: file
+        };
+
+        contentBlocks.push(block);
+
+        const blockDiv = document.createElement('div');
+        blockDiv.className = 'content-block';
+
+        const img = document.createElement('img');
+        img.className = 'image-preview';
+        img.file = file;
+
+        const controls = createBlockControls(blockId);
+        blockDiv.appendChild(img);
+        blockDiv.appendChild(controls);
+
+        contentBlocksContainer.appendChild(blockDiv);
+
+        const reader = new FileReader();
+        reader.onload = (e) => img.src = e.target.result;
+        reader.readAsDataURL(file);
+    }
+
+    function updateBlockContent(blockId, content) {
+        const block = contentBlocks.find(b => b.id === blockId);
+        if (block) {
+            block.content = content;
+        }
+    }
+
+    function moveBlock(blockId, direction) {
+        const index = contentBlocks.findIndex(b => b.id === blockId);
+        if (index === -1) return;
+
+        if (direction === 'up' && index > 0) {
+            [contentBlocks[index], contentBlocks[index - 1]] = [contentBlocks[index - 1], contentBlocks[index]];
+        } else if (direction === 'down' && index < contentBlocks.length - 1) {
+            [contentBlocks[index], contentBlocks[index + 1]] = [contentBlocks[index + 1], contentBlocks[index]];
+        }
+
+        renderBlocks();
+    }
+
+    function deleteBlock(blockId) {
+        contentBlocks = contentBlocks.filter(b => b.id !== blockId);
+        renderBlocks();
+    }
+
+    function renderBlocks() {
+        contentBlocksContainer.innerHTML = '';
+        contentBlocks.forEach(block => {
+            if (block.type === 'text') {
+                const textarea = document.createElement('textarea');
+                textarea.className = 'w-full p-2 border border-gray-300 rounded-md mb-4';
+                textarea.value = block.content;
+                textarea.rows = 4;
+                textarea.id = block.id;
+                textarea.oninput = (e) => updateBlockContent(block.id, e.target.value);
+
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'content-block';
+                blockDiv.appendChild(textarea);
+                blockDiv.appendChild(createBlockControls(block.id));
+                contentBlocksContainer.appendChild(blockDiv);
+            } else if (block.type === 'image') {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'content-block';
+
+                const img = document.createElement('img');
+                img.className = 'image-preview';
+
+                const reader = new FileReader();
+                reader.onload = (e) => img.src = e.target.result;
+                reader.readAsDataURL(block.file);
+
+                blockDiv.appendChild(img);
+                blockDiv.appendChild(createBlockControls(block.id));
+                contentBlocksContainer.appendChild(blockDiv);
             }
         });
+    }
 
-        // Initialize tag input handling
-        setupTagInput();
+    // Tag Management
+    let tags = [];
+    const tagInput = document.getElementById('tagInput');
+    const selectedTags = document.getElementById('selectedTags');
+    const tagsInput = document.getElementById('tagsInput');
 
-        // Submit handler
-        document.getElementById('questionForm').addEventListener('submit', function(e) {
-            prepareContentData();
+    function updateTags() {
+        selectedTags.innerHTML = '';
+        tags.forEach((tag, index) => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'tag';
+            tagElement.innerHTML = `${tag} <button type="button" onclick="removeTag(${index})">×</button>`;
+            selectedTags.appendChild(tagElement);
         });
+        tagsInput.value = tags.join(',');
+    }
 
-        // Initialize existing tags if in edit mode
-        const tagsInput = document.getElementById('tagsInput');
-        if (tagsInput && tagsInput.value) {
-            const existingTags = tagsInput.value.split(',');
-            if (existingTags.length > 0) {
-                tags = existingTags;
-                renderTags();
+    function removeTag(index) {
+        tags.splice(index, 1);
+        updateTags();
+    }
+
+    function addTag(tag) {
+        tag = tag.trim().toLowerCase();
+        if (tag && !tags.includes(tag) && tags.length < 5)
+            tag = tag.trim().toLowerCase();
+        if (tag && !tags.includes(tag) && tags.length < 5) {
+            tags.push(tag);
+            updateTags();
+            return true;
+        }
+        return false;
+    }
+
+    tagInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const input = tagInput.value.trim();
+            if (addTag(input)) {
+                tagInput.value = '';
             }
         }
     });
 
-    // Function to add a text block after the current block
-    function addTextBlock(currentBlock) {
-        const newBlock = document.createElement('div');
-        newBlock.className = 'content-block';
-        newBlock.dataset.type = 'text';
-        newBlock.innerHTML = `
-            <label class="block font-bold mb-2">Additional Information</label>
-            <textarea name="contentBlocks[${blockCounter}].text" class="editor-content w-full"></textarea>
-            <input type="hidden" name="contentBlocks[${blockCounter}].type" value="text">
-            <div class="content-actions">
-                <button type="button" class="bg-red-100 text-red-700 px-3 py-1 rounded-md text-sm delete-block-btn">Delete</button>
-                <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
-                <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
-            </div>
-        `;
-
-        currentBlock.insertAdjacentElement('afterend', newBlock);
-        blockCounter++;
-    }
-
-    // Function to add an image block after the current block
-    function addImageBlock(currentBlock) {
-        const newBlock = document.createElement('div');
-        newBlock.className = 'content-block';
-        newBlock.dataset.type = 'image';
-        newBlock.innerHTML = `
-            <label class="block font-bold mb-2">Add an Image</label>
-            <p class="text-gray-600 text-sm mb-2">Upload an image to illustrate your question</p>
-            <input type="file" name="contentBlocks[${blockCounter}].image" class="w-full p-2 border border-gray-300 rounded-md" accept="image/*">
-            <input type="hidden" name="contentBlocks[${blockCounter}].type" value="image">
-            <div class="content-actions">
-                <button type="button" class="bg-red-100 text-red-700 px-3 py-1 rounded-md text-sm delete-block-btn">Delete</button>
-                <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
-                <button type="button" class="ml-2 bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
-            </div>
-        `;
-
-        currentBlock.insertAdjacentElement('afterend', newBlock);
-        blockCounter++;
-    }
-
-    // Function to delete a content block
-    function deleteBlock(blockToDelete) {
-        // Don't allow deleting if it's the only block
-        const allBlocks = document.querySelectorAll('.content-block');
-        if (allBlocks.length > 1) {
-            blockToDelete.remove();
-        } else {
-            alert("You must have at least one content block.");
+    tagInput.addEventListener('blur', () => {
+        const input = tagInput.value.trim();
+        if (input) {
+            addTag(input);
+            tagInput.value = '';
         }
-    }
+    });
 
-    // Function to prepare content data for submission
-    function prepareContentData() {
-        // For complex content with multiple blocks, we'll combine it all into the content field
-        const contentBlocks = document.querySelectorAll('.content-block');
-        let fullContent = '';
+    // Form submission handling
+    document.getElementById('questionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
 
-        // Will be used to track image uploads
-        const formData = new FormData(document.getElementById('questionForm'));
+        // Validate title
+        const title = document.getElementById('title').value.trim();
+        if (title.length < 5) {
+            alert('Title must be at least 5 characters long');
+            return;
+        }
 
-        contentBlocks.forEach((block, index) => {
-            if (block.dataset.type === 'text') {
-                const textContent = block.querySelector('textarea').value;
-                fullContent += textContent + '\n\n';
-            } else if (block.dataset.type === 'image') {
-                fullContent += `[IMAGE_PLACEHOLDER_${index}]\n\n`;
-            }
-        });
+        // Validate content blocks
+        if (contentBlocks.length === 0) {
+            alert('Please add some content to your question');
+            return;
+        }
 
-        // Set the combined content to the main content field
-        const hiddenContent = document.createElement('input');
-        hiddenContent.type = 'hidden';
-        hiddenContent.name = 'content';
-        hiddenContent.value = fullContent;
-        document.getElementById('questionForm').appendChild(hiddenContent);
-    }
+        // Validate attempts/excerpt
+        const excerpt = document.getElementById('attempts').value.trim();
+        if (excerpt.length < 20) {
+            alert('Please describe what you tried in more detail (minimum 20 characters)');
+            return;
+        }
 
-    // Tag input handling
-    let tags = [];
-    function setupTagInput() {
-        const tagInput = document.getElementById('tagInput');
-        const selectedTags = document.getElementById('selectedTags');
-        const tagsInput = document.getElementById('tagsInput');
+        // Validate tags
+        if (tags.length === 0) {
+            alert('Please add at least one tag to your question');
+            return;
+        }
 
-        tagInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                const tag = tagInput.value.trim();
-                if (tag && !tags.includes(tag) && tags.length < 5) {
-                    tags.push(tag);
-                    renderTags();
-                    tagInput.value = '';
+        try {
+            const formData = new FormData(this);
+
+            // Add content blocks data
+            const contentBlocksData = [];
+            const contentBlockTypes = [];
+            const contentImages = [];
+
+            for (const block of contentBlocks) {
+                if (block.type === 'text') {
+                    contentBlocksData.push(block.content);
+                    contentBlockTypes.push('text');
+                } else if (block.type === 'image') {
+                    contentBlocksData.push(''); // Empty string for image blocks
+                    contentBlockTypes.push('image');
+                    contentImages.push(block.file);
                 }
             }
-        });
 
-        function renderTags() {
-            selectedTags.innerHTML = '';
-            tags.forEach((tag, i) => {
-                const tagEl = document.createElement('span');
-                tagEl.className = 'tag flex items-center';
-                tagEl.innerHTML = `${tag} <button type="button" class="ml-1 text-xs" data-index="${i}">×</button>`;
-                selectedTags.appendChild(tagEl);
+            // Append content blocks to form data
+            contentBlocksData.forEach((data, index) => {
+                formData.append('contentBlocksData', data);
             });
-            tagsInput.value = tags.join(',');
-        }
 
-        // Remove tags when clicking x button
-        selectedTags.addEventListener('click', function(e) {
-            if (e.target.tagName === 'BUTTON') {
-                const index = parseInt(e.target.dataset.index);
-                tags.splice(index, 1);
-                renderTags();
-            }
-        });
+            contentBlockTypes.forEach((type, index) => {
+                formData.append('contentBlockTypes', type);
+            });
+
+            contentImages.forEach((file, index) => {
+                formData.append('contentImages', file);
+            });
+
+            // Submit the form
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Posting...';
+
+            await fetch(this.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            }).then(htmlResponse => {
+                // Check if response contains redirect URL
+                const match = htmlResponse.match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/);
+                if (match) {
+                    window.location.href = match[1];
+                } else {
+                    // If no redirect found, reload the page
+                    window.location.reload();
+                }
+            });
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error submitting question. Please try again.');
+        } finally {
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Post Your Question';
+        }
+    });
+
+    // Initialize existing content if in edit mode
+    function initializeExistingContent() {
+        const contentField = document.getElementById('content');
+        if (contentField && contentField.value) {
+            // Split content into blocks based on images and text
+            const content = contentField.value;
+            const blocks = content.split(/!\[.*?\]\((.*?)\)/).filter(Boolean);
+
+            blocks.forEach((block, index) => {
+                if (block.trim()) {
+                    if (block.startsWith('http')) {
+                        // This is an image URL
+                        const blockId = `block-${Date.now()}-${index}`;
+                        contentBlocks.push({
+                            id: blockId,
+                            type: 'image',
+                            existingUrl: block.trim()
+                        });
+                    } else {
+                        // This is a text block
+                        const blockId = `block-${Date.now()}-${index}`;
+                        contentBlocks.push({
+                            id: blockId,
+                            type: 'text',
+                            content: block.trim()
+                        });
+                    }
+                }
+            });
+
+            renderBlocks();
+        }
     }
+
+    // Initialize tags if in edit mode
+    if (tagsInput.value) {
+        const existingTags = tagsInput.value.split(',');
+        existingTags.forEach(tag => addTag(tag));
+    }
+
+    // Call initialization function
+    initializeExistingContent();
 </script>
 </body>
 </html>
