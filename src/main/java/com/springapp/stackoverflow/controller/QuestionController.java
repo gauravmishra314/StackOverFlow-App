@@ -154,11 +154,83 @@ public class QuestionController {
         model.addAttribute("tag",tag);
         return "question-details";
     }
+    @GetMapping("/edit/{id}")
+    public String showEditQuestionForm(@PathVariable Long id, Model model) {
+        QuestionDTO questionDTO = questionService.getQuestionById(id);
+        model.addAttribute("questionDTO", questionDTO);
+        model.addAttribute("isEditMode", true);
+        return "ask-question-page";
+    }
+    @PostMapping("/edit/{id}")
+    public String updateQuestion(
+            @PathVariable Long id,
+            @ModelAttribute("questionDTO") QuestionDTO questionDTO,
+            @RequestParam(value = "file", required = false) MultipartFile mainImage,
+            @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
+            @RequestParam(value = "contentBlocks[].image", required = false) MultipartFile[] contentImages,
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
 
-    @PutMapping("/{questionID}")
-    public ResponseEntity<QuestionDTO> editQuestion(@PathVariable Long questionID, @RequestBody QuestionDTO questionDTO){
-        QuestionDTO questionDTOEdited = questionService.edit(questionID,questionDTO);
-        return new ResponseEntity<>(questionDTOEdited, HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            return "ask-question-page";
+        }
+
+        try {
+            // Process main image
+            String mainImageUrl = questionDTO.getImageURL();
+            if (mainImage != null && !mainImage.isEmpty()) {
+                try {
+                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/" +
+                            cloudinaryService.uploadImage(mainImage);
+                    logger.info("Main image uploaded successfully: {}", mainImageUrl);
+                } catch (IOException e) {
+                    logger.error("Failed to upload main image", e);
+                    redirectAttributes.addFlashAttribute("error", "Failed to upload main image");
+                    return "redirect:/questions/edit/" + id;
+                }
+            }
+
+            // Process content and content images - similar to your create method
+            StringBuilder contentBuilder = new StringBuilder();
+            List<String> contentImageUrls = new ArrayList<>();
+
+            if (contentBlocks != null && contentImages != null) {
+                for (int i = 0; i < contentBlocks.size(); i++) {
+                    ContentBlockDTO block = contentBlocks.get(i);
+                    if ("text".equals(block.getType())) {
+                        contentBuilder.append(block.getText()).append("\n\n");
+                    } else if ("image".equals(block.getType()) && i < contentImages.length) {
+                        MultipartFile image = contentImages[i];
+                        if (image != null && !image.isEmpty()) {
+                            try {
+                                String imageUrl = cloudinaryService.uploadImage(image);
+                                contentImageUrls.add(imageUrl);
+                                contentBuilder.append("![Image ").append(i + 1).append("](").append(imageUrl).append(")\n\n");
+                            } catch (IOException e) {
+                                logger.error("Failed to upload content image", e);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Only update content if we have new content
+            if (contentBuilder.length() > 0) {
+                questionDTO.setContent(contentBuilder.toString());
+            }
+
+            questionDTO.setImageURL(mainImageUrl);
+            questionDTO.setId(id); // Ensure ID is set
+
+            QuestionDTO updatedQuestion = questionService.edit(id, questionDTO);
+            redirectAttributes.addFlashAttribute("message", "Question updated successfully");
+            return "redirect:/questions/" + updatedQuestion.getId();
+
+        } catch (Exception e) {
+            logger.error("Error updating question", e);
+            redirectAttributes.addFlashAttribute("error", "Failed to update question: " + e.getMessage());
+            return "redirect:/questions/edit/" + id;
+        }
     }
 
     @GetMapping("/home")
