@@ -55,12 +55,16 @@ public class QuestionServiceImpl implements QuestionService {
     public QuestionDTO createQuestion(QuestionDTO questionDTO, String mainImageUrl, List<String> contentImageUrls) {
         Question question = new Question();
         question.setTitle(questionDTO.getTitle());
+
+        // Ensure content is set correctly
+        if (questionDTO.getContent() == null || questionDTO.getContent().trim().isEmpty()) {
+            logger.warn("Question content is empty!");
+            throw new RuntimeException("Content cannot be empty.");
+        }
+
         question.setContent(questionDTO.getContent());
         question.setExcerpt(questionDTO.getExcerpt());
-
-        // Explicitly set the image URL
         question.setImageURL(mainImageUrl);
-        logger.info("Setting main image URL: {}", mainImageUrl);
 
         if (questionDTO.getUser() != null) {
             question.setUser(modelMapper.map(questionDTO.getUser(), User.class));
@@ -93,10 +97,11 @@ public class QuestionServiceImpl implements QuestionService {
         question.setTags(tags);
 
         Question savedQuestion = questionRepository.save(question);
-        logger.info("Question saved with ID: {} and image URL: {}", savedQuestion.getId(), savedQuestion.getImageURL());
+        logger.info("Question saved with ID: {} and content: {}", savedQuestion.getId(), savedQuestion.getContent());
 
         return convertToDTO(savedQuestion);
     }
+
     @Override
     public QuestionDTO getQuestionById(Long id) {
         Optional<Question> question = questionRepository.findById(id);

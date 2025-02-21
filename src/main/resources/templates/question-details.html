@@ -366,6 +366,37 @@
       color: #0074cc;
       text-decoration: none;
     }
+    .comment-link {
+      margin-right: 8px;
+    }
+
+    /* Ensure content renders properly */
+    .post-text p {
+      margin-bottom: 15px;
+    }
+
+    .post-text pre {
+      margin: 15px 0;
+      padding: 12px;
+      background-color: #f6f6f6;
+      border-radius: 3px;
+      overflow-x: auto;
+    }.comment-link {
+       margin-right: 8px;
+     }
+
+    /* Ensure content renders properly */
+    .post-text p {
+      margin-bottom: 15px;
+    }
+
+    .post-text pre {
+      margin: 15px 0;
+      padding: 12px;
+      background-color: #f6f6f6;
+      border-radius: 3px;
+      overflow-x: auto;
+    }
   </style>
 </head>
 <body>
@@ -459,6 +490,7 @@
             <div class="post-actions">
               <div class="post-menu">
                 <a href="#" class="share-link">Share</a>
+                <a href="#" class="comment-link">Add a comment</a>
                 <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
                 <a href="#" class="follow-link">Follow</a>
                 <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>
