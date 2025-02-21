@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
   <style>
     /* Base styles */
     * {
@@ -308,6 +311,72 @@
       resize: vertical;
     }
 
+     .content-block {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: white;
+        }
+
+        .editor-toolbar {
+            border: 1px solid #e2e8f0;
+            border-bottom: none;
+            border-radius: 0.5rem 0.5rem 0 0;
+            background-color: #f8fafc;
+            padding: 8px;
+        }
+
+        .editor-content {
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0 0.5rem 0.5rem;
+            min-height: 150px;
+            padding: 10px;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .content-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+            gap: 0.5rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            display: none;
+        }
+
+        .loading .loading-spinner {
+            display: inline-block;
+        }
+
     /* Delete modal */
     .modal {
       display: none;
@@ -534,13 +603,92 @@
       <!-- Answer form -->
       <div class="post-form">
         <h2>Your Answer</h2>
-        <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post">
-          <div class="form-group">
-            <textarea id="answer-content" name="content" rows="10"
-                      placeholder="Write your answer here. Support Markdown formatting."></textarea>
+<!--        <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post">-->
+<!--          <div class="form-group">-->
+<!--            <textarea id="answer-content" name="content" rows="10"-->
+<!--                      placeholder="Write your answer here. Support Markdown formatting."></textarea>-->
+<!--          </div>-->
+<!--          <button type="submit" class="button">Post Your Answer</button>-->
+<!--        </form>-->
+
+        <div class="container mx-auto px-4 py-8 max-w-4xl">
+          <form id="contentForm" class="space-y-6">
+            <div class="bg-white p-6 rounded-lg border border-gray-200">
+              <!-- Content blocks container -->
+              <div id="contentBlocks">
+                <!-- First content block (text) - Always required -->
+                <div class="content-block" data-type="text" data-block-id="0">
+                  <label class="block font-bold mb-2">Content</label>
+                  <p class="text-gray-600 text-sm mb-2">Provide details of your content. Minimum 20 characters.</p>
+                  <div class="editor-toolbar flex gap-2">
+                    <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="bold">B</button>
+                    <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="italic">I</button>
+                    <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="code">{}</button>
+                    <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="link">🔗</button>
+                  </div>
+                  <textarea name="contentBlocks[0].text" class="editor-content w-full" required></textarea>
+                  <input type="hidden" name="contentBlocks[0].type" value="text">
+                  <div class="content-actions">
+                    <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
+                    <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Submit Content</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Template for new text block -->
+        <template id="textBlockTemplate">
+          <div class="content-block" data-type="text">
+            <label class="block font-bold mb-2">Additional Text</label>
+            <div class="editor-toolbar flex gap-2">
+              <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="bold">B</button>
+              <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="italic">I</button>
+              <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="code">{}</button>
+              <button type="button" class="p-1 hover:bg-gray-200 rounded" data-action="link">🔗</button>
+            </div>
+            <textarea class="editor-content w-full"></textarea>
+            <input type="hidden" value="text">
+            <div class="content-actions">
+              <button type="button" class="bg-red-100 text-red-700 px-3 py-1 rounded-md text-sm delete-block-btn">Delete</button>
+              <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
+              <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
+            </div>
           </div>
-          <button type="submit" class="button">Post Your Answer</button>
-        </form>
+        </template>
+
+        <!-- Template for new image block -->
+        <template id="imageBlockTemplate">
+          <div class="content-block" data-type="image">
+            <label class="block font-bold mb-2">Image Content</label>
+            <p class="text-gray-600 text-sm mb-2">Upload an image</p>
+
+            <div class="flex items-center space-x-4">
+              <div class="file-input-wrapper">
+                <button type="button" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-md border border-blue-200">
+                  Choose File
+                </button>
+                <input type="file" accept="image/*" class="block-image-input cursor-pointer">
+              </div>
+              <span class="file-name-display text-sm text-gray-600">No file selected</span>
+            </div>
+
+            <div class="block-preview-container mt-4 hidden">
+              <img src="#" alt="Image preview" class="preview-image block-image-preview">
+            </div>
+
+            <input type="hidden" value="image">
+            <div class="content-actions">
+              <button type="button" class="bg-red-100 text-red-700 px-3 py-1 rounded-md text-sm delete-block-btn">Delete</button>
+              <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-image-btn">Add Image</button>
+              <button type="button" class="bg-gray-200 text-gray-700 px-3 py-1 rounded-md text-sm add-text-btn">Add Text</button>
+            </div>
+          </div>
+        </template>
 
         <!-- Login prompt if not authenticated -->
         <div class="login-prompt" style="display: none;">
@@ -583,5 +731,283 @@
     </div>
   </div>
 </div>
+<script>
+  // Initialize variables
+  let blockCounter = 1;
+  let editors = [];
+
+  document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the first editor
+      setupEditor(document.querySelector('.editor-content'));
+
+      // Setup event listeners
+      setupEventListeners();
+
+      // Setup main image preview
+      setupMainImagePreview();
+
+      // Add demo content
+      setTimeout(() => {
+          // Add a text block for demo
+          const firstBlock = document.querySelector('.content-block');
+          addTextBlock(firstBlock);
+
+          // Add an image block for demo
+          const secondBlock = document.querySelectorAll('.content-block')[1];
+          addImageBlock(secondBlock);
+
+          // Add some sample text to first editor
+          if (editors[0]) {
+              editors[0].value("# Sample Content\n\nThis is an example of the content editor with image upload functionality. You can add multiple blocks of text and images.\n\n- You can format text\n- Upload images\n- Rearrange content");
+          }
+
+          // Show main image preview for demo
+          const demoImage = document.getElementById('imagePreview');
+          demoImage.src = "/api/placeholder/400/300";
+          document.getElementById('fileNameDisplay').textContent = "example-image.jpg";
+          document.getElementById('imagePreviewContainer').classList.remove('hidden');
+
+          // Show an image in the image block for demo
+          const blockPreview = document.querySelector('.block-image-preview');
+          if (blockPreview) {
+              blockPreview.src = "/api/placeholder/400/250";
+              blockPreview.closest('.block-preview-container').classList.remove('hidden');
+              const fileDisplay = blockPreview.closest('.content-block').querySelector('.file-name-display');
+              if (fileDisplay) {
+                  fileDisplay.textContent = "second-image.png";
+              }
+          }
+      }, 500);
+  });
+
+  function setupEditor(textareaElement) {
+      const editor = new SimpleMDE({
+          element: textareaElement,
+          spellChecker: false,
+          status: false,
+          toolbar: false,
+          placeholder: "Enter your content here..."
+      });
+      editors.push(editor);
+      return editor;
+  }
+
+  function setupEventListeners() {
+      // Add event listeners for block actions using event delegation
+      document.addEventListener('click', function(e) {
+          // Add text block
+          if (e.target.classList.contains('add-text-btn')) {
+              addTextBlock(e.target.closest('.content-block'));
+          }
+          // Add image block
+          else if (e.target.classList.contains('add-image-btn')) {
+              addImageBlock(e.target.closest('.content-block'));
+          }
+          // Delete block
+          else if (e.target.classList.contains('delete-block-btn')) {
+              deleteBlock(e.target.closest('.content-block'));
+          }
+          // Editor toolbar buttons
+          else if (e.target.closest('.editor-toolbar')) {
+              const button = e.target.closest('button');
+              if (button) {
+                  const action = button.dataset.action;
+                  const contentBlock = button.closest('.content-block');
+                  const blockId = contentBlock.dataset.blockId;
+
+                  if (action && typeof blockId !== 'undefined') {
+                      handleEditorAction(action, parseInt(blockId));
+                  }
+              }
+          }
+      });
+
+      // Form submission
+      document.getElementById('contentForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          prepareContentData();
+
+          // Here you would typically send the form data to your server
+          console.log('Form submitted!');
+
+          // For demo purposes, show what was submitted
+          const formData = new FormData(e.target);
+          for (let [key, value] of formData.entries()) {
+              if (typeof value !== 'object') { // Skip file objects for console output
+                  console.log(`${key}: ${value}`);
+              } else {
+                  console.log(`${key}: [File object]`);
+              }
+          }
+
+          alert('Content submitted successfully!');
+      });
+  }
+
+  function setupMainImagePreview() {
+      const mainImageInput = document.getElementById('mainImage');
+      const fileNameDisplay = document.getElementById('fileNameDisplay');
+      const imagePreview = document.getElementById('imagePreview');
+      const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+      const removeImageBtn = document.getElementById('removeImage');
+
+      mainImageInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+              const file = this.files[0];
+              fileNameDisplay.textContent = file.name;
+
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  imagePreview.src = e.target.result;
+                  imagePreviewContainer.classList.remove('hidden');
+              }
+              reader.readAsDataURL(file);
+          } else {
+              fileNameDisplay.textContent = 'No file selected';
+              imagePreviewContainer.classList.add('hidden');
+          }
+      });
+
+      removeImageBtn.addEventListener('click', function() {
+          mainImageInput.value = '';
+          fileNameDisplay.textContent = 'No file selected';
+          imagePreviewContainer.classList.add('hidden');
+      });
+  }
+
+  function setupBlockImagePreview(block) {
+      const imageInput = block.querySelector('.block-image-input');
+      const fileNameDisplay = block.querySelector('.file-name-display');
+      const imagePreview = block.querySelector('.block-image-preview');
+      const previewContainer = block.querySelector('.block-preview-container');
+
+      imageInput.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+              const file = this.files[0];
+              fileNameDisplay.textContent = file.name;
+
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  imagePreview.src = e.target.result;
+                  previewContainer.classList.remove('hidden');
+              }
+              reader.readAsDataURL(file);
+          } else {
+              fileNameDisplay.textContent = 'No file selected';
+              previewContainer.classList.add('hidden');
+          }
+      });
+  }
+
+  function addTextBlock(currentBlock) {
+      const template = document.getElementById('textBlockTemplate');
+      const newBlock = template.content.cloneNode(true).firstElementChild;
+      newBlock.dataset.blockId = blockCounter;
+
+      // Update name attributes
+      newBlock.querySelector('textarea').name = `contentBlocks[${blockCounter}].text`;
+      newBlock.querySelector('input[type="hidden"]').name = `contentBlocks[${blockCounter}].type`;
+
+      currentBlock.insertAdjacentElement('afterend', newBlock);
+
+      // Setup editor for the new block
+      setupEditor(newBlock.querySelector('textarea'));
+
+      blockCounter++;
+  }
+
+  function addImageBlock(currentBlock) {
+      const template = document.getElementById('imageBlockTemplate');
+      const newBlock = template.content.cloneNode(true).firstElementChild;
+      newBlock.dataset.blockId = blockCounter;
+
+      // Update name attributes
+      newBlock.querySelector('.block-image-input').name = `contentBlocks[${blockCounter}].image`;
+      newBlock.querySelector('input[type="hidden"]').name = `contentBlocks[${blockCounter}].type`;
+
+      currentBlock.insertAdjacentElement('afterend', newBlock);
+
+      // Setup image preview for the new block
+      setupBlockImagePreview(newBlock);
+
+      blockCounter++;
+  }
+
+  function deleteBlock(blockToDelete) {
+      const allBlocks = document.querySelectorAll('.content-block');
+      if (allBlocks.length > 1) {
+          // Remove editor from editors array if it's a text block
+          if (blockToDelete.dataset.type === 'text') {
+              const blockId = parseInt(blockToDelete.dataset.blockId);
+              if (!isNaN(blockId)) {
+                  editors[blockId] = null; // Remove the reference
+              }
+          }
+
+          blockToDelete.remove();
+      } else {
+          alert("You must have at least one content block.");
+      }
+  }
+
+  function handleEditorAction(action, editorIndex) {
+      if (editors[editorIndex]) {
+          const editor = editors[editorIndex];
+
+          switch(action) {
+              case 'bold':
+                  editor.codemirror.replaceSelection(`**${editor.codemirror.getSelection() || 'bold text'}**`);
+                  break;
+              case 'italic':
+                  editor.codemirror.replaceSelection(`*${editor.codemirror.getSelection() || 'italic text'}*`);
+                  break;
+              case 'code':
+                  editor.codemirror.replaceSelection(`\`${editor.codemirror.getSelection() || 'code'}\``);
+                  break;
+              case 'link':
+                  const selectedText = editor.codemirror.getSelection() || 'link text';
+                  editor.codemirror.replaceSelection(`[${selectedText}](https://example.com)`);
+                  break;
+          }
+      }
+  }
+
+  function prepareContentData() {
+      // For more complex processing, you'd format data for submission here
+      // For now, we'll just update the editor values to ensure they're in sync
+      editors.forEach((editor, index) => {
+          if (editor !== null) {
+              const textarea = editor.codemirror.getTextArea();
+              textarea.value = editor.value();
+          }
+      });
+
+      // Here you could combine all blocks into a single content field if needed
+      const contentBlocks = document.querySelectorAll('.content-block');
+      let fullContent = '';
+
+      contentBlocks.forEach((block, index) => {
+          if (block.dataset.type === 'text') {
+              const blockId = parseInt(block.dataset.blockId);
+              if (!isNaN(blockId) && editors[blockId]) {
+                  const textContent = editors[blockId].value();
+                  fullContent += textContent + '\n\n';
+              }
+          } else if (block.dataset.type === 'image') {
+              fullContent += `[IMAGE_PLACEHOLDER_${index}]\n\n`;
+          }
+      });
+
+      // For debugging
+      console.log("Full combined content:", fullContent);
+
+      // You could add a hidden field with the full content if needed:
+      // const hiddenContent = document.createElement('input');
+      // hiddenContent.type = 'hidden';
+      // hiddenContent.name = 'fullContent';
+      // hiddenContent.value = fullContent;
+      // document.getElementById('contentForm').appendChild(hiddenContent);
+  }
+</script>
 </body>
 </html>
