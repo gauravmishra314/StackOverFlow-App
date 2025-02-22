@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -104,20 +105,36 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionDTO getQuestionById(Long id) {
-        Optional<Question> question = questionRepository.findById(id);
-        QuestionDTO questionDTO = modelMapper.map(question,QuestionDTO.class);
-        return questionDTO;
+        Optional<Question> questionOpt = questionRepository.findById(id);
+        if (questionOpt.isPresent()) {
+            Question question = questionOpt.get();
+            QuestionDTO dto = modelMapper.map(question, QuestionDTO.class);
+
+            // Convert tags to string list
+            if (question.getTags() != null) {
+                List<String> tagNames = question.getTags().stream()
+                        .map(Tag::getName)
+                        .collect(Collectors.toList());
+                dto.setTags(tagNames);
+            }
+
+            return dto;
+        }
+        throw new RuntimeException("Question not found with id: " + id);
     }
 
     @Override
-    public QuestionDTO edit(Long questionID, QuestionDTO questionDTO) {
-        Optional<Question> questionOptional = questionRepository.findById(questionID);
-        Question editedQuestion = questionOptional.get();
-        editedQuestion.setTitle(questionDTO.getTitle());
-        editedQuestion.setContent(questionDTO.getContent());
-        editedQuestion.setUpdatedAt(questionDTO.getUpdatedAt());
-        editedQuestion.setExcerpt(questionDTO.getExcerpt());
+    public QuestionDTO edit(Long questionId, QuestionDTO questionDTO) {
+        Question existingQuestion = questionRepository.findById(questionId)
+                .orElseThrow(() -> new RuntimeException("Question not found with id: " + questionId));
 
+        // Update basic fields
+        existingQuestion.setTitle(questionDTO.getTitle());
+        existingQuestion.setContent(questionDTO.getContent());
+        existingQuestion.setExcerpt(questionDTO.getExcerpt());
+        existingQuestion.setUpdatedAt(LocalDateTime.now());
+
+        // Update tags
         List<Tag> tags = new ArrayList<>();
         if (questionDTO.getTags() != null) {
             for (String tagName : questionDTO.getTags()) {
@@ -127,10 +144,11 @@ public class QuestionServiceImpl implements QuestionService {
                 }
             }
         }
-        editedQuestion.setViewsCount(questionDTO.getViewsCount());
-        editedQuestion.setTags(tags);
-        questionRepository.save(editedQuestion);
-        return questionToquestionDto(editedQuestion);
+        existingQuestion.setTags(tags);
+
+        // Save the updated question
+        Question updatedQuestion = questionRepository.save(existingQuestion);
+        return convertToDTO(updatedQuestion);
     }
 
     @Override

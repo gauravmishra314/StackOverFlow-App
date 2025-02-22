@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -152,77 +153,75 @@ public class QuestionController {
         model.addAttribute("tag",tag);
         return "question-details";
     }
+
     @GetMapping("/edit/{id}")
     public String showEditQuestionForm(@PathVariable Long id, Model model) {
         QuestionDTO questionDTO = questionService.getQuestionById(id);
-        List<Tag> tag = questionService.findTagsByQuestionId(id);
+        List<String> tagNames = questionDTO.getTags() != null ?
+                questionDTO.getTags() :
+                new ArrayList<>();
+        questionDTO.setTags(tagNames);
+
         model.addAttribute("questionDTO", questionDTO);
         model.addAttribute("isEditMode", true);
-        model.addAttribute("tag",tag);
         return "ask-question-page";
     }
+
     @PostMapping("/edit/{id}")
     public String updateQuestion(
             @PathVariable Long id,
             @ModelAttribute("questionDTO") QuestionDTO questionDTO,
-            @RequestParam(value = "file", required = false) MultipartFile mainImage,
-            @RequestParam(value = "contentBlocks", required = false) List<ContentBlockDTO> contentBlocks,
-            @RequestParam(value = "contentBlocks[].image", required = false) MultipartFile[] contentImages,
+            @RequestParam(value = "contentBlocksData", required = false) String[] contentBlocksData,
+            @RequestParam(value = "contentBlockTypes", required = false) String[] contentBlockTypes,
+            @RequestParam(value = "contentImages", required = false) MultipartFile[] contentImages,
             BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
-        System.out.println("All tags"+questionDTO.getTags());
         if (bindingResult.hasErrors()) {
             return "ask-question-page";
         }
 
         try {
-            // Process main image
-            String mainImageUrl = questionDTO.getImageURL();
-            if (mainImage != null && !mainImage.isEmpty()) {
-                try {
-                    mainImageUrl = "https://res.cloudinary.com/dqmjfe5mg/image/upload/" +
-                            cloudinaryService.uploadImage(mainImage);
-                    logger.info("Main image uploaded successfully: {}", mainImageUrl);
-                } catch (IOException e) {
-                    logger.error("Failed to upload main image", e);
-                    redirectAttributes.addFlashAttribute("error", "Failed to upload main image");
-                    return "redirect:/questions/edit/" + id;
-                }
-            }
-
-            // Process content and content images - similar to your create method
             StringBuilder contentBuilder = new StringBuilder();
             List<String> contentImageUrls = new ArrayList<>();
+            int imageCounter = 0;
 
-            if (contentBlocks != null && contentImages != null) {
-                for (int i = 0; i < contentBlocks.size(); i++) {
-                    ContentBlockDTO block = contentBlocks.get(i);
-                    if ("text".equals(block.getType())) {
-                        contentBuilder.append(block.getText()).append("\n\n");
-                    } else if ("image".equals(block.getType()) && i < contentImages.length) {
-                        MultipartFile image = contentImages[i];
+            if (contentBlockTypes != null) {
+                for (int i = 0; i < contentBlockTypes.length; i++) {
+                    String type = contentBlockTypes[i];
+
+                    if ("text".equals(type) && i < contentBlocksData.length) {
+                        String text = contentBlocksData[i];
+                        if (text != null && !text.trim().isEmpty()) {
+                            contentBuilder.append(text).append("\n\n");
+                        }
+                    } else if ("image".equals(type) && contentImages != null && imageCounter < contentImages.length) {
+                        MultipartFile image = contentImages[imageCounter];
                         if (image != null && !image.isEmpty()) {
                             try {
                                 String imageUrl = cloudinaryService.uploadImage(image);
                                 contentImageUrls.add(imageUrl);
-                                contentBuilder.append("![Image ").append(i + 1).append("](").append(imageUrl).append(")\n\n");
+                                contentBuilder.append("![Image ")
+                                        .append(imageCounter + 1)
+                                        .append("](")
+                                        .append(imageUrl)
+                                        .append(")\n\n");
+                                imageCounter++;
                             } catch (IOException e) {
                                 logger.error("Failed to upload content image", e);
+                                throw new RuntimeException("Failed to upload image", e);
                             }
                         }
                     }
                 }
             }
 
-            // Only update content if we have new content
-            if (contentBuilder.length() > 0) {
-                questionDTO.setContent(contentBuilder.toString());
-            }
+            // Set the content
+            questionDTO.setContent(contentBuilder.toString());
+            questionDTO.setId(id);
+            questionDTO.setUpdatedAt(LocalDateTime.now());
 
-            questionDTO.setImageURL(mainImageUrl);
-            questionDTO.setId(id); // Ensure ID is set
-
+            // Update the question
             QuestionDTO updatedQuestion = questionService.edit(id, questionDTO);
             redirectAttributes.addFlashAttribute("message", "Question updated successfully");
             return "redirect:/questions/" + updatedQuestion.getId();
