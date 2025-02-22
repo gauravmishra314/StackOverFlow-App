@@ -103,7 +103,9 @@ public class QuestionController {
             }
 
             questionDTO.setContent(contentBuilder.toString());
-            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, null, contentImageUrls);
+            //QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, null, contentImageUrls);
+            QuestionDTO savedQuestion = questionService.createQuestion(questionDTO, contentBuilder.toString(), contentImageUrls);
+
             return "redirect:/questions/" + savedQuestion.getId();
 
         } catch (Exception e) {
