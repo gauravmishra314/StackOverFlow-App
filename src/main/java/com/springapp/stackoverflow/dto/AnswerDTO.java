@@ -19,4 +19,5 @@ public class AnswerDTO {
     private String imageUrl;
     private LocalDateTime createdAt;
     private String userName;
+    private int voteCount;
 }

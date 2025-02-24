@@ -16,7 +16,7 @@ public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    int voteCount;
+    int voteCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
@@ -27,7 +27,7 @@ public class Answer {
     private Question question;
 
     @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String body;
 
     @Column(nullable = true)

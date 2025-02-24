@@ -1,618 +1,903 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* Base styles */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.5;
-      color: #232629;
-      background-color: #fff;
-    }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.5;
+            color: #232629;
+            background-color: #fff;
+        }
 
-    /* Container layout */
-    .container {
-      max-width: 1264px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+        /* Container layout */
+        .container {
+            max-width: 1264px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
 
-    .page-container {
-      display: grid;
-      grid-template-columns: 1fr 3fr;
-      gap: 24px;
-      margin-top: 50px;
-    }
+        .page-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 24px;
+            margin-top: 50px;
+        }
 
-    @media (min-width: 1100px) {
-      .page-container {
-        grid-template-columns: 164px 1fr 300px;
-      }
-    }
+        @media (min-width: 1100px) {
+            .page-container {
+                grid-template-columns: 164px 1fr 300px;
+            }
+        }
 
-    /* Header styles */
-    .top-bar {
-      display: flex;
-      align-items: center;
-      height: 50px;
-      background-color: #f8f9f9;
-      border-top: 3px solid #f48024;
-      border-bottom: 1px solid #e3e6e8;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 100;
-    }
+        /* Header styles */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            background-color: #f8f9f9;
+            border-top: 3px solid #f48024;
+            border-bottom: 1px solid #e3e6e8;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
 
-    .logo {
-      padding: 0 8px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-    }
+        .logo {
+            padding: 0 8px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
 
-    .logo img {
-      height: 30px;
-    }
+        .logo img {
+            height: 30px;
+        }
 
-    .search-container {
-      flex-grow: 1;
-      max-width: 700px;
-      margin: 0 8px;
-    }
+        .search-container {
+            flex-grow: 1;
+            max-width: 700px;
+            margin: 0 8px;
+        }
 
-    .search-input {
-      width: 100%;
-      padding: 8px 8px 8px 32px;
-      border: 1px solid #babfc4;
-      border-radius: 3px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23838C95" d="M12.2 13.6a7 7 0 1 1 1.4-1.4l3.1 3.1a1 1 0 1 1-1.4 1.4l-3.1-3.1zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z"/></svg>');
-      background-position: 8px center;
-      background-repeat: no-repeat;
-    }
+        .search-input {
+            width: 100%;
+            padding: 8px 8px 8px 32px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23838C95" d="M12.2 13.6a7 7 0 1 1 1.4-1.4l3.1 3.1a1 1 0 1 1-1.4 1.4l-3.1-3.1zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z"/></svg>');
+            background-position: 8px center;
+            background-repeat: no-repeat;
+        }
 
-    /* Question header */
-    .question-header {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e3e6e8;
-    }
+        /* Question header */
+        .question-header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e3e6e8;
+        }
 
-    .question-header h1 {
-      font-size: 27px;
-      margin-bottom: 8px;
-      font-weight: 400;
-      color: #242729;
-    }
+        .question-header h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+            font-weight: 400;
+            color: #242729;
+        }
 
-    .question-metadata {
-      display: flex;
-      gap: 16px;
-      font-size: 13px;
-      color: #6a737c;
-      margin-bottom: 8px;
-    }
+        .question-metadata {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6a737c;
+            margin-bottom: 8px;
+        }
 
-    .ask-button {
-      margin-left: auto;
-    }
+        .ask-button {
+            margin-left: auto;
+        }
 
-    .button {
-      background-color: #0a95ff;
-      color: white;
-      border: 1px solid #0a95ff;
-      padding: 8px 10px;
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 13px;
-      text-decoration: none;
-    }
+        .button {
+            background-color: #0a95ff;
+            color: white;
+            border: 1px solid #0a95ff;
+            padding: 8px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            text-decoration: none;
+        }
 
-    .button:hover {
-      background-color: #0074cc;
-    }
+        .button:hover {
+            background-color: #0074cc;
+        }
 
-    /* Question layout */
-    .post-layout {
-      display: grid;
-      grid-template-columns: max-content 1fr;
-      gap: 16px;
-    }
+        /* Question layout */
+        .post-layout {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 16px;
+        }
 
-    /* Vote controls */
-    .vote-cell {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      color: #6a737c;
-    }
+        /* Vote controls */
+        .vote-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #6a737c;
+        }
 
-    .vote-cell button {
-      background: none;
-      border: none;
-      color: #babfc4;
-      font-size: 30px;
-      cursor: pointer;
-      padding: 0;
-      margin: 2px 0;
-    }
+        .vote-cell button {
+            background: none;
+            border: none;
+            color: #babfc4;
+            font-size: 30px;
+            cursor: pointer;
+            padding: 0;
+            margin: 2px 0;
+        }
 
-    .vote-cell button:hover {
-      color: #838c95;
-    }
+        .vote-cell button:hover {
+            color: #838c95;
+        }
 
-    .vote-count {
-      font-size: 21px;
-      color: #6a737c;
-      margin: 2px 0;
-    }
+        .vote-count {
+            font-size: 21px;
+            color: #6a737c;
+            margin: 2px 0;
+        }
 
-    .bookmark-button, .history-button {
-      font-size: 16px !important;
-      margin-top: 8px !important;
-    }
+        .bookmark-button, .history-button {
+            font-size: 16px !important;
+            margin-top: 8px !important;
+        }
 
-    /* Post content */
-    .post-text {
-      font-size: 15px;
-      line-height: 1.5;
-      overflow-wrap: break-word;
-      margin-bottom: 24px;
-    }
+        /* Post content */
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            overflow-wrap: break-word;
+            margin-bottom: 24px;
+        }
 
-    /* Code blocks */
-    .post-text pre {
-      background-color: #f6f6f6;
-      padding: 12px;
-      border-radius: 3px;
-      overflow-x: auto;
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.4;
-      margin: 16px 0;
-    }
+        /* Code blocks */
+        .post-text pre {
+            background-color: #f6f6f6;
+            padding: 12px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 16px 0;
+        }
 
-    .post-text code {
-      background-color: #f6f6f6;
-      padding: 2px 5px;
-      border-radius: 3px;
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-    }
+        .post-text code {
+            background-color: #f6f6f6;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+        }
 
-    /* Tags */
-    .post-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
+        /* Tags */
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
 
-    .post-tag {
-      background-color: #e1ecf4;
-      color: #39739d;
-      padding: 4px 6px;
-      border-radius: 3px;
-      font-size: 12px;
-      text-decoration: none;
-    }
+        .post-tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 4px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            text-decoration: none;
+        }
 
-    .post-tag:hover {
-      background-color: #d0e3f1;
-      color: #2c5877;
-    }
+        .post-tag:hover {
+            background-color: #d0e3f1;
+            color: #2c5877;
+        }
 
-    /* Post actions */
-    .post-actions {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #6a737c;
-      margin-bottom: 16px;
-    }
+        /* Post actions */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6a737c;
+            margin-bottom: 16px;
+        }
 
-    .post-menu {
-      display: flex;
-      gap: 12px;
-    }
+        .post-menu {
+            display: flex;
+            gap: 12px;
+        }
 
-    .post-menu a {
-      color: #6a737c;
-      text-decoration: none;
-    }
+        .post-menu a {
+            color: #6a737c;
+            text-decoration: none;
+        }
 
-    .post-menu a:hover {
-      color: #0074cc;
-    }
+        .post-menu a:hover {
+            color: #0074cc;
+        }
 
-    /* User card */
-    .user-info {
-      display: flex;
-      align-items: center;
-      padding: 5px 6px 7px 7px;
-      background-color: #f8f9f9;
-      border-radius: 3px;
-    }
+        /* User card */
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 5px 6px 7px 7px;
+            background-color: #f8f9f9;
+            border-radius: 3px;
+        }
 
-    .user-action-time {
-      color: #6a737c;
-      font-size: 12px;
-      margin-right: 8px;
-    }
+        .user-action-time {
+            color: #6a737c;
+            font-size: 12px;
+            margin-right: 8px;
+        }
 
-    .user-gravatar {
-      margin-right: 8px;
-    }
+        .user-gravatar {
+            margin-right: 8px;
+        }
 
-    .user-gravatar img {
-      width: 32px;
-      height: 32px;
-      border-radius: 3px;
-    }
+        .user-gravatar img {
+            width: 32px;
+            height: 32px;
+            border-radius: 3px;
+        }
 
-    .user-details {
-      font-size: 12px;
-    }
+        .user-details {
+            font-size: 12px;
+        }
 
-    .user-details a {
-      color: #0074cc;
-      text-decoration: none;
-    }
+        .user-details a {
+            color: #0074cc;
+            text-decoration: none;
+        }
 
-    .user-reputation {
-      font-weight: bold;
-      color: #6a737c;
-    }
+        .user-reputation {
+            font-weight: bold;
+            color: #6a737c;
+        }
 
-    /* Answers section */
-    .answers-header {
-      font-size: 19px;
-      font-weight: 400;
-      margin: 20px 0;
-      padding-top: 20px;
-      border-top: 1px solid #e3e6e8;
-    }
+        /* Answers section */
+        .answers-header {
+            font-size: 19px;
+            font-weight: 400;
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid #e3e6e8;
+        }
 
-    /* Answer form */
-    .post-form h2 {
-      font-size: 19px;
-      font-weight: 400;
-      margin: 20px 0;
-      padding-top: 20px;
-      border-top: 1px solid #e3e6e8;
-    }
+        /* Answer form */
+        .post-form h2 {
+            font-size: 19px;
+            font-weight: 400;
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid #e3e6e8;
+        }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
+        .form-group {
+            margin-bottom: 12px;
+        }
 
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #babfc4;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 15px;
-      resize: vertical;
-    }
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 15px;
+            resize: vertical;
+        }
 
-    /* Delete modal */
-    .delete-question {
-    background: none;
-    border: none;
-    color: #0077cc; /* Match the link color */
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0;
-}
+        /* Delete modal */
+        .delete-question {
+            background: none;
+            border: none;
+            color: #0077cc; /* Match the link color */
+            font-size: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 0;
+        }
 
-.delete-question:hover {
-    text-decoration: underline;
-}
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+        .delete-question:hover {
+            text-decoration: underline;
+        }
 
-    .modal-content {
-      background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 3px;
-      max-width: 400px;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px;
-    }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 3px;
+            max-width: 400px;
+        }
 
-    .danger-button {
-      background-color: #d0393e;
-      border-color: #d0393e;
-    }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
 
-    .danger-button:hover {
-      background-color: #c23030;
-    }
+        .danger-button {
+            background-color: #d0393e;
+            border-color: #d0393e;
+        }
 
-    .secondary-button {
-      background-color: #f8f9f9;
-      color: #3b4045;
-      border-color: #d6d9dc;
-    }
+        .danger-button:hover {
+            background-color: #c23030;
+        }
 
-    .secondary-button:hover {
-      background-color: #e3e6e8;
-    }
+        .secondary-button {
+            background-color: #f8f9f9;
+            color: #3b4045;
+            border-color: #d6d9dc;
+        }
 
-    .login-prompt {
-      margin: 20px 0;
-      padding: 16px;
-      background-color: #fdf7e3;
-      border: 1px solid #e6dcae;
-      border-radius: 3px;
-    }
+        .secondary-button:hover {
+            background-color: #e3e6e8;
+        }
 
-    .login-prompt a {
-      color: #0074cc;
-      text-decoration: none;
-    }
-    .comment-link {
-      margin-right: 8px;
-    }
+        .login-prompt {
+            margin: 20px 0;
+            padding: 16px;
+            background-color: #fdf7e3;
+            border: 1px solid #e6dcae;
+            border-radius: 3px;
+        }
 
-    /* Ensure content renders properly */
-    .post-text p {
-      margin-bottom: 15px;
-    }
+        .login-prompt a {
+            color: #0074cc;
+            text-decoration: none;
+        }
 
-    .post-text pre {
-      margin: 15px 0;
-      padding: 12px;
-      background-color: #f6f6f6;
-      border-radius: 3px;
-      overflow-x: auto;
-    }.comment-link {
-       margin-right: 8px;
-     }
+        .comment-link {
+            margin-right: 8px;
+        }
 
-    /* Ensure content renders properly */
-    .post-text p {
-      margin-bottom: 15px;
-    }
+        /* Ensure content renders properly */
+        .post-text p {
+            margin-bottom: 15px;
+        }
 
-    .post-text pre {
-      margin: 15px 0;
-      padding: 12px;
-      background-color: #f6f6f6;
-      border-radius: 3px;
-      overflow-x: auto;
-    }
+        .post-text pre {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #f6f6f6;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
 
-    .post-text img {
-      max-width: 100%;
-      height: auto;
-      margin: 10px 0;
-      border-radius: 4px;
-    }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
+        .comment-link {
+            margin-right: 8px;
+        }
+
+        /* Ensure content renders properly */
+        .post-text p {
+            margin-bottom: 15px;
+        }
+
+        .post-text pre {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #f6f6f6;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+
+        .post-text img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .answer-editor {
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            margin-bottom: 16px;
+        }
+
+        .content-block {
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .content-block textarea {
+            width: 100%;
+            border: 1px solid #e3e6e8;
+            border-radius: 3px;
+            padding: 8px;
+            resize: vertical;
+        }
+
+        .image-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            margin-top: 8px;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
+            padding: 8px;
+            background-color: #f8f9f9;
+            border-top: 1px solid #e3e6e8;
+        }
+
+        .editor-button {
+            background-color: #e1ecf4;
+            color: #39739d;
+            border: 1px solid #7aa7c7;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .editor-button:hover {
+            background-color: #d0e3f1;
+        }
+
+        .remove-block-button {
+            background-color: #f8f9f9;
+            color: #d0393e;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 4px;
+            align-self: flex-end;
+        }
+
+        /* Answer styles */
+        .answer {
+            padding-top: 20px;
+            border-top: 1px solid #e3e6e8;
+            margin-top: 20px;
+        }
+
+        .answer-count {
+            color: #232629;
+            font-size: 19px;
+            margin-bottom: 15px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
 <body>
 
 <header class="top-bar">
-  <div class="logo">
-    <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
-  </div>
-  <div class="search-container">
-    <input type="text" placeholder="Search..." class="search-input">
-  </div>
-  <div class="user-nav">
-    <!-- User navigation would go here -->
-  </div>
+    <div class="logo">
+        <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
+    </div>
+    <div class="search-container">
+        <input type="text" placeholder="Search..." class="search-input">
+    </div>
+    <div class="user-nav">
+        <!-- User navigation would go here -->
+    </div>
 </header>
 
 <div class="container">
-  <div class="page-container">
-    <!-- Left Sidebar -->
-    <div class="left-sidebar">
-      <nav>
-        <ul style="list-style-type: none;">
-          <li><a href="/" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-            <i class="fas fa-home" style="margin-right: 8px;"></i> Home
-          </a></li>
-          <li><a href="/questions" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px; font-weight: bold; background-color: #f1f2f3;">
-            <i class="fas fa-question" style="margin-right: 8px;"></i> Questions
-          </a></li>
-          <li><a href="/tags" style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-            <i class="fas fa-tag" style="margin-right: 8px;"></i> Tags
-          </a></li>
-        </ul>
-      </nav>
-    </div>
-
-    <!-- Main Content -->
-    <div class="content">
-      <div class="question-header">
-        <h1 th:text="${question.title}">Question Title</h1>
-        <div class="question-metadata">
-          <span class="asked">Asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
-          <span class="modified" th:if="${question.updatedAt != question.createdAt}">Modified <span th:text="${#temporals.format(question.updatedAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
-          <span class="viewed">Viewed <span th:text="${question.viewsCount}">6</span> times</span>
+    <div class="page-container">
+        <!-- Left Sidebar -->
+        <div class="left-sidebar">
+            <nav>
+                <ul style="list-style-type: none;">
+                    <li><a href="/"
+                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
+                        <i class="fas fa-home" style="margin-right: 8px;"></i> Home
+                    </a></li>
+                    <li><a href="/questions"
+                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px; font-weight: bold; background-color: #f1f2f3;">
+                        <i class="fas fa-question" style="margin-right: 8px;"></i> Questions
+                    </a></li>
+                    <li><a href="/tags"
+                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
+                        <i class="fas fa-tag" style="margin-right: 8px;"></i> Tags
+                    </a></li>
+                </ul>
+            </nav>
         </div>
-        <div class="ask-button">
-          <a href="/questions/ask" class="button">Ask Question</a>
-        </div>
-      </div>
 
-      <!-- Question -->
-      <div class="question-body">
-        <div class="post-layout">
-          <!-- Vote controls -->
-          <div class="vote-cell">
-            <button class="vote-up-button" th:attr="data-question-id=${question.id}">
-              <i class="fas fa-caret-up"></i>
-            </button>
-            <div class="vote-count" th:text="${question.voteCount}">0</div>
-            <button class="vote-down-button" th:attr="data-question-id=${question.id}">
-              <i class="fas fa-caret-down"></i>
-            </button>
-            <button class="bookmark-button" th:attr="data-question-id=${question.id}">
-              <i class="far fa-bookmark"></i>
-            </button>
-            <button class="history-button" th:if="${question.updatedAt != question.createdAt}">
-              <i class="fas fa-history"></i>
-            </button>
-          </div>
-
-          <!-- Question content -->
-          <div class="post-cell">
-            <!-- Main question image if present -->
-            <div class="post-image" th:if="${question.imageURL != null}">
-              <img th:src="${question.imageURL}" alt="Question image" style="max-width: 100%; margin-bottom: 16px;">
+        <!-- Main Content -->
+        <div class="content">
+            <div class="question-header">
+                <h1 th:text="${question.title}">Question Title</h1>
+                <div class="question-metadata">
+                    <span class="asked">Asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
+                    <span class="modified" th:if="${question.updatedAt != question.createdAt}">Modified <span
+                            th:text="${#temporals.format(question.updatedAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
+                    <span class="viewed">Viewed <span th:text="${question.viewsCount}">6</span> times</span>
+                </div>
+                <div class="ask-button">
+                    <a href="/questions/ask" class="button">Ask Question</a>
+                </div>
             </div>
 
-            <!-- Question content -->
-            <div class="post-text" id="question-content">
-              <!-- Content will be rendered here by JavaScript -->
+            <!-- Question -->
+            <div class="question-body">
+                <div class="post-layout">
+                    <!-- Vote controls -->
+                    <div class="vote-cell">
+                        <button class="vote-up-button" th:attr="data-question-id=${question.id}">
+                            <i class="fas fa-caret-up"></i>
+                        </button>
+                        <div class="vote-count" th:text="${question.voteCount}">0</div>
+                        <button class="vote-down-button" th:attr="data-question-id=${question.id}">
+                            <i class="fas fa-caret-down"></i>
+                        </button>
+                        <button class="bookmark-button" th:attr="data-question-id=${question.id}">
+                            <i class="far fa-bookmark"></i>
+                        </button>
+                        <button class="history-button" th:if="${question.updatedAt != question.createdAt}">
+                            <i class="fas fa-history"></i>
+                        </button>
+                    </div>
+
+                    <!-- Question content -->
+                    <div class="post-cell">
+                        <!-- Main question image if present -->
+                        <div class="post-image" th:if="${question.imageURL != null}">
+                            <img th:src="${question.imageURL}" alt="Question image"
+                                 style="max-width: 100%; margin-bottom: 16px;">
+                        </div>
+
+                        <!-- Question content -->
+                        <div class="post-text" id="question-content">
+                            <!-- Content will be rendered here by JavaScript -->
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="post-tags">
+                            <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag"
+                               th:text="${tag.name}">postgresql</a>
+                            <!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
+                            <!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
+                        </div>
+
+                        <!-- Question actions -->
+                        <div class="post-actions">
+                            <div class="post-menu">
+                                <a href="#" class="share-link">Share</a>
+                                <a href="#" class="comment-link">Add a comment</a>
+                                <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
+                                <a href="#" class="follow-link">Follow</a>
+                                <!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
+                                <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
+                                    <input type="hidden" name="_method" value="DELETE"/>
+                                    <button type="submit" class="delete-question">Delete</button>
+                                </form>
+
+                            </div>
+
+                            <!-- User card -->
+                            <div class="user-info" th:if="${question.user != null}">
+                                <div class="user-action-time">
+                                    asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                                </div>
+                                <div class="user-gravatar">
+                                    <a th:href="@{/users/{id}(id=${question.user.id})}">
+                                        <img th:src="${question.user.avatarUrl ?: '/images/default-avatar.png'}"
+                                             alt="User avatar">
+                                    </a>
+                                </div>
+                                <div class="user-details">
+                                    <a th:href="@{/users/{id}(id=${question.user.id})}"
+                                       th:text="${question.user.displayName}">Username</a>
+                                    <div class="user-reputation" th:text="${question.user.reputation}">123</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tags -->
-            <div class="post-tags">
-              <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag" th:text="${tag.name}">postgresql</a>
-<!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
-<!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
+            <!-- Answers section -->
+            <div id="answers">
+                <h2 class="answers-header">
+                    <span th:text="${question.answerCount}">0</span> Answers
+                </h2>
+
+                <!-- Loop through answers -->
+                <div th:each="answer : ${answers}" class="answer">
+                    <div class="post-layout">
+                        <!-- Vote controls for answer -->
+                        <div class="vote-cell">
+                            <button class="vote-up-button" th:attr="data-answer-id=${answer.id}">
+                                <i class="fas fa-caret-up"></i>
+                            </button>
+                            <div class="vote-count" th:text="${answer.voteCount != null ? answer.voteCount : 0}">0</div>
+                            <button class="vote-down-button" th:attr="data-answer-id=${answer.id}">
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </div>
+
+                        <!-- Answer content -->
+                        <div class="post-cell">
+                            <div class="post-text answer-content" th:id="'answer-content-' + ${answer.id}">
+                                <!-- Answer content will be rendered here by JavaScript -->
+                            </div>
+
+                            <!-- Answer actions -->
+                            <div class="post-actions">
+                                <div class="post-menu">
+                                    <a href="#" class="share-link">Share</a>
+                                    <a href="#" class="comment-link">Add a comment</a>
+                                    <!-- Add edit/delete links as needed -->
+                                </div>
+
+                                <!-- User card for answer -->
+                                <div class="user-info" th:if="${answer.userName != null}">
+                                    <div class="user-action-time">
+                                        answered <span th:text="${#temporals.format(answer.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                                    </div>
+                                    <div class="user-details">
+                                        <a href="#" th:text="${answer.userName}">Username</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Question actions -->
-            <div class="post-actions">
-              <div class="post-menu">
-                <a href="#" class="share-link">Share</a>
-                <a href="#" class="comment-link">Add a comment</a>
-                <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
-                <a href="#" class="follow-link">Follow</a>
-<!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
-                <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
-                  <input type="hidden" name="_method" value="DELETE" />
-                  <button type="submit" class="delete-question">Delete</button>
+            <!-- Answer form -->
+            <div class="post-form">
+                <h2>Your Answer</h2>
+                <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post"
+                      enctype="multipart/form-data">
+                    <div class="answer-editor">
+                        <div id="content-blocks-container">
+                            <div class="content-block text-block">
+
+                <textarea name="contentBlocksData" class="form-control" rows="6"
+                          placeholder="Write your answer here."></textarea>
+
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="content-types-input" name="contentBlockTypes" value="text">
+
+                        <div class="editor-toolbar">
+                            <button type="button" id="add-text-block" class="editor-button">
+                                <i class="fas fa-paragraph"></i> Add Text
+                            </button>
+                            <button type="button" id="add-image-block" class="editor-button">
+                                <i class="fas fa-image"></i> Add Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="button">Post Your Answer</button>
                 </form>
 
-              </div>
-
-              <!-- User card -->
-              <div class="user-info" th:if="${question.user != null}">
-                <div class="user-action-time">
-                  asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                <!-- Login prompt if not authenticated -->
+                <div class="login-prompt" style="display: none;">
+                    <p>You must <a th:href="@{/login}">log in</a> to answer this question.</p>
                 </div>
-                <div class="user-gravatar">
-                  <a th:href="@{/users/{id}(id=${question.user.id})}">
-                    <img th:src="${question.user.avatarUrl ?: '/images/default-avatar.png'}" alt="User avatar">
-                  </a>
-                </div>
-                <div class="user-details">
-                  <a th:href="@{/users/{id}(id=${question.user.id})}" th:text="${question.user.displayName}">Username</a>
-                  <div class="user-reputation" th:text="${question.user.reputation}">123</div>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
 
-      <!-- Answer count -->
-      <h2 class="answers-header">
-        <span th:text="${question.answerCount}">0</span> Answers
-      </h2>
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div style="background-color: #fdf7e3; padding: 16px; border-radius: 3px; margin-bottom: 16px;">
+                <h3 style="font-size: 15px; margin-bottom: 8px;">The Overflow Blog</h3>
+                <ul style="list-style-type: none; margin-left: 20px;">
+                    <li style="display: flex; margin-bottom: 8px;">
+                        <i class="fas fa-pencil-alt" style="margin-right: 8px; margin-left: -20px;"></i>
+                        <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Why is it so hard
+                            for companies to protect your privacy?</a>
+                    </li>
+                </ul>
 
-      <!-- Answers would be here -->
-      <div id="answers">
-        <!-- This would be populated dynamically or from a fragment -->
-      </div>
-
-      <!-- Answer form -->
-      <div class="post-form">
-        <h2>Your Answer</h2>
-        <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post">
-          <div class="form-group">
-            <textarea id="answer-content" name="content" rows="10"
-                      placeholder="Write your answer here. Support Markdown formatting."></textarea>
-          </div>
-          <button type="submit" class="button">Post Your Answer</button>
-        </form>
-
-        <!-- Login prompt if not authenticated -->
-        <div class="login-prompt" style="display: none;">
-          <p>You must <a th:href="@{/login}">log in</a> to answer this question.</p>
+                <h3 style="font-size: 15px; margin: 16px 0 8px 0;">Featured on Meta</h3>
+                <ul style="list-style-type: none; margin-left: 20px;">
+                    <li style="display: flex; margin-bottom: 8px;">
+                        <i class="fab fa-stack-overflow"
+                           style="color: #0086d8; margin-right: 8px; margin-left: -20px;"></i>
+                        <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Join us for our
+                            first community-wide AMA</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </div>
-
-    <!-- Right Sidebar -->
-    <div class="right-sidebar">
-      <div style="background-color: #fdf7e3; padding: 16px; border-radius: 3px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 8px;">The Overflow Blog</h3>
-        <ul style="list-style-type: none; margin-left: 20px;">
-          <li style="display: flex; margin-bottom: 8px;">
-            <i class="fas fa-pencil-alt" style="margin-right: 8px; margin-left: -20px;"></i>
-            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Why is it so hard for companies to protect your privacy?</a>
-          </li>
-        </ul>
-
-        <h3 style="font-size: 15px; margin: 16px 0 8px 0;">Featured on Meta</h3>
-        <ul style="list-style-type: none; margin-left: 20px;">
-          <li style="display: flex; margin-bottom: 8px;">
-            <i class="fab fa-stack-overflow" style="color: #0086d8; margin-right: 8px; margin-left: -20px;"></i>
-            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Join us for our first community-wide AMA</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Delete confirmation modal -->
 <div id="delete-modal" class="modal">
-  <div class="modal-content">
-    <h3>Delete Question</h3>
-    <p>Are you sure you want to delete this question? This action cannot be undone.</p>
-    <div class="modal-actions">
-      <button id="confirm-delete" class="button danger-button">Delete</button>
-      <button id="cancel-delete" class="button secondary-button">Cancel</button>
+    <div class="modal-content">
+        <h3>Delete Question</h3>
+        <p>Are you sure you want to delete this question? This action cannot be undone.</p>
+        <div class="modal-actions">
+            <button id="confirm-delete" class="button danger-button">Delete</button>
+            <button id="cancel-delete" class="button secondary-button">Cancel</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <script th:inline="javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-    const content = /*[[${question.content}]]*/ '';
-    const parser = new commonmark.Parser();
-    const renderer = new commonmark.HtmlRenderer();
-    const parsed = parser.parse(content);
-    const html = renderer.render(parsed);
-    document.getElementById('question-content').innerHTML = html;
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle Markdown rendering for question content
+        const content = /*[[${question.content}]]*/ '';
+        const parser = new commonmark.Parser();
+        const renderer = new commonmark.HtmlRenderer();
+        const parsed = parser.parse(content);
+        const html = renderer.render(parsed);
+        document.getElementById('question-content').innerHTML = html;
+
+        // Render answer content
+        const answerElements = document.querySelectorAll('.answer-content');
+        answerElements.forEach(element => {
+            const answerId = element.id.replace('answer-content-', '');
+            // Find the answer content from the model
+            const answers = /*[[${answers}]]*/ [];
+            const answer = answers.find(a => a.id == answerId);
+
+            if (answer && answer.body) {
+                const parsedAnswer = parser.parse(answer.body);
+                const answerHtml = renderer.render(parsedAnswer);
+                element.innerHTML = answerHtml;
+            }
+        });
+
+        // Answer editor functionality
+        const contentBlocksContainer = document.getElementById('content-blocks-container');
+        const contentTypesInput = document.getElementById('content-types-input');
+
+        // Add text block button
+        document.getElementById('add-text-block').addEventListener('click', function () {
+            const blockIndex = contentBlocksContainer.children.length;
+
+            const textBlock = document.createElement('div');
+            textBlock.className = 'content-block text-block';
+            textBlock.innerHTML = `
+        <textarea name="contentBlocksData[${blockIndex}]" class="form-control" rows="6"
+                  placeholder="Continue your answer here..."></textarea>
+        <button type="button" class="remove-block-button">
+          <i class="fas fa-trash"></i> Remove
+        </button>
+      `;
+
+            contentBlocksContainer.appendChild(textBlock);
+            updateContentTypesInput();
+
+            // Add event listener for the remove button
+            textBlock.querySelector('.remove-block-button').addEventListener('click', function () {
+                textBlock.remove();
+                updateContentTypesInput();
+            });
+        });
+
+        // Add image block button
+        document.getElementById('add-image-block').addEventListener('click', function () {
+            const blockIndex = contentBlocksContainer.children.length;
+
+            const imageBlock = document.createElement('div');
+            imageBlock.className = 'content-block image-block';
+            imageBlock.innerHTML = `
+        <input type="file" name="contentImages" accept="image/*" class="image-input" />
+        <div class="image-preview-container"></div>
+        <button type="button" class="remove-block-button">
+          <i class="fas fa-trash"></i> Remove
+        </button>
+      `;
+
+            contentBlocksContainer.appendChild(imageBlock);
+            updateContentTypesInput();
+
+            // Add event listener for image preview
+            const imageInput = imageBlock.querySelector('.image-input');
+            const previewContainer = imageBlock.querySelector('.image-preview-container');
+
+            imageInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewContainer.innerHTML = `<img src="${e.target.result}" class="image-preview" alt="Preview">`;
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Add event listener for the remove button
+            imageBlock.querySelector('.remove-block-button').addEventListener('click', function () {
+                imageBlock.remove();
+                updateContentTypesInput();
+            });
+        });
+
+        // Function to update content types hidden input
+        function updateContentTypesInput() {
+            const blocks = contentBlocksContainer.children;
+            const types = [];
+
+            for (let i = 0; i < blocks.length; i++) {
+                const block = blocks[i];
+                if (block.classList.contains('text-block')) {
+                    types.push('text');
+                } else if (block.classList.contains('image-block')) {
+                    types.push('image');
+                }
+            }
+
+            contentTypesInput.value = types.join(',');
+        }
+    });
+
+    // Add this to your existing script in question-details.html
+    document.addEventListener('DOMContentLoaded', function () {
+        // Existing code...
+
+        // Improved answer content rendering
+        const answerElements = document.querySelectorAll('.answer-content');
+        answerElements.forEach(element => {
+            const answerId = element.id.replace('answer-content-', '');
+            // Find the answer content from the model
+            const answers = /*[[${answers}]]*/ [];
+            const answer = answers.find(a => a.id == answerId);
+
+            if (answer && answer.body) {
+                // Log for debugging
+                console.log('Answer body:', answer.body);
+
+                // Parse the Markdown content
+                const parsedAnswer = parser.parse(answer.body);
+                const answerHtml = renderer.render(parsedAnswer);
+
+                // Apply the HTML
+                element.innerHTML = answerHtml;
+            }
+        });
+        // Add this to your answer rendering code
+        if (answer && answer.body) {
+            console.log('Raw answer body:', answer.body);
+            const parsedAnswer = parser.parse(answer.body);
+            console.log('Parsed answer:', parsedAnswer);
+            const answerHtml = renderer.render(parsedAnswer);
+            console.log('Rendered HTML:', answerHtml);
+            element.innerHTML = answerHtml;
+        }
+    });
 </script>
 </body>
 </html>

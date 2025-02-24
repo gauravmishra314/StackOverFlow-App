@@ -1,8 +1,10 @@
 package com.springapp.stackoverflow.controller;
 
+import com.springapp.stackoverflow.dto.AnswerDTO;
 import com.springapp.stackoverflow.dto.ContentBlockDTO;
 import com.springapp.stackoverflow.dto.QuestionDTO;
 import com.springapp.stackoverflow.model.Tag;
+import com.springapp.stackoverflow.service.AnswerService;
 import com.springapp.stackoverflow.service.CloudinaryService;
 import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
@@ -34,6 +36,7 @@ public class QuestionController {
     private final QuestionService questionService;
     private final TagService tagService;
     private final CloudinaryService cloudinaryService;
+    private final AnswerService answerService;
     private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
 
@@ -41,10 +44,11 @@ public class QuestionController {
     public QuestionController(
             QuestionService questionService,
             TagService tagService,
-            CloudinaryService cloudinaryService) {
+            CloudinaryService cloudinaryService,AnswerService answerService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.cloudinaryService = cloudinaryService;
+        this.answerService = answerService;
     }
 
     @GetMapping("/ask")
@@ -147,10 +151,13 @@ public class QuestionController {
     @GetMapping("/{id}")
     public String viewQuestion(@PathVariable Long id, Model model) {
         QuestionDTO questionDTO = questionService.getQuestionById(id);
-        List<Tag> tag = questionService.findTagsByQuestionId(id);
-        System.out.println("Qustion content: " + questionDTO.getContent());
+        List<Tag> tags = questionService.findTagsByQuestionId(id);
+        List<AnswerDTO> answers = answerService.getAnswersByQuestionId(id);
+
+        System.out.println("Question content: " + questionDTO.getContent());
         model.addAttribute("question", questionDTO);
-        model.addAttribute("tag",tag);
+        model.addAttribute("tag", tags);
+        model.addAttribute("answers", answers);
         return "question-details";
     }
 
