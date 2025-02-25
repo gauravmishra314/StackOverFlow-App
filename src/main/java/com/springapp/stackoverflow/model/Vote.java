@@ -17,7 +17,7 @@ public class Vote {
     private Long id; // Renamed from voteId to id for consistency
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @ManyToOne

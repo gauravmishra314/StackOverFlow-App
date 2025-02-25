@@ -161,7 +161,6 @@ public class QuestionServiceImpl implements QuestionService {
     public void deleteQuestion(Long id) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Question not found with id: " + id));
-
         questionRepository.delete(question);
     }
 
