@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -149,267 +151,271 @@
             margin: 2px 0;
         }
 
-    .vote-cell button:hover {
-      color: #838c95;
-    }
+        .vote-cell button:hover {
+            color: #838c95;
+        }
 
-    .vote-count {
-      font-size: 21px;
-      color: #6a737c;
-      margin: 2px 0;
-    }
+        .vote-count {
+            font-size: 21px;
+            color: #6a737c;
+            margin: 2px 0;
+        }
 
-    .bookmark-button, .history-button {
-      font-size: 16px !important;
-      margin-top: 8px !important;
-    }
+        .bookmark-button, .history-button {
+            font-size: 16px !important;
+            margin-top: 8px !important;
+        }
 
-    /* Post content */
-    .post-text {
-      font-size: 15px;
-      line-height: 1.5;
-      overflow-wrap: break-word;
-      margin-bottom: 24px;
-    }
+        /* Post content */
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            overflow-wrap: break-word;
+            margin-bottom: 24px;
+        }
 
-    /* Code blocks */
-    .post-text pre {
-      background-color: #f6f6f6;
-      padding: 12px;
-      border-radius: 3px;
-      overflow-x: auto;
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.4;
-      margin: 16px 0;
-    }
+        /* Code blocks */
+        .post-text pre {
+            background-color: #f6f6f6;
+            padding: 12px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            margin: 16px 0;
+        }
 
-    .post-text code {
-      background-color: #f6f6f6;
-      padding: 2px 5px;
-      border-radius: 3px;
-      font-family: Consolas, Monaco, 'Courier New', monospace;
-      font-size: 13px;
-    }
+        .post-text code {
+            background-color: #f6f6f6;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Courier New', monospace;
+            font-size: 13px;
+        }
 
-    /* Tags */
-    .post-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-bottom: 12px;
-    }
+        /* Tags */
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
 
-    .post-tag {
-      background-color: #e1ecf4;
-      color: #39739d;
-      padding: 4px 6px;
-      border-radius: 3px;
-      font-size: 12px;
-      text-decoration: none;
-    }
+        .post-tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 4px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            text-decoration: none;
+        }
 
-    .post-tag:hover {
-      background-color: #d0e3f1;
-      color: #2c5877;
-    }
+        .post-tag:hover {
+            background-color: #d0e3f1;
+            color: #2c5877;
+        }
 
-    /* Post actions */
-    .post-actions {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #6a737c;
-      margin-bottom: 16px;
-    }
+        /* Post actions */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6a737c;
+            margin-bottom: 16px;
+        }
 
-    .post-menu {
-      display: flex;
-      gap: 12px;
-    }
+        .post-menu {
+            display: flex;
+            gap: 12px;
+        }
 
-    .post-menu a {
-      color: #6a737c;
-      text-decoration: none;
-    }
+        .post-menu a {
+            color: #6a737c;
+            text-decoration: none;
+        }
 
-    .post-menu a:hover {
-      color: #0074cc;
-    }
+        .post-menu a:hover {
+            color: #0074cc;
+        }
 
-    /* User card */
-    .user-info {
-      display: flex;
-      align-items: center;
-      padding: 5px 6px 7px 7px;
-      background-color: #f8f9f9;
-      border-radius: 3px;
-    }
+        /* User card */
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 5px 6px 7px 7px;
+            background-color: #f8f9f9;
+            border-radius: 3px;
+        }
 
-    .user-action-time {
-      color: #6a737c;
-      font-size: 12px;
-      margin-right: 8px;
-    }
+        .user-action-time {
+            color: #6a737c;
+            font-size: 12px;
+            margin-right: 8px;
+        }
 
-    .user-gravatar {
-      margin-right: 8px;
-    }
+        .user-gravatar {
+            margin-right: 8px;
+        }
 
-    .user-gravatar img {
-      width: 32px;
-      height: 32px;
-      border-radius: 3px;
-    }
+        .user-gravatar img {
+            width: 32px;
+            height: 32px;
+            border-radius: 3px;
+        }
 
-    .user-details {
-      font-size: 12px;
-    }
+        .user-details {
+            font-size: 12px;
+        }
 
-    .user-details a {
-      color: #0074cc;
-      text-decoration: none;
-    }
+        .user-details a {
+            color: #0074cc;
+            text-decoration: none;
+        }
 
-    .user-reputation {
-      font-weight: bold;
-      color: #6a737c;
-    }
+        .user-reputation {
+            font-weight: bold;
+            color: #6a737c;
+        }
 
-    /* Answers section */
-    .answers-header {
-      font-size: 19px;
-      font-weight: 400;
-      margin: 20px 0;
-      padding-top: 20px;
-      border-top: 1px solid #e3e6e8;
-    }
+        /* Answers section */
+        .answers-header {
+            font-size: 19px;
+            font-weight: 400;
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid #e3e6e8;
+        }
 
-    /* Answer form */
-    .post-form h2 {
-      font-size: 19px;
-      font-weight: 400;
-      margin: 20px 0;
-      padding-top: 20px;
-      border-top: 1px solid #e3e6e8;
-    }
+        /* Answer form */
+        .post-form h2 {
+            font-size: 19px;
+            font-weight: 400;
+            margin: 20px 0;
+            padding-top: 20px;
+            border-top: 1px solid #e3e6e8;
+        }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
+        .form-group {
+            margin-bottom: 12px;
+        }
 
-    .form-group textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #babfc4;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 15px;
-      resize: vertical;
-    }
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 15px;
+            resize: vertical;
+        }
 
-    /* Delete modal */
-    .delete-question {
-    background: none;
-    border: none;
-    color: #0077cc; /* Match the link color */
-    font-size: inherit;
-    text-decoration: none;
-    cursor: pointer;
-    padding: 0;
-}
+        /* Delete modal */
+        .delete-question {
+            background: none;
+            border: none;
+            color: #0077cc; /* Match the link color */
+            font-size: inherit;
+            text-decoration: none;
+            cursor: pointer;
+            padding: 0;
+        }
 
-.delete-question:hover {
-    text-decoration: underline;
-}
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+        .delete-question:hover {
+            text-decoration: underline;
+        }
 
-    .modal-content {
-      background-color: white;
-      margin: 15% auto;
-      padding: 20px;
-      border-radius: 3px;
-      max-width: 400px;
-    }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
 
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 16px;
-    }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 3px;
+            max-width: 400px;
+        }
 
-    .danger-button {
-      background-color: #d0393e;
-      border-color: #d0393e;
-    }
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 16px;
+        }
 
-    .danger-button:hover {
-      background-color: #c23030;
-    }
+        .danger-button {
+            background-color: #d0393e;
+            border-color: #d0393e;
+        }
 
-    .secondary-button {
-      background-color: #f8f9f9;
-      color: #3b4045;
-      border-color: #d6d9dc;
-    }
+        .danger-button:hover {
+            background-color: #c23030;
+        }
 
-    .secondary-button:hover {
-      background-color: #e3e6e8;
-    }
+        .secondary-button {
+            background-color: #f8f9f9;
+            color: #3b4045;
+            border-color: #d6d9dc;
+        }
 
-    .login-prompt {
-      margin: 20px 0;
-      padding: 16px;
-      background-color: #fdf7e3;
-      border: 1px solid #e6dcae;
-      border-radius: 3px;
-    }
+        .secondary-button:hover {
+            background-color: #e3e6e8;
+        }
 
-    .login-prompt a {
-      color: #0074cc;
-      text-decoration: none;
-    }
-    .comment-link {
-      margin-right: 8px;
-    }
+        .login-prompt {
+            margin: 20px 0;
+            padding: 16px;
+            background-color: #fdf7e3;
+            border: 1px solid #e6dcae;
+            border-radius: 3px;
+        }
 
-    /* Ensure content renders properly */
-    .post-text p {
-      margin-bottom: 15px;
-    }
+        .login-prompt a {
+            color: #0074cc;
+            text-decoration: none;
+        }
 
-    .post-text pre {
-      margin: 15px 0;
-      padding: 12px;
-      background-color: #f6f6f6;
-      border-radius: 3px;
-      overflow-x: auto;
-    }.comment-link {
-       margin-right: 8px;
-     }
+        .comment-link {
+            margin-right: 8px;
+        }
 
-    /* Ensure content renders properly */
-    .post-text p {
-      margin-bottom: 15px;
-    }
+        /* Ensure content renders properly */
+        .post-text p {
+            margin-bottom: 15px;
+        }
 
-    .post-text pre {
-      margin: 15px 0;
-      padding: 12px;
-      background-color: #f6f6f6;
-      border-radius: 3px;
-      overflow-x: auto;
-    }
+        .post-text pre {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #f6f6f6;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
+
+        .comment-link {
+            margin-right: 8px;
+        }
+
+        /* Ensure content renders properly */
+        .post-text p {
+            margin-bottom: 15px;
+        }
+
+        .post-text pre {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #f6f6f6;
+            border-radius: 3px;
+            overflow-x: auto;
+        }
 
         .post-text img {
             max-width: 100%;
@@ -494,42 +500,65 @@
             font-size: 19px;
             margin-bottom: 15px;
         }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
-    .post-text img {
-      max-width: 100%;
-      height: auto;
-      margin: 10px 0;
-      border-radius: 4px;
-    }
-    .voting-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-.vote-button {
+        .vote-cell button {
     background: none;
     border: none;
+    color: #babfc4;
+    font-size: 30px;
     cursor: pointer;
-    padding: 4px;
+    padding: 0;
+    margin: 2px 0;
+    transition: color 0.2s;
 }
 
-.vote-button:hover {
-    background-color: #f0f0f0;
-    border-radius: 50%;
+.vote-cell button:hover {
+    color: #838c95;
 }
 
-.vote-button.active {
-    color: #0a95ff;
+.vote-cell button.active {
+    color: #f48024;
 }
 
-.vote-button.active:hover {
-    background-color: #e1ecf4;
+.vote-count {
+    font-size: 21px;
+    color: #6a737c;
+    margin: 2px 0;
+    text-align: center;
+    min-width: 40px;
 }
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
+
+/* Ensure voting arrows are properly sized and centered */
+.fa-caret-up, .fa-caret-down {
+    display: block;
+    font-size: 36px;
+    line-height: 1;
+}
+
+/* Login prompt */
+.login-prompt {
+    margin: 20px 0;
+    padding: 16px;
+    background-color: #fdf7e3;
+    border: 1px solid #e6dcae;
+    border-radius: 3px;
+}
+
+/* Error toast */
+#error-toast {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f44336;
+    color: white;
+    padding: 16px;
+    border-radius: 4px;
+    z-index: 1000;
+    max-width: 300px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
 <body>
 
@@ -601,34 +630,6 @@
                             <i class="fas fa-history"></i>
                         </button>
                     </div>
-      <!-- Question -->
-      <div class="question-body">
-        <div class="post-layout">
-          <!-- Vote controls -->
-<!--          <div class="vote-cell">-->
-<!--            <button class="vote-up-button" th:attr="data-question-id=${question.id}">-->
-<!--              <i class="fas fa-caret-up"></i>-->
-<!--            </button>-->
-<!--            <div class="vote-count" th:text="${question.voteCount}">0</div>-->
-<!--            <button class="vote-down-button" th:attr="data-question-id=${question.id}">-->
-<!--              <i class="fas fa-caret-down"></i>-->
-<!--            </button>-->
-<!--            <button class="bookmark-button" th:attr="data-question-id=${question.id}">-->
-<!--              <i class="far fa-bookmark"></i>-->
-<!--            </button>-->
-<!--            <button class="history-button" th:if="${question.updatedAt != question.createdAt}">-->
-<!--              <i class="fas fa-history"></i>-->
-<!--            </button>-->
-<!--          </div>-->
-          <div class="voting-container" th:data-question-id="${question.id}">
-            <button class="vote-button upvote" onclick="handleVote(1)">
-              <i class="fas fa-chevron-up"></i>
-            </button>
-            <span class="vote-count" th:text="${questionVotes}">0</span>
-            <button class="vote-button downvote" onclick="handleVote(-1)">
-              <i class="fas fa-chevron-down"></i>
-            </button>
-          </div>
 
                     <!-- Question content -->
                     <div class="post-cell">
@@ -637,155 +638,352 @@
                             <img th:src="${question.imageURL}" alt="Question image"
                                  style="max-width: 100%; margin-bottom: 16px;">
                         </div>
-          <!-- Question content -->
-          <div class="post-cell">
-            <!-- Main question image if present -->
-<!--            <div class="post-image" th:if="${question.imageURL != null}">-->
-<!--              <img th:src="${question.imageURL}" alt="Question image" style="max-width: 100%; margin-bottom: 16px;">-->
-<!--            </div>-->
 
-            <!-- Question content -->
-            <div class="post-text" id="question-content">
-              <!-- Content will be rendered here by JavaScript -->
+                        <!-- Question content -->
+                        <div class="post-text" id="question-content">
+                            <!-- Content will be rendered here by JavaScript -->
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="post-tags">
+                            <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag"
+                               th:text="${tag.name}">postgresql</a>
+                            <!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
+                            <!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
+                        </div>
+
+                        <!-- Question actions -->
+                        <div class="post-actions">
+                            <div class="post-menu">
+                                <a href="#" class="share-link">Share</a>
+                                <a href="#" class="comment-link">Add a comment</a>
+                                <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
+                                <a href="#" class="follow-link">Follow</a>
+                                <!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
+                                <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
+                                    <input type="hidden" name="_method" value="DELETE"/>
+                                    <button type="submit" class="delete-question">Delete</button>
+                                </form>
+
+                            </div>
+
+                            <!-- User card -->
+                            <div class="user-info" th:if="${question.user != null}">
+                                <div class="user-action-time">
+                                    asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                                </div>
+                                <div class="user-gravatar">
+                                    <a th:href="@{/users/{id}(id=${question.user.id})}">
+                                        <img th:src="${question.user.avatarUrl ?: '/images/default-avatar.png'}"
+                                             alt="User avatar">
+                                    </a>
+                                </div>
+                                <div class="user-details">
+                                    <a th:href="@{/users/{id}(id=${question.user.id})}"
+                                       th:text="${question.user.displayName}">Username</a>
+                                    <div class="user-reputation" th:text="${question.user.reputation}">123</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Tags -->
-            <div class="post-tags">
-              <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag" th:text="${tag.name}">postgresql</a>
-<!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
-<!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
+            <!-- Answers section -->
+            <div id="answers">
+                <h2 class="answers-header">
+                    <span th:text="${question.answerCount}">0</span> Answers
+                </h2>
+
+                <!-- Loop through answers -->
+                <div th:each="answer : ${answers}" class="answer">
+                    <div class="post-layout">
+                        <!-- Vote controls for answer -->
+                        <div class="vote-cell">
+                            <button class="vote-up-button" th:attr="data-answer-id=${answer.id}">
+                                <i class="fas fa-caret-up"></i>
+                            </button>
+                            <div class="vote-count" th:text="${answer.voteCount != null ? answer.voteCount : 0}">0</div>
+                            <button class="vote-down-button" th:attr="data-answer-id=${answer.id}">
+                                <i class="fas fa-caret-down"></i>
+                            </button>
+                        </div>
+
+                        <!-- Answer content -->
+                        <div class="post-cell">
+                            <div class="post-text answer-content" th:id="'answer-content-' + ${answer.id}">
+                                <!-- Answer content will be rendered here by JavaScript -->
+                            </div>
+
+                            <!-- Answer actions -->
+                            <div class="post-actions">
+                                <div class="post-menu">
+                                    <a href="#" class="share-link">Share</a>
+                                    <a href="#" class="comment-link">Add a comment</a>
+                                    <!-- Add edit/delete links as needed -->
+                                </div>
+
+                                <!-- User card for answer -->
+                                <div class="user-info" th:if="${answer.userName != null}">
+                                    <div class="user-action-time">
+                                        answered <span th:text="${#temporals.format(answer.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                                    </div>
+                                    <div class="user-details">
+                                        <a href="#" th:text="${answer.userName}">Username</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Question actions -->
-            <div class="post-actions">
-              <div class="post-menu">
-                <a href="#" class="share-link">Share</a>
-                <a href="#" class="comment-link">Add a comment</a>
-                <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
-                <a href="#" class="follow-link">Follow</a>
-<!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
-                <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
-                  <input type="hidden" name="_method" value="DELETE" />
-                  <button type="submit" class="delete-question">Delete</button>
+            <!-- Answer form -->
+            <div class="post-form">
+                <h2>Your Answer</h2>
+                <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post"
+                      enctype="multipart/form-data">
+                    <div class="answer-editor">
+                        <div id="content-blocks-container">
+                            <div class="content-block text-block">
+
+                <textarea name="contentBlocksData" class="form-control" rows="6"
+                          placeholder="Write your answer here."></textarea>
+
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="content-types-input" name="contentBlockTypes" value="text">
+
+                        <div class="editor-toolbar">
+                            <button type="button" id="add-text-block" class="editor-button">
+                                <i class="fas fa-paragraph"></i> Add Text
+                            </button>
+                            <button type="button" id="add-image-block" class="editor-button">
+                                <i class="fas fa-image"></i> Add Image
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="button">Post Your Answer</button>
                 </form>
 
-              </div>
-
-              <!-- User card -->
-              <div class="user-info" th:if="${question.user != null}">
-                <div class="user-action-time">
-                  asked <span th:text="${#temporals.format(question.createdAt, 'MMM d, yyyy')}">Feb 20, 2023</span>
+                <!-- Login prompt if not authenticated -->
+                <div class="login-prompt" style="display: none;">
+                    <p>You must <a th:href="@{/login}">log in</a> to answer this question.</p>
                 </div>
-                <div class="user-gravatar">
-                  <a th:href="@{/users/{id}(id=${question.user.id})}">
-                    <img th:src="${question.user.avatarUrl ?: '/images/default-avatar.png'}" alt="User avatar">
-                  </a>
-                </div>
-                <div class="user-details">
-                  <a th:href="@{/users/{id}(id=${question.user.id})}" th:text="${question.user.displayName}">Username</a>
-                  <div class="user-reputation" th:text="${question.user.reputation}">123</div>
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
 
-      <!-- Answer count -->
-      <h2 class="answers-header">
-        <span th:text="${question.answerCount}">0</span> Answers
-      </h2>
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div style="background-color: #fdf7e3; padding: 16px; border-radius: 3px; margin-bottom: 16px;">
+                <h3 style="font-size: 15px; margin-bottom: 8px;">The Overflow Blog</h3>
+                <ul style="list-style-type: none; margin-left: 20px;">
+                    <li style="display: flex; margin-bottom: 8px;">
+                        <i class="fas fa-pencil-alt" style="margin-right: 8px; margin-left: -20px;"></i>
+                        <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Why is it so hard
+                            for companies to protect your privacy?</a>
+                    </li>
+                </ul>
 
-      <!-- Answers would be here -->
-      <div id="answers">
-        <!-- This would be populated dynamically or from a fragment -->
-      </div>
-
-      <!-- Answer form -->
-      <div class="post-form">
-        <h2>Your Answer</h2>
-        <form th:action="@{/answers/{questionId}(questionId=${question.id})}" method="post">
-          <div class="form-group">
-            <textarea id="answer-content" name="content" rows="10"
-                      placeholder="Write your answer here. Support Markdown formatting."></textarea>
-          </div>
-          <button type="submit" class="button">Post Your Answer</button>
-        </form>
-
-        <!-- Login prompt if not authenticated -->
-        <div class="login-prompt" style="display: none;">
-          <p>You must <a th:href="@{/login}">log in</a> to answer this question.</p>
+                <h3 style="font-size: 15px; margin: 16px 0 8px 0;">Featured on Meta</h3>
+                <ul style="list-style-type: none; margin-left: 20px;">
+                    <li style="display: flex; margin-bottom: 8px;">
+                        <i class="fab fa-stack-overflow"
+                           style="color: #0086d8; margin-right: 8px; margin-left: -20px;"></i>
+                        <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Join us for our
+                            first community-wide AMA</a>
+                    </li>
+                </ul>
+            </div>
         </div>
-      </div>
     </div>
-
-    <!-- Right Sidebar -->
-    <div class="right-sidebar">
-      <div style="background-color: #fdf7e3; padding: 16px; border-radius: 3px; margin-bottom: 16px;">
-        <h3 style="font-size: 15px; margin-bottom: 8px;">The Overflow Blog</h3>
-        <ul style="list-style-type: none; margin-left: 20px;">
-          <li style="display: flex; margin-bottom: 8px;">
-            <i class="fas fa-pencil-alt" style="margin-right: 8px; margin-left: -20px;"></i>
-            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Why is it so hard for companies to protect your privacy?</a>
-          </li>
-        </ul>
-
-        <h3 style="font-size: 15px; margin: 16px 0 8px 0;">Featured on Meta</h3>
-        <ul style="list-style-type: none; margin-left: 20px;">
-          <li style="display: flex; margin-bottom: 8px;">
-            <i class="fab fa-stack-overflow" style="color: #0086d8; margin-right: 8px; margin-left: -20px;"></i>
-            <a href="#" style="color: #3b4045; text-decoration: none; font-size: 13px;">Join us for our first community-wide AMA</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
 </div>
 
 <!-- Delete confirmation modal -->
 <div id="delete-modal" class="modal">
-  <div class="modal-content">
-    <h3>Delete Question</h3>
-    <p>Are you sure you want to delete this question? This action cannot be undone.</p>
-    <div class="modal-actions">
-      <button id="confirm-delete" class="button danger-button">Delete</button>
-      <button id="cancel-delete" class="button secondary-button">Cancel</button>
+    <div class="modal-content">
+        <h3>Delete Question</h3>
+        <p>Are you sure you want to delete this question? This action cannot be undone.</p>
+        <div class="modal-actions">
+            <button id="confirm-delete" class="button danger-button">Delete</button>
+            <button id="cancel-delete" class="button secondary-button">Cancel</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <script th:inline="javascript">
-  document.addEventListener('DOMContentLoaded', function() {
-    const content = /*[[${question.content}]]*/ '';
-    const parser = new commonmark.Parser();
-    const renderer = new commonmark.HtmlRenderer();
-    const parsed = parser.parse(content);
-    const html = renderer.render(parsed);
-    document.getElementById('question-content').innerHTML = html;
-  });
-<!--  // Voting system-=======-&#45;&#45;&#45;&#45;&#45;&#45;===============-->
-async function handleVote(voteType) {
-    const questionId = document.querySelector('.voting-container').dataset.questionId;
+    document.addEventListener('DOMContentLoaded', function () {
+    //voting system
+     // Set up event listeners for question voting
+    const questionUpVoteBtn = document.querySelector('.question-body .vote-up-button');
+    const questionDownVoteBtn = document.querySelector('.question-body .vote-down-button');
+    const questionVoteCount = document.querySelector('.question-body .vote-count');
 
-    try {
-        const response = await fetch(`/api/votes/question/${questionId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `voteType=${voteType}`
+    if (questionUpVoteBtn && questionDownVoteBtn) {
+        const questionId = questionUpVoteBtn.getAttribute('data-question-id');
+
+        questionUpVoteBtn.addEventListener('click', function() {
+            voteQuestion(questionId, 1, questionVoteCount);
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            // Update vote count
-            document.querySelector('.vote-count').textContent = data.totalVotes;
-        }
-    } catch (error) {
-        console.error('Error voting:', error);
+        questionDownVoteBtn.addEventListener('click', function() {
+            voteQuestion(questionId, -1, questionVoteCount);
+        });
     }
-}
-    document.addEventListener('DOMContentLoaded', function () {
+
+    // Set up event listeners for answer voting
+    document.querySelectorAll('#answers .vote-up-button').forEach(function(button) {
+        const answerId = button.getAttribute('data-answer-id');
+        const voteCount = button.parentElement.querySelector('.vote-count');
+
+        button.addEventListener('click', function() {
+            voteAnswer(answerId, 1, voteCount);
+        });
+    });
+
+    document.querySelectorAll('#answers .vote-down-button').forEach(function(button) {
+        const answerId = button.getAttribute('data-answer-id');
+        const voteCount = button.parentElement.querySelector('.vote-count');
+
+        button.addEventListener('click', function() {
+            voteAnswer(answerId, -1, voteCount);
+        });
+    });
+
+    // Function to vote on a question
+    function voteQuestion(questionId, voteType, voteCountElement) {
+        // Create form data to send the vote type as a parameter
+        const formData = new URLSearchParams();
+        formData.append('voteType', voteType);
+
+        fetch(`/api/votes/question/${questionId}?voteType=${voteType}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+                // CSRF token is commented out in the HTML, so we don't include it here
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showLoginPrompt();
+                    throw new Error('You must be logged in to vote');
+                }
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Error recording vote');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            voteCountElement.textContent = data.totalVotes;
+
+            // Update UI to show active vote
+            if (voteType === 1) {
+                questionUpVoteBtn.classList.toggle('active');
+                questionDownVoteBtn.classList.remove('active');
+            } else {
+                questionDownVoteBtn.classList.toggle('active');
+                questionUpVoteBtn.classList.remove('active');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Show error toast
+            showErrorToast(error.message);
+        });
+    }
+
+    // Function to vote on an answer
+    function voteAnswer(answerId, voteType, voteCountElement) {
+        // Create form data to send the vote type as a parameter
+        const formData = new URLSearchParams();
+        formData.append('voteType', voteType);
+
+        fetch(`/api/votes/answer/${answerId}?voteType=${voteType}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+                // CSRF token is commented out in the HTML, so we don't include it here
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    showLoginPrompt();
+                    throw new Error('You must be logged in to vote');
+                }
+                return response.json().then(data => {
+                    throw new Error(data.error || 'Error recording vote');
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            voteCountElement.textContent = data.totalVotes;
+
+            // Update UI to show active vote
+            const upButton = voteCountElement.parentElement.querySelector('.vote-up-button');
+            const downButton = voteCountElement.parentElement.querySelector('.vote-down-button');
+
+            if (voteType === 1) {
+                upButton.classList.toggle('active');
+                downButton.classList.remove('active');
+            } else {
+                downButton.classList.toggle('active');
+                upButton.classList.remove('active');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Show error toast
+            showErrorToast(error.message);
+        });
+    }
+
+    // Show login prompt
+    function showLoginPrompt() {
+        const loginPrompt = document.querySelector('.login-prompt');
+        if (loginPrompt) {
+            loginPrompt.style.display = 'block';
+            // Scroll to the login prompt
+            loginPrompt.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // Show error toast message
+    function showErrorToast(message) {
+        // Create toast element if it doesn't exist
+        let toast = document.getElementById('error-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'error-toast';
+            document.body.appendChild(toast);
+        }
+
+        // Set toast styles
+        toast.style.display = 'block';
+        toast.style.position = 'fixed';
+        toast.style.bottom = '20px';
+        toast.style.right = '20px';
+        toast.style.backgroundColor = '#f44336';
+        toast.style.color = 'white';
+        toast.style.padding = '16px';
+        toast.style.borderRadius = '4px';
+        toast.style.zIndex = '1000';
+        toast.style.maxWidth = '300px';
+        toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+
+        toast.textContent = message;
+
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+    //====================
         // Handle Markdown rendering for question content
         const content = /*[[${question.content}]]*/ '';
         const parser = new commonmark.Parser();
