@@ -23,4 +23,7 @@ public interface QuestionService {
 
     long getTotalQuestions();
     List<Tag> findTagsByQuestionId(Long id);
+
+    Page<QuestionDTO> searchQuestions(String query, String tags, Pageable pageable);
+
 }

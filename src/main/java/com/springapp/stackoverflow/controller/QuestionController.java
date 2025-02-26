@@ -1,7 +1,6 @@
 package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.AnswerDTO;
-import com.springapp.stackoverflow.dto.ContentBlockDTO;
 import com.springapp.stackoverflow.dto.QuestionDTO;
 import com.springapp.stackoverflow.model.Tag;
 import com.springapp.stackoverflow.service.AnswerService;
@@ -13,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,9 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/questions")
@@ -44,7 +40,7 @@ public class QuestionController {
     public QuestionController(
             QuestionService questionService,
             TagService tagService,
-            CloudinaryService cloudinaryService,AnswerService answerService) {
+            CloudinaryService cloudinaryService, AnswerService answerService) {
         this.questionService = questionService;
         this.tagService = tagService;
         this.cloudinaryService = cloudinaryService;
@@ -129,23 +125,40 @@ public class QuestionController {
 
     @GetMapping
     public String getAllQuestions(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String tags,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "DESC") String direction,
             Model model) {
 
-        Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
+        // Create a pageable with sorting by createdAt in descending order
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        Page<QuestionDTO> questions = questionService.getAllQuestions(pageRequest);
+        // Decide whether to use search or get all questions
+        Page<QuestionDTO> questions;
+        if ((query != null && !query.isEmpty()) || (tags != null && !tags.isEmpty())) {
+            questions = questionService.searchQuestions(query, tags, pageable);
+        } else {
+            questions = questionService.getAllQuestions(pageable);
+        }
 
-        model.addAttribute("questions", questions.getContent());
-        model.addAttribute("totalQuestions", questionService.getTotalQuestions());
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", questions.getTotalPages());
+        model.addAttribute("questions", questions);
+        model.addAttribute("totalQuestions", questions.getTotalElements());
+        model.addAttribute("searchQuery", query);
+        model.addAttribute("searchTags", tags);
 
-        return "questions-page"; // This will look for questions.html in your templates folder
+        return "questions-page";
+    }
+
+    @GetMapping("/questions/search")
+    public String searchQuestions(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String tags,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Model model) {
+
+        return "redirect:/questions?query=" + (query != null ? query : "") + "&tags=" + (tags != null ? tags : "");
     }
 
     @GetMapping("/{id}")
@@ -260,4 +273,5 @@ public class QuestionController {
 
         return "home";
     }
+
 }

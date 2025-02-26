@@ -566,9 +566,14 @@
     <div class="logo">
         <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
     </div>
-    <div class="search-container">
-        <input type="text" placeholder="Search..." class="search-input">
-    </div>
+
+    <form action="/questions/search" method="get">
+        <input type="text" name="query" placeholder="Search questions and answers" required>
+        <input type="text" name="tags" placeholder="Enter tags (comma-separated)">
+        <button type="submit">Search</button>
+    </form>
+
+
     <div class="user-nav">
         <!-- User navigation would go here -->
     </div>

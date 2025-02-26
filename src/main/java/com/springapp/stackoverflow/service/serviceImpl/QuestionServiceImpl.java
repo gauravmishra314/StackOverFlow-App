@@ -8,11 +8,14 @@ import com.springapp.stackoverflow.repository.QuestionRepository;
 import com.springapp.stackoverflow.repository.TagRepository;
 import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -187,5 +190,44 @@ public class QuestionServiceImpl implements QuestionService {
     public List<Tag> findTagsByQuestionId(Long id) {
         List<Tag> tagList = questionRepository.findTagsByQuestionId(id);
         return tagList;
+    }
+
+    @Override
+    public Page<QuestionDTO> searchQuestions(String query, String tags, Pageable pageable) {
+        // Create a Specification to build dynamic query
+        Specification<Question> spec = Specification.where(null);
+
+        // Add title search criteria if query is provided
+        if (query != null && !query.trim().isEmpty()) {
+            spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
+                    criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("title")),
+                            "%" + query.toLowerCase() + "%"
+                    )
+            );
+        }
+
+        // Add tag search criteria if tags are provided
+        if (tags != null && !tags.trim().isEmpty()) {
+            String[] tagArray = tags.split(",");
+            for (String tag : tagArray) {
+                String trimmedTag = tag.trim();
+                if (!trimmedTag.isEmpty()) {
+                    spec = spec.and((root, criteriaQuery, criteriaBuilder) -> {
+                        Join<Question, Tag> tagJoin = root.join("tags", JoinType.INNER);
+                        return criteriaBuilder.equal(
+                                criteriaBuilder.lower(tagJoin.get("name")),
+                                trimmedTag.toLowerCase()
+                        );
+                    });
+                }
+            }
+        }
+
+        // Execute the query with the specifications
+        Page<Question> questions = questionRepository.findAll(spec, pageable);
+
+        // Convert to DTOs
+        return questions.map(this::convertToDTO);
     }
 }
