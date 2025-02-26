@@ -194,10 +194,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Page<QuestionDTO> searchQuestions(String query, String tags, Pageable pageable) {
-        // Create a Specification to build dynamic query
         Specification<Question> spec = Specification.where(null);
 
-        // Add title search criteria if query is provided
         if (query != null && !query.trim().isEmpty()) {
             spec = spec.and((root, criteriaQuery, criteriaBuilder) ->
                     criteriaBuilder.like(
@@ -207,7 +205,6 @@ public class QuestionServiceImpl implements QuestionService {
             );
         }
 
-        // Add tag search criteria if tags are provided
         if (tags != null && !tags.trim().isEmpty()) {
             String[] tagArray = tags.split(",");
             for (String tag : tagArray) {
@@ -224,10 +221,8 @@ public class QuestionServiceImpl implements QuestionService {
             }
         }
 
-        // Execute the query with the specifications
         Page<Question> questions = questionRepository.findAll(spec, pageable);
 
-        // Convert to DTOs
         return questions.map(this::convertToDTO);
     }
 }

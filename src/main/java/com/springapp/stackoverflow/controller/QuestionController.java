@@ -131,10 +131,8 @@ public class QuestionController {
             @RequestParam(defaultValue = "10") int size,
             Model model) {
 
-        // Create a pageable with sorting by createdAt in descending order
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        // Decide whether to use search or get all questions
         Page<QuestionDTO> questions;
         if ((query != null && !query.isEmpty()) || (tags != null && !tags.isEmpty())) {
             questions = questionService.searchQuestions(query, tags, pageable);
@@ -236,12 +234,10 @@ public class QuestionController {
                 }
             }
 
-            // Set the content
             questionDTO.setContent(contentBuilder.toString());
             questionDTO.setId(id);
             questionDTO.setUpdatedAt(LocalDateTime.now());
 
-            // Update the question
             QuestionDTO updatedQuestion = questionService.edit(id, questionDTO);
             redirectAttributes.addFlashAttribute("message", "Question updated successfully");
             return "redirect:/questions/" + updatedQuestion.getId();
