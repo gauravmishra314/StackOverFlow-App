@@ -32,6 +32,9 @@ public class User {
     private String profilePic;
     private String bio;
 
+    @Column(name="role")
+    private String role;
+
     @ElementCollection
     private List<String> interestedTopics;
 

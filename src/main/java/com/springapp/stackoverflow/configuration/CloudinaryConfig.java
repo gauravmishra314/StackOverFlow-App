@@ -18,8 +18,8 @@ public class CloudinaryConfig {
                 "api_secret", "UB5wcoL5l9abCGVviH8Wr3FgxDc"
         ));
     }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 }

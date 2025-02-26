@@ -18,6 +18,7 @@ public class UserDTO {
         private String username;
         private String email;
         private String password;
+        private String role;
         private List<String> interestedTopics;
     }
 
@@ -38,6 +39,7 @@ public class UserDTO {
         private String name;
         private String bio;
         private String profilePic;
+        private String role;
         private List<String> interestedTopics;
     }
 
