@@ -35,26 +35,26 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login").anonymous()
                         .requestMatchers(
-                                "/CSS/**"
-//                                "/post/viewPost/**",
-//                                "/posts/**",
-//                                "/posts/filter-author/**",
-//                                "/posts/filter-tag/**",
-//                                "/posts/search/**",
-//                                "/posts/sort/**",
-//                                "/posts/{id}/comments/add/**",
-//                                "/posts/comments/{commentId}/reply/**",
-//                                "/registerUser",
-//                                "/comment/reply/**"
+                                "/CSS/**",
+                               "/questions/**",
+                                "/answers/{id}/**",
+                                "/questions/{id}/**",
+                                "/login/**",
+                                "/signup/**",
+                                "/logout/**",
+                                "/profile/**",
+                                "/change-password/**"
                         ).permitAll()
                         .requestMatchers(
-                                "/posts/edit/**",
-                                "/post/publish/**",
-                                "/posts/createForm/**",
-                                "/post/republish/**",
-                                "/posts/delete/**",
-                                "/posts/comments/delete/{id}/**",
-                                "/logout/"
+                               "/questions/{id}/comment/**",
+                                "/answer/{id}/comment/**",
+                                "/questions/{id}/comment/{deleteID}/**",
+                                "/questions/{questionId}/edit/{commentId}/**",
+                                "/answer/{answerId}/comment/{commentId}/**",
+                                "/questions/{id}/comment/{deleteID}/**",
+                                "/questions/{questionId}/edit/{commentId}/**",
+                                "/questions/ask/**",
+                                "/profile/update/**"
                         ).hasAnyRole("ADMIN","AUTHOR")
                         .requestMatchers("/comment/reply/**").authenticated()
                 )
