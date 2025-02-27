@@ -266,48 +266,6 @@
       </form>
     </div>
 
-      <div class="flex items-center space-x-4">
-        <span class="text-gray-500">1</span>
-        <span class="text-gray-500">📫</span>
-        <span class="text-gray-500">🏆</span>
-        <span class="text-gray-500">❓</span>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- Main Content -->
-<div class="flex mt-14">
-  <!-- Sidebar -->
-  <div class="w-52 fixed h-full border-r border-gray-300">
-    <nav class="pt-4">
-      <a th:href="@{/questions/home}" class="sidebar-item">
-        <span class="mr-2" >🏠</span> Home
-      </a>
-      <a href="#" class="sidebar-item active">
-        <span class="mr-2">❓</span> Questions
-      </a>
-      <a href="#" class="sidebar-item">
-        <span class="mr-2">🏷️</span> Tags
-      </a>
-      <a href="#" class="sidebar-item">
-        <span class="mr-2">📑</span> Saves
-      </a>
-      <a href="#" class="sidebar-item">
-        <span class="mr-2">👥</span> Users
-      </a>
-    </nav>
-  </div>
-
-  <!-- Main Content Area -->
-  <div class="ml-52 p-6 flex-1">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold" th:text="${param.query != null && !param.query.isEmpty()} ? 'Search Results' : 'Newest Questions'">Newest Questions</h1>
-      <a href="/questions/ask" class="bg-blue-500 text-white px-4 py-2 rounded-md inline-block">Ask Question</a>
-    </div>
-
-    <div class="text-gray-600 mb-4" th:text="${totalQuestions + ' questions'}">24,251,273 questions</div>
-
     <!-- Filter Buttons -->
     <div style="display: flex; margin-bottom: 20px;">
       <button class="filter-button active">Newest</button>
@@ -323,15 +281,6 @@
     </div>
 
     <!-- Questions List -->
-    <div class="space-y-4">
-      <div th:each="question : ${questions}" class="bg-white p-4 rounded-lg border border-gray-200">
-        <div class="flex">
-          <!-- Vote stats -->
-          <div class="text-center mr-4 text-gray-600 text-sm">
-            <div th:text="${question.voteCount + ' votes'}" class="mb-1">0 votes</div>
-            <div th:text="${question.answerCount + ' answers'}" class="mb-1">0 answers</div>
-            <div th:text="${question.viewsCount + ' views'}" class="">2 views</div>
-          </div>
     <div th:if="${questions.empty}" style="text-align: center; padding: 50px 0; color: #6a737c;">
       <h3>No questions found</h3>
       <p>Try different keywords or remove tag filters</p>
@@ -380,17 +329,12 @@
 
     <!-- Pagination -->
     <div class="pagination" th:if="${totalPages > 1}">
-      <!-- First Page -->
-      <a th:href="@{/questions(page=0, query=${searchQuery != null ? searchQuery : ''}, tags=${searchTags != null ? searchTags : ''})}">&laquo;</a>
-
-      <!-- Page Numbers -->
+      <a th:href="@{/questions(page=0, query=${param.query}, tags=${param.tags})}">&laquo;</a>
       <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-         th:href="@{/questions(page=${i}, query=${searchQuery != null ? searchQuery : ''}, tags=${searchTags != null ? searchTags : ''})}"
+         th:href="@{/questions(page=${i}, query=${param.query}, tags=${param.tags})}"
          th:text="${i + 1}"
-         th:class="${currentPage == i ? 'active' : ''}"></a>
-
-      <!-- Last Page -->
-      <a th:href="@{/questions(page=${totalPages-1}, query=${searchQuery != null ? searchQuery : ''}, tags=${searchTags != null ? searchTags : ''})}">&raquo;</a>
+         th:class="${currentPage == i ? 'active' : ''}">1</a>
+      <a th:href="@{/questions(page=${totalPages-1}, query=${param.query}, tags=${param.tags})}">&raquo;</a>
     </div>
   </div>
 

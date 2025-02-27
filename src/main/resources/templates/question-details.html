@@ -69,14 +69,6 @@
         }
 
         /* Question header */
-        .question-header {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 12px; /* Reduced margin */
-            padding-bottom: 6px; /* Reduced padding */
-            border-bottom: 1px solid #e3e6e8;
-        }
-
         .question-header h1 {
             font-size: 22px; /* Smaller heading */
             margin-bottom: 0; /* Removed bottom margin */
@@ -100,10 +92,10 @@
             background-color: #0a95ff;
             color: white;
             border: 1px solid #0a95ff;
-            padding: 6px 8px; /* Reduced padding */
+            padding: 8px 12px;
             border-radius: 3px;
             cursor: pointer;
-            font-size: 12px; /* Smaller font */
+            font-size: 13px;
             text-decoration: none;
             box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
             white-space: nowrap; /* Prevent button text from wrapping */
@@ -265,7 +257,6 @@
             margin-top: 12px;
             background-color: #f8f9f9;
             border-radius: 3px;
-            font-size: 12px; /* Smaller font */
         }
 
         .user-gravatar img {
@@ -444,48 +435,6 @@
             border-radius: 3px;
         }
 
-        /* Button styling */
-        .button {
-            background-color: #0a95ff;
-            color: white;
-            border: 1px solid #0a95ff;
-            padding: 8px 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 13px;
-            box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
-        }
-
-        .button:hover {
-            background-color: #0074cc;
-            border-color: #0074cc;
-        }
-
-        .secondary-button {
-            background-color: #e1ecf4;
-            color: #39739d;
-            border-color: #7aa7c7;
-        }
-
-        .secondary-button:hover {
-            background-color: #d0e3f1;
-        }
-
-        .danger-button {
-            background-color: #d9534f;
-            border-color: #d43f3a;
-        }
-
-        .danger-button:hover {
-            background-color: #c9302c;
-            border-color: #ac2925;
-        }
-
-        /* Vote button active states */
-        .vote-cell button.active {
-            color: #f48024;
-        }
-
         /* Login prompt styling */
         .login-prompt {
             margin: 20px 0;
@@ -538,32 +487,6 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
-        /* Improve user card styling */
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 5px 7px;
-            margin-top: 12px;
-            background-color: #f8f9f9;
-            border-radius: 3px;
-        }
-
-        .user-details {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-details a {
-            color: #0074cc;
-            text-decoration: none;
-        }
-
-        .user-reputation {
-            font-weight: bold;
-            color: #6a737c;
-        }
-
         /* Post actions styling */
         .post-actions {
             display: flex;
@@ -607,29 +530,6 @@
             margin-bottom: 5px;
         }
 
-        .question-metadata {
-            flex: 1 1 auto;
-            font-size: 14px;
-            color: #6a737c;
-        }
-
-        .ask-button {
-            flex-shrink: 0;
-        }
-
-        .ask-button .button {
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .ask-button .button:hover {
-            background-color: #0056b3;
-        }
-
 
         /* Add some styles for blockquotes */
         .post-text blockquote {
@@ -668,6 +568,7 @@
             background-color: #f6f8fa;
         }
 
+        /* Blog and Meta cards */
         .blog-card, .meta-card {
             background-color: #fff;
             border: 1px solid #e4e6e8;
@@ -675,6 +576,7 @@
             padding: 15px;
             margin-bottom: 20px;
         }
+
         .blog-card h3, .meta-card h3 {
             font-size: 16px;
             margin-top: 0;
@@ -682,17 +584,20 @@
             padding-bottom: 8px;
             border-bottom: 1px solid #e4e6e8;
         }
+
         .blog-link, .meta-link {
             display: block;
             margin-bottom: 10px;
             color: #0074cc;
             text-decoration: none;
         }
+
         .meta-item {
             display: flex;
             margin-bottom: 12px;
             align-items: flex-start;
         }
+
         .meta-icon {
             margin-right: 10px;
             color: #0074cc;
@@ -910,6 +815,7 @@
                             th:text="${#temporals.format(question.updatedAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
                     <span class="viewed">Viewed <span th:text="${question.viewsCount}">6</span> times</span>
                 </div>
+
                 <div class="ask-button">
                     <a href="/questions/ask" class="button">Ask Question</a>
                 </div>
@@ -937,11 +843,6 @@
 
                     <!-- Question content -->
                     <div class="post-cell">
-                        <!-- Main question image if present -->
-<!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
-<!--                            <img th:src="${question.imageURL}" alt="Question image"-->
-<!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
-<!--                        </div>-->
 
                         <!-- Question content -->
                         <div class="post-text" id="question-content">
@@ -952,18 +853,13 @@
                         <div class="post-tags">
                             <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag"
                                th:text="${tag.name}">postgresql</a>
-                            <!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
-                            <!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
                         </div>
 
                         <!-- Question actions -->
                         <div class="post-actions">
                             <div class="post-menu">
                                 <a href="#" class="share-link">Share</a>
-                                <a href="#" class="comment-link">Add a comment</a>
                                 <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
-                                <a href="#" class="follow-link">Follow</a>
-                                <!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
                                 <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
                                     <input type="hidden" name="_method" value="DELETE"/>
                                     <button type="submit" class="delete-question">Delete</button>
@@ -1073,12 +969,6 @@
 
                             <!-- Answer actions -->
                             <div class="post-actions">
-                                <div class="post-menu">
-                                    <a href="#" class="share-link">Share</a>
-                                    <a href="#" class="comment-link">Add a comment</a>
-                                    <!-- Add edit/delete links as needed -->
-                                </div>
-
                                 <!-- User card for answer -->
                                 <div class="user-info" th:if="${answer.userName != null}">
                                     <div class="user-action-time">
