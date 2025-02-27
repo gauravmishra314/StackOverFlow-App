@@ -36,7 +36,8 @@ public class SecurityConfig {
                         .requestMatchers("/login").anonymous()
                         .requestMatchers(
                                 "/CSS/**",
-                               "/questions/**",
+                               "/questions",
+                               "/questions/unanswered/**",
                                 "/answers/{id}/**",
                                 "/questions/{id}/**",
                                 "/login/**",
@@ -44,6 +45,7 @@ public class SecurityConfig {
                                 "/logout/**",
                                 "/profile/**",
                                 "/change-password/**"
+
                         ).permitAll()
                         .requestMatchers(
                                "/questions/{id}/comment/**",
@@ -61,7 +63,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
-                        .defaultSuccessUrl("/questions", true)
+                        .defaultSuccessUrl("/questions", false)
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

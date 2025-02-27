@@ -113,7 +113,11 @@
       <button class="px-3 py-1 rounded-full border filter-button">
         Bountied <span class="bg-blue-500 text-white px-1 rounded text-xs">65</span>
       </button>
-      <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
+
+      <form th:action="@{/questions/unanswered}" th:methodq="GET">
+        <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
+      </form>
+
       <button class="px-3 py-1 rounded-full border filter-button">More</button>
       <button class="ml-auto px-3 py-1 rounded-full border">Filter</button>
     </div>

@@ -270,4 +270,26 @@ public class QuestionController {
         return "home";
     }
 
+    @GetMapping("/unanswered")
+    public String unAnswered(@RequestParam(required = false) String query,
+                             @RequestParam(required = false) String tags,
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "10") int size,Model model){
+        System.out.println("--------------------------- is I am hiting");
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<QuestionDTO> questions;
+        if ((query != null && !query.isEmpty()) || (tags != null && !tags.isEmpty())) {
+            questions = questionService.unAnsweredQuestion(query, tags, pageable);
+        } else {
+            questions = questionService.unAnsweredQuestion(query, tags, pageable);
+        }
+
+        model.addAttribute("questions", questions);
+        model.addAttribute("totalQuestions", questions.getTotalElements());
+        model.addAttribute("searchQuery", query);
+        model.addAttribute("searchTags", tags);
+
+        return "questions-page";
+    }
 }

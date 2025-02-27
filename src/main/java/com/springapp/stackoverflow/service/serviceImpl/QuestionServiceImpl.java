@@ -10,10 +10,12 @@ import com.springapp.stackoverflow.service.QuestionService;
 import com.springapp.stackoverflow.service.TagService;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -224,5 +226,31 @@ public class QuestionServiceImpl implements QuestionService {
         Page<Question> questions = questionRepository.findAll(spec, pageable);
 
         return questions.map(this::convertToDTO);
+    }
+
+//    @Override
+//    public Page<QuestionDTO> unAnsweredQuestion(String query, String tags, Pageable pageable) {
+//        Page<Question> questions = questionRepository.findAll(pageable);
+//
+//
+//        for(Question q : questions){
+//            if(!q.getAnswers().isEmpty()){
+//                questions.
+//            }
+//        }
+//        return questions.map(this::convertToDTO);
+//    }
+
+    @Transactional
+    @Override
+    public Page<QuestionDTO> unAnsweredQuestion(String query, String tags, Pageable pageable) {
+        Page<Question> questions = questionRepository.findAll(pageable);
+
+        List<QuestionDTO> filteredQuestions = questions.getContent().stream()
+                .filter(q -> q.getAnswers().isEmpty()) // Keep only unanswered questions
+                .map(this::convertToDTO) // Convert to DTO
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(filteredQuestions, pageable, filteredQuestions.size());
     }
 }

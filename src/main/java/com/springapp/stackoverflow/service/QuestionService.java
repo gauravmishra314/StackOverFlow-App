@@ -26,4 +26,5 @@ public interface QuestionService {
 
     Page<QuestionDTO> searchQuestions(String query, String tags, Pageable pageable);
 
+    Page<QuestionDTO> unAnsweredQuestion(String query, String tags, Pageable pageable);
 }
