@@ -136,7 +136,7 @@
           <div class="text-center mr-4 text-gray-600 text-sm">
             <div th:text="${question.voteCount + ' votes'}" class="mb-1">0 votes</div>
             <div th:text="${question.answerCount + ' answers'}" class="mb-1">0 answers</div>
-            <div th:text="${question.viewsCount + ' views'}">2 views</div>
+            <div th:text="${question.viewsCount + ' views'}" class="">2 views</div>
           </div>
 
           <!-- Question content -->
@@ -228,6 +228,7 @@
       window.location.href = `/questions?tags=${encodeURIComponent(tagName)}`;
     });
   });
+
 </script>
 </body>
 </html>

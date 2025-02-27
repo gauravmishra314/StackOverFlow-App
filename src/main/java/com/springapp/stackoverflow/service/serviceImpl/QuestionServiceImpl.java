@@ -113,6 +113,7 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<Question> questionOpt = questionRepository.findById(id);
         if (questionOpt.isPresent()) {
             Question question = questionOpt.get();
+            question.setViewsCount(question.getViewsCount()+1);
             QuestionDTO dto = modelMapper.map(question, QuestionDTO.class);
 
             // Convert tags to string list
@@ -122,7 +123,7 @@ public class QuestionServiceImpl implements QuestionService {
                         .collect(Collectors.toList());
                 dto.setTags(tagNames);
             }
-
+            questionRepository.save(question);
             return dto;
         }
         throw new RuntimeException("Question not found with id: " + id);

@@ -162,6 +162,7 @@ public class QuestionController {
     @GetMapping("/{id}")
     public String viewQuestion(@PathVariable Long id, Model model) {
         QuestionDTO questionDTO = questionService.getQuestionById(id);
+
         List<Tag> tags = questionService.findTagsByQuestionId(id);
         List<AnswerDTO> answers = answerService.getAnswersByQuestionId(id);
 
