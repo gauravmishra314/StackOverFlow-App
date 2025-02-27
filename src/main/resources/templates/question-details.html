@@ -7,6 +7,8 @@
 <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace="fragments/header :: head"></th:block>
+
     <style>
         /* Base styles */
         * {
@@ -20,36 +22,18 @@
             line-height: 1.5;
             color: #232629;
             background-color: #fff;
+            padding-top: 42px; /* Reduced padding for smaller header */
         }
 
-        /* Container layout */
-        .container {
-            max-width: 1264px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .page-container {
-            display: grid;
-            grid-template-columns: 1fr 3fr;
-            gap: 24px;
-            margin-top: 50px;
-        }
-
-        @media (min-width: 1100px) {
-            .page-container {
-                grid-template-columns: 164px 1fr 300px;
-            }
-        }
-
-        /* Header styles */
-        .top-bar {
+        /* Header styles - REDUCED SIZE */
+        .header {
+            background-color: #fff;
+            border-top: 3px solid #f48024;
+            border-bottom: 1px solid #e4e6e8;
+            padding: 4px 16px; /* Reduced padding */
             display: flex;
             align-items: center;
-            height: 50px;
-            background-color: #f8f9f9;
-            border-top: 3px solid #f48024;
-            border-bottom: 1px solid #e3e6e8;
+            height: 42px; /* Reduced height */
             position: fixed;
             width: 100%;
             top: 0;
@@ -57,54 +41,80 @@
         }
 
         .logo {
-            padding: 0 8px;
-            height: 100%;
+            height: 24px; /* Smaller logo */
+            margin-right: 16px;
+        }
+
+        .nav-items {
             display: flex;
-            align-items: center;
+            gap: 12px; /* Reduced gap */
+            margin-right: auto;
+            font-size: 13px; /* Smaller font */
         }
 
-        .logo img {
-            height: 30px;
-        }
-
-        .search-container {
+        .search-bar {
             flex-grow: 1;
             max-width: 700px;
-            margin: 0 8px;
+            margin: 0 12px;
         }
 
-        .search-input {
+        .search-bar input {
             width: 100%;
-            padding: 8px 8px 8px 32px;
+            padding: 6px 8px; /* Reduced padding */
             border: 1px solid #babfc4;
             border-radius: 3px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23838C95" d="M12.2 13.6a7 7 0 1 1 1.4-1.4l3.1 3.1a1 1 0 1 1-1.4 1.4l-3.1-3.1zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z"/></svg>');
-            background-position: 8px center;
-            background-repeat: no-repeat;
+            font-size: 13px; /* Smaller font */
+        }
+
+        .icons {
+            display: flex;
+            gap: 12px; /* Reduced gap */
+            align-items: center;
+            font-size: 14px; /* Smaller icons */
+        }
+
+        /* Container layout */
+        .container {
+            max-width: 1264px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .page-container {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 16px;
+            margin-top: 16px; /* Reduced margin */
+        }
+
+        @media (min-width: 1100px) {
+            .page-container {
+                grid-template-columns: 164px minmax(0, 1fr) 300px;
+            }
         }
 
         /* Question header */
         .question-header {
             display: flex;
             flex-direction: column;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
+            margin-bottom: 12px; /* Reduced margin */
+            padding-bottom: 6px; /* Reduced padding */
             border-bottom: 1px solid #e3e6e8;
         }
 
         .question-header h1 {
-            font-size: 27px;
-            margin-bottom: 8px;
+            font-size: 22px; /* Smaller heading */
+            margin-bottom: 6px;
             font-weight: 400;
             color: #242729;
         }
 
         .question-metadata {
             display: flex;
-            gap: 16px;
-            font-size: 13px;
+            gap: 12px;
+            font-size: 12px; /* Smaller font */
             color: #6a737c;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .ask-button {
@@ -115,22 +125,18 @@
             background-color: #0a95ff;
             color: white;
             border: 1px solid #0a95ff;
-            padding: 8px 10px;
+            padding: 6px 8px; /* Reduced padding */
             border-radius: 3px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 12px; /* Smaller font */
             text-decoration: none;
         }
 
-        .button:hover {
-            background-color: #0074cc;
-        }
-
-        /* Question layout */
+        /* Post layout */
         .post-layout {
             display: grid;
             grid-template-columns: max-content 1fr;
-            gap: 16px;
+            gap: 12px; /* Reduced gap */
         }
 
         /* Vote controls */
@@ -145,322 +151,183 @@
             background: none;
             border: none;
             color: #babfc4;
-            font-size: 30px;
+            font-size: 24px; /* Smaller icons */
             cursor: pointer;
             padding: 0;
             margin: 2px 0;
-        }
-
-        .vote-cell button:hover {
-            color: #838c95;
+            transition: color 0.2s;
         }
 
         .vote-count {
-            font-size: 21px;
+            font-size: 18px; /* Smaller text */
             color: #6a737c;
             margin: 2px 0;
+            text-align: center;
+            min-width: 32px; /* Reduced width */
         }
 
-        .bookmark-button, .history-button {
-            font-size: 16px !important;
-            margin-top: 8px !important;
+        /* Sidebar styles */
+        .sidebar {
+            grid-column: 1;
+            position: sticky;
+            top: 56px; /* Adjusted for smaller header */
+            height: calc(100vh - 56px);
+            overflow-y: auto;
+            padding-right: 8px;
         }
 
-        /* Post content */
-        .post-text {
-            font-size: 15px;
-            line-height: 1.5;
-            overflow-wrap: break-word;
-            margin-bottom: 24px;
+        .sidebar .nav-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
         }
 
-        /* Code blocks */
-        .post-text pre {
-            background-color: #f6f6f6;
-            padding: 12px;
-            border-radius: 3px;
-            overflow-x: auto;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            margin: 16px 0;
+        .sidebar .nav-links li {
+            margin: 2px 0; /* Reduced margin */
         }
 
-        .post-text code {
-            background-color: #f6f6f6;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            font-size: 13px;
-        }
-
-        /* Tags */
-        .post-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 12px;
-        }
-
-        .post-tag {
-            background-color: #e1ecf4;
-            color: #39739d;
-            padding: 4px 6px;
-            border-radius: 3px;
-            font-size: 12px;
+        .sidebar .nav-links a {
+            display: block;
+            padding: 6px; /* Reduced padding */
+            color: #525960;
             text-decoration: none;
+            border-radius: 4px;
+            font-size: 13px; /* Smaller font */
         }
 
-        .post-tag:hover {
-            background-color: #d0e3f1;
-            color: #2c5877;
-        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+            }
 
-        /* Post actions */
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #6a737c;
-            margin-bottom: 16px;
-        }
+            .container {
+                padding: 0 12px;
+            }
 
-        .post-menu {
-            display: flex;
-            gap: 12px;
-        }
-
-        .post-menu a {
-            color: #6a737c;
-            text-decoration: none;
-        }
-
-        .post-menu a:hover {
-            color: #0074cc;
+            .sidebar {
+                display: none; /* Hide sidebar on mobile */
+            }
         }
 
         /* User card */
         .user-info {
             display: flex;
             align-items: center;
-            padding: 5px 6px 7px 7px;
+            padding: 4px 5px; /* Reduced padding */
             background-color: #f8f9f9;
             border-radius: 3px;
-        }
-
-        .user-action-time {
-            color: #6a737c;
-            font-size: 12px;
-            margin-right: 8px;
-        }
-
-        .user-gravatar {
-            margin-right: 8px;
+            font-size: 12px; /* Smaller font */
         }
 
         .user-gravatar img {
-            width: 32px;
-            height: 32px;
+            width: 28px; /* Smaller avatar */
+            height: 28px;
             border-radius: 3px;
         }
 
-        .user-details {
-            font-size: 12px;
+        /* Post tags */
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px; /* Reduced margin */
         }
 
-        .user-details a {
-            color: #0074cc;
+        .post-tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 3px 5px; /* Reduced padding */
+            border-radius: 3px;
+            font-size: 11px; /* Smaller font */
             text-decoration: none;
         }
 
-        .user-reputation {
-            font-weight: bold;
-            color: #6a737c;
+        /* Additional styles for Stack Overflow clone */
+
+        /* Post content formatting */
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            word-wrap: break-word;
         }
 
-        /* Answers section */
+        .post-text p {
+            margin-bottom: 1.1em;
+        }
+
+        .post-text h1, .post-text h2, .post-text h3, .post-text h4 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+        }
+
+        .post-text code {
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            background-color: #f6f6f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .post-text pre {
+            background-color: #f6f6f6;
+            padding: 12px;
+            border-radius: 3px;
+            overflow-x: auto;
+            margin-bottom: 1.1em;
+        }
+
+        .post-text pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Answer section styling */
         .answers-header {
             font-size: 19px;
+            padding: 20px 0 10px;
+            margin-top: 10px;
+            border-top: 1px solid #e3e6e8;
+            color: #232629;
             font-weight: 400;
-            margin: 20px 0;
-            padding-top: 20px;
+        }
+
+        .answer {
+            padding: 16px 0;
+            border-bottom: 1px solid #e3e6e8;
+        }
+
+        /* Answer form styling */
+        .post-form {
+            margin-top: 30px;
+            padding: 20px 0;
             border-top: 1px solid #e3e6e8;
         }
 
-        /* Answer form */
         .post-form h2 {
             font-size: 19px;
+            margin-bottom: 16px;
             font-weight: 400;
-            margin: 20px 0;
-            padding-top: 20px;
-            border-top: 1px solid #e3e6e8;
         }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group textarea {
+        .post-form textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #babfc4;
             border-radius: 3px;
             font-family: inherit;
             font-size: 15px;
-            resize: vertical;
-        }
-
-        /* Delete modal */
-        .delete-question {
-            background: none;
-            border: none;
-            color: #0077cc; /* Match the link color */
-            font-size: inherit;
-            text-decoration: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .delete-question:hover {
-            text-decoration: underline;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 3px;
-            max-width: 400px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .danger-button {
-            background-color: #d0393e;
-            border-color: #d0393e;
-        }
-
-        .danger-button:hover {
-            background-color: #c23030;
-        }
-
-        .secondary-button {
-            background-color: #f8f9f9;
-            color: #3b4045;
-            border-color: #d6d9dc;
-        }
-
-        .secondary-button:hover {
-            background-color: #e3e6e8;
-        }
-
-        .login-prompt {
-            margin: 20px 0;
-            padding: 16px;
-            background-color: #fdf7e3;
-            border: 1px solid #e6dcae;
-            border-radius: 3px;
-        }
-
-        .login-prompt a {
-            color: #0074cc;
-            text-decoration: none;
-        }
-
-        .comment-link {
-            margin-right: 8px;
-        }
-
-        /* Ensure content renders properly */
-        .post-text p {
-            margin-bottom: 15px;
-        }
-
-        .post-text pre {
-            margin: 15px 0;
-            padding: 12px;
-            background-color: #f6f6f6;
-            border-radius: 3px;
-            overflow-x: auto;
-        }
-
-        .comment-link {
-            margin-right: 8px;
-        }
-
-        /* Ensure content renders properly */
-        .post-text p {
-            margin-bottom: 15px;
-        }
-
-        .post-text pre {
-            margin: 15px 0;
-            padding: 12px;
-            background-color: #f6f6f6;
-            border-radius: 3px;
-            overflow-x: auto;
-        }
-
-        .post-text img {
-            max-width: 100%;
-            height: auto;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-
-        .answer-editor {
-            border: 1px solid #babfc4;
-            border-radius: 3px;
-            margin-bottom: 16px;
-        }
-
-        .content-block {
-            padding: 8px;
-            margin-bottom: 8px;
-        }
-
-        .content-block textarea {
-            width: 100%;
-            border: 1px solid #e3e6e8;
-            border-radius: 3px;
-            padding: 8px;
-            resize: vertical;
-        }
-
-        .image-block {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .image-preview {
-            max-width: 200px;
-            max-height: 150px;
-            margin-top: 8px;
         }
 
         .editor-toolbar {
+            margin: 10px 0;
             display: flex;
-            gap: 8px;
-            padding: 8px;
-            background-color: #f8f9f9;
-            border-top: 1px solid #e3e6e8;
+            gap: 10px;
         }
 
         .editor-button {
@@ -477,138 +344,236 @@
             background-color: #d0e3f1;
         }
 
-        .remove-block-button {
-            background-color: #f8f9f9;
-            color: #d0393e;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 4px;
-            align-self: flex-end;
+        .content-block {
+            margin-bottom: 16px;
+            position: relative;
         }
 
-        /* Answer styles */
-        .answer {
-            padding-top: 20px;
-            border-top: 1px solid #e3e6e8;
+        .remove-block-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #f8f9f9;
+            border: 1px solid #d6d9dc;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #6a737c;
+            cursor: pointer;
+        }
+
+        .remove-block-button:hover {
+            background-color: #f1f2f3;
+        }
+
+        /* Image preview styling */
+        .image-preview-container {
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #e3e6e8;
+            border-radius: 3px;
+        }
+
+        /* Button styling */
+        .button {
+            background-color: #0a95ff;
+            color: white;
+            border: 1px solid #0a95ff;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
+        }
+
+        .button:hover {
+            background-color: #0074cc;
+            border-color: #0074cc;
+        }
+
+        .secondary-button {
+            background-color: #e1ecf4;
+            color: #39739d;
+            border-color: #7aa7c7;
+        }
+
+        .secondary-button:hover {
+            background-color: #d0e3f1;
+        }
+
+        .danger-button {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .danger-button:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+        }
+
+        /* Vote button active states */
+        .vote-cell button.active {
+            color: #f48024;
+        }
+
+        /* Login prompt styling */
+        .login-prompt {
+            margin: 20px 0;
+            padding: 16px;
+            background-color: #fdf7e3;
+            border: 1px solid #f1e5bc;
+            border-radius: 3px;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 3px;
+            width: 400px;
+            max-width: 80%;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
             margin-top: 20px;
         }
 
-        .answer-count {
-            color: #232629;
-            font-size: 19px;
-            margin-bottom: 15px;
+        /* Toast notification styling */
+        #error-toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 16px;
+            border-radius: 4px;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .vote-cell button {
-    background: none;
-    border: none;
-    color: #babfc4;
-    font-size: 30px;
-    cursor: pointer;
-    padding: 0;
-    margin: 2px 0;
-    transition: color 0.2s;
-}
 
-.vote-cell button:hover {
-    color: #838c95;
-}
+        /* Improve user card styling */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 7px;
+            margin-top: 12px;
+            background-color: #f8f9f9;
+            border-radius: 3px;
+        }
 
-.vote-cell button.active {
-    color: #f48024;
-}
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
 
-.vote-count {
-    font-size: 21px;
-    color: #6a737c;
-    margin: 2px 0;
-    text-align: center;
-    min-width: 40px;
-}
+        .user-details a {
+            color: #0074cc;
+            text-decoration: none;
+        }
 
-/* Ensure voting arrows are properly sized and centered */
-.fa-caret-up, .fa-caret-down {
-    display: block;
-    font-size: 36px;
-    line-height: 1;
-}
+        .user-reputation {
+            font-weight: bold;
+            color: #6a737c;
+        }
 
-/* Login prompt */
-.login-prompt {
-    margin: 20px 0;
-    padding: 16px;
-    background-color: #fdf7e3;
-    border: 1px solid #e6dcae;
-    border-radius: 3px;
-}
+        /* Post actions styling */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
 
-/* Error toast */
-#error-toast {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #f44336;
-    color: white;
-    padding: 16px;
-    border-radius: 4px;
-    z-index: 1000;
-    max-width: 300px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
+        .post-menu {
+            display: flex;
+            gap: 8px;
+        }
+
+        .post-menu a {
+            color: #6a737c;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .post-menu a:hover {
+            color: #0074cc;
+        }
+
+        /* Make code blocks responsive */
+        @media (max-width: 768px) {
+            .post-text pre {
+                max-width: calc(100vw - 80px);
+            }
+        }
+
+        /* Add some styles for blockquotes */
+        .post-text blockquote {
+            padding: 10px;
+            margin: 0 0 16px;
+            border-left: 4px solid #e1e4e8;
+            color: #6a737c;
+            background-color: #f6f8fa;
+        }
+
+        /* Add styles for lists */
+        .post-text ul, .post-text ol {
+            margin-bottom: 16px;
+            padding-left: 30px;
+        }
+
+        .post-text li {
+            margin-bottom: 8px;
+        }
+
+        /* Add styles for tables */
+        .post-text table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .post-text table th,
+        .post-text table td {
+            border: 1px solid #e1e4e8;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .post-text table th {
+            background-color: #f6f8fa;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">
-        <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
-    </div>
-
-    <div class="flex-1 max-w-xl px-4">
-        <form action="/questions" method="GET" id="searchForm">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <input type="text" name="query" id="query" placeholder="Search in question titles..."
-                       th:value="${searchQuery}"
-                       class="w-full pl-10 pr-4 py-1 border border-gray-300 rounded-md">
-            </div>
-        </form>
-    </div>
-
-
-    <div class="user-nav">
-        <!-- User navigation would go here -->
-    </div>
-</header>
+<div th:replace="fragments/header :: header"></div>
 
 <div class="container">
     <div class="page-container">
         <!-- Left Sidebar -->
-        <div class="left-sidebar">
-            <nav>
-                <ul style="list-style-type: none;">
-                    <li><a href="/"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-                        <i class="fas fa-home" style="margin-right: 8px;"></i> Home
-                    </a></li>
-                    <li><a href="/questions"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px; font-weight: bold; background-color: #f1f2f3;">
-                        <i class="fas fa-question" style="margin-right: 8px;"></i> Questions
-                    </a></li>
-                    <li><a href="/tags"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-                        <i class="fas fa-tag" style="margin-right: 8px;"></i> Tags
-                    </a></li>
-                </ul>
-            </nav>
-        </div>
+        <div th:replace="fragments/sidebar :: sidebar"></div>
 
         <!-- Main Content -->
         <div class="content">
