@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
+    <!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
+    <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <th:block th:replace="fragments/header :: head"></th:block>
@@ -613,10 +613,10 @@
                     <!-- Question content -->
                     <div class="post-cell">
                         <!-- Main question image if present -->
-<!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
-<!--                            <img th:src="${question.imageURL}" alt="Question image"-->
-<!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
-<!--                        </div>-->
+                        <!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
+                        <!--                            <img th:src="${question.imageURL}" alt="Question image"-->
+                        <!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
+                        <!--                        </div>-->
 
                         <!-- Question content -->
                         <div class="post-text" id="question-content">

@@ -123,6 +123,31 @@ public class QuestionController {
         return "redirect:/questions";
     }
 
+//    @GetMapping
+//    public String getAllQuestions(
+//            @RequestParam(required = false) String query,
+//            @RequestParam(required = false) String tags,
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            Model model) {
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+//
+//        Page<QuestionDTO> questions;
+//        if ((query != null && !query.isEmpty()) || (tags != null && !tags.isEmpty())) {
+//            questions = questionService.searchQuestions(query, tags, pageable);
+//        } else {
+//            questions = questionService.getAllQuestions(pageable);
+//        }
+//
+//        model.addAttribute("questions", questions);
+//        model.addAttribute("totalQuestions", questions.getTotalElements());
+//        model.addAttribute("searchQuery", query);
+//        model.addAttribute("searchTags", tags);
+//
+//        return "questions-page";
+//    }
+
     @GetMapping
     public String getAllQuestions(
             @RequestParam(required = false) String query,
@@ -140,15 +165,16 @@ public class QuestionController {
             questions = questionService.getAllQuestions(pageable);
         }
 
-        model.addAttribute("questions", questions);
-        model.addAttribute("totalQuestions", questions.getTotalElements());
-        model.addAttribute("searchQuery", query);
-        model.addAttribute("searchTags", tags);
+        model.addAttribute("questions", questions.getContent());
+        model.addAttribute("totalPages", questions.getTotalPages());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("searchQuery", query != null ? query : "");
+        model.addAttribute("searchTags", tags != null ? tags : "");
 
         return "questions-page";
     }
 
-    @GetMapping("/questions/search")
+    @GetMapping("/search")
     public String searchQuestions(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String tags,
@@ -257,7 +283,7 @@ public class QuestionController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String direction,
             Model model) {
-
+        System.out.println("------------------Is I am inside the home-----------------");
         Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
