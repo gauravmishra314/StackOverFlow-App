@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-    <!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <th:block th:replace="fragments/header :: head"></th:block>
@@ -22,40 +20,15 @@
             line-height: 1.5;
             color: #232629;
             background-color: #fff;
-            padding-top: 42px; /* Reduced padding for smaller header */
+            padding-top: 50px; /* Reduced padding for smaller header */
         }
 
-        /* Header styles - REDUCED SIZE */
-        .header {
-            background-color: #fff;
-            border-top: 3px solid #f48024;
-            border-bottom: 1px solid #e4e6e8;
-            padding: 4px 16px; /* Reduced padding */
-            display: flex;
-            align-items: center;
-            height: 42px; /* Reduced height */
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
+        .nav-items span {
+            cursor: pointer;
         }
 
-        .logo {
-            height: 24px; /* Smaller logo */
-            margin-right: 16px;
-        }
-
-        .nav-items {
-            display: flex;
-            gap: 12px; /* Reduced gap */
-            margin-right: auto;
-            font-size: 13px; /* Smaller font */
-        }
-
-        .search-bar {
-            flex-grow: 1;
-            max-width: 700px;
-            margin: 0 12px;
+        .nav-items span:hover {
+            color: #0c0d0e;
         }
 
         .search-bar input {
@@ -66,11 +39,12 @@
             font-size: 13px; /* Smaller font */
         }
 
-        .icons {
-            display: flex;
-            gap: 12px; /* Reduced gap */
-            align-items: center;
-            font-size: 14px; /* Smaller icons */
+        .icons span {
+            cursor: pointer;
+        }
+
+        .icons span:hover {
+            color: #0c0d0e;
         }
 
         /* Container layout */
@@ -83,13 +57,14 @@
         .page-container {
             display: grid;
             grid-template-columns: 1fr 3fr;
-            gap: 16px;
-            margin-top: 16px; /* Reduced margin */
+            gap: 24px; /* Increased gap between columns */
+            margin-top: 16px;
         }
 
         @media (min-width: 1100px) {
             .page-container {
                 grid-template-columns: 164px minmax(0, 1fr) 300px;
+                gap: 24px; /* Consistent gap for all columns */
             }
         }
 
@@ -104,7 +79,7 @@
 
         .question-header h1 {
             font-size: 22px; /* Smaller heading */
-            margin-bottom: 6px;
+            margin-bottom: 0; /* Removed bottom margin */
             font-weight: 400;
             color: #242729;
         }
@@ -130,6 +105,33 @@
             cursor: pointer;
             font-size: 12px; /* Smaller font */
             text-decoration: none;
+            box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
+            white-space: nowrap; /* Prevent button text from wrapping */
+        }
+
+        .button:hover {
+            background-color: #0074cc;
+            border-color: #0074cc;
+        }
+
+        .secondary-button {
+            background-color: #e1ecf4;
+            color: #39739d;
+            border-color: #7aa7c7;
+        }
+
+        .secondary-button:hover {
+            background-color: #d0e3f1;
+        }
+
+        .danger-button {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .danger-button:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
         }
 
         /* Post layout */
@@ -158,6 +160,10 @@
             transition: color 0.2s;
         }
 
+        .vote-cell button.active {
+            color: #f48024;
+        }
+
         .vote-count {
             font-size: 18px; /* Smaller text */
             color: #6a737c;
@@ -166,33 +172,67 @@
             min-width: 32px; /* Reduced width */
         }
 
-        /* Sidebar styles */
+        /* Sidebar Styles (Left) */
         .sidebar {
-            grid-column: 1;
-            position: sticky;
-            top: 56px; /* Adjusted for smaller header */
-            height: calc(100vh - 56px);
-            overflow-y: auto;
-            padding-right: 8px;
+            width: 220px;
+            background-color: #ffffff; /* White background */
+            color: #333333; /* Dark text for contrast */
+            padding: 10px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         }
-
-        .sidebar .nav-links {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        .sidebar .nav-links li {
-            margin: 2px 0; /* Reduced margin */
-        }
-
-        .sidebar .nav-links a {
-            display: block;
-            padding: 6px; /* Reduced padding */
-            color: #525960;
-            text-decoration: none;
+        .sidebar-item {
+            padding: 8px;
+            margin: 4px 0;
             border-radius: 4px;
-            font-size: 13px; /* Smaller font */
+            display: flex;
+            align-items: center;
+        }
+        .sidebar-item.active {
+            background-color: #e9ecef; /* Light gray for active item */
+        }
+        .sidebar-item span {
+            margin-right: 8px;
+            filter: grayscale(100%);
+        }
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-section {
+            margin-top: 15px;
+        }
+        .sidebar-section-header {
+            font-size: 12px;
+            color: #6c757d; /* Gray for section headers */
+            margin-bottom: 8px;
+        }
+        .sidebar-item a {
+            margin-top: 4px;
+            color: #333333; /* Dark text for links */
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-section .sidebar-item {
+            background-color: #f8f9fa; /* Light gray for section items */
+            padding: 10px;
+            margin: 8px 0;
+        }
+        .sidebar-section .sidebar-item a {
+            color: #333333; /* Dark text for links */
+            text-decoration: none;
+        }
+        .sidebar-section .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        /* Right sidebar */
+        .right-sidebar {
+            width: 300px;
+            padding-left: 8px;
         }
 
         /* Responsive adjustments */
@@ -205,16 +245,24 @@
                 padding: 0 12px;
             }
 
-            .sidebar {
-                display: none; /* Hide sidebar on mobile */
+            .sidebar, .right-sidebar {
+                display: none; /* Hide sidebars on mobile */
             }
+        }
+
+        /* Main content area with padding */
+        .content {
+            padding: 1rem;
+            margin: 20px;
         }
 
         /* User card */
         .user-info {
             display: flex;
             align-items: center;
-            padding: 4px 5px; /* Reduced padding */
+            gap: 6px;
+            padding: 5px 7px;
+            margin-top: 12px;
             background-color: #f8f9f9;
             border-radius: 3px;
             font-size: 12px; /* Smaller font */
@@ -224,6 +272,21 @@
             width: 28px; /* Smaller avatar */
             height: 28px;
             border-radius: 3px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-details a {
+            color: #0074cc;
+            text-decoration: none;
+        }
+
+        .user-reputation {
+            font-weight: bold;
+            color: #6a737c;
         }
 
         /* Post tags */
@@ -243,7 +306,10 @@
             text-decoration: none;
         }
 
-        /* Additional styles for Stack Overflow clone */
+        .post-tag:hover {
+            background-color: #d0e3f1;
+            color: #2c5777;
+        }
 
         /* Post content formatting */
         .post-text {
@@ -527,6 +593,44 @@
             }
         }
 
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .question-header h1 {
+            flex: 1 1 100%;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .question-metadata {
+            flex: 1 1 auto;
+            font-size: 14px;
+            color: #6a737c;
+        }
+
+        .ask-button {
+            flex-shrink: 0;
+        }
+
+        .ask-button .button {
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .ask-button .button:hover {
+            background-color: #0056b3;
+        }
+
+
         /* Add some styles for blockquotes */
         .post-text blockquote {
             padding: 10px;
@@ -594,6 +698,196 @@
             color: #0074cc;
             min-width: 16px;
         }
+
+        /* Comment styles */
+        .comments-section {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #e3e6e8;
+        }
+
+        .comment {
+            padding: 6px 0;
+            display: flex;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 13px;
+        }
+
+        .comment-content {
+            flex-grow: 1;
+            color: #3b4045;
+        }
+
+        .comment-user {
+            color: #0074cc;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .comment-timestamp {
+            color: #9199a1;
+            margin-left: 4px;
+        }
+
+        .comment-actions {
+            display: none;
+            margin-left: 8px;
+        }
+
+        .comment:hover .comment-actions {
+            display: block;
+        }
+
+        .comment-actions a {
+            color: #9199a1;
+            margin-left: 6px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .comment-actions a:hover {
+            color: #0074cc;
+        }
+
+        .add-comment-link {
+            color: #9199a1;
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .add-comment-link:hover {
+            color: #0074cc;
+        }
+
+        .comment-form {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .comment-form.active {
+            display: block;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            height: 80px;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .comment-submit-button {
+            background-color: #0a95ff;
+            color: white;
+            border: 1px solid #0a95ff;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .comment-cancel-button {
+            background-color: #f8f9f9;
+            color: #6a737c;
+            border: 1px solid #d6d9dc;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-comment-form {
+            display: none;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .edit-comment-form.active {
+            display: block;
+        }
+
+        /* Delete button styling */
+        .delete-question {
+            background: none;
+            border: none;
+            color: #6a737c;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .delete-question:hover {
+            color: #0074cc;
+        }
+
+        /* Header styles for navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #f8f9f9;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        .header-logo {
+            height: 30px;
+            margin-right: 16px;
+        }
+
+        .header-navigation {
+            display: flex;
+            gap: 16px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .header-navigation a {
+            color: #535a60;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .header-navigation a:hover {
+            color: #0c0d0e;
+        }
+
+        .header-search {
+            flex-grow: 1;
+            max-width: 700px;
+            margin: 0 16px;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+        }
+
+        .header-auth {
+            display: flex;
+            gap: 8px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
@@ -644,10 +938,10 @@
                     <!-- Question content -->
                     <div class="post-cell">
                         <!-- Main question image if present -->
-                        <!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
-                        <!--                            <img th:src="${question.imageURL}" alt="Question image"-->
-                        <!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
-                        <!--                        </div>-->
+<!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
+<!--                            <img th:src="${question.imageURL}" alt="Question image"-->
+<!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
+<!--                        </div>-->
 
                         <!-- Question content -->
                         <div class="post-text" id="question-content">
@@ -695,6 +989,58 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="comments-section">
+                            <div class="comments-list">
+                                <!-- Sample comments - these will be replaced by actual comments from the backend -->
+                                <div class="comment">
+                                    <div class="comment-content">
+                                        This is a helpful question. I've been struggling with a similar issue.
+                                        <a href="/users/123" class="comment-user">JohnDoe</a>
+                                        <span class="comment-timestamp">Feb 20, 2023</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <a href="#" class="edit-comment-link">Edit</a>
+                                        <a href="#" class="delete-comment-link">Delete</a>
+                                    </div>
+                                </div>
+                                <div class="comment">
+                                    <div class="comment-content">
+                                        Have you tried using a different approach to this problem?
+                                        <a href="/users/456" class="comment-user">JaneSmith</a>
+                                        <span class="comment-timestamp">Feb 21, 2023</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <a href="#" class="edit-comment-link">Edit</a>
+                                        <a href="#" class="delete-comment-link">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a class="add-comment-link">Add a comment</a>
+
+                            <div class="comment-form">
+                                <form id="question-comment-form">
+                                    <textarea name="comment" placeholder="Use comments to ask for clarification or add more information. Avoid answering questions in comments."></textarea>
+                                    <div class="comment-form-actions">
+                                        <button type="button" class="comment-cancel-button">Cancel</button>
+                                        <button type="submit" class="comment-submit-button">Add Comment</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="edit-comment-form">
+                                <form id="edit-comment-form">
+                                    <input type="hidden" name="commentId" value="">
+                                    <textarea name="editedComment" placeholder="Edit your comment here"></textarea>
+                                    <div class="comment-form-actions">
+                                        <button type="button" class="edit-comment-cancel-button">Cancel</button>
+                                        <button type="submit" class="edit-comment-submit-button">Save Edits</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -740,6 +1086,36 @@
                                     </div>
                                     <div class="user-details">
                                         <a href="#" th:text="${answer.userName}">Username</a>
+                                    </div>
+                                </div>
+
+                                <div class="comments-section">
+                                    <div class="comments-list">
+                                        <!-- Sample comments for answer -->
+                                        <div class="comment">
+                                            <div class="comment-content">
+                                                This is a well-explained answer. Thanks!
+                                                <a href="/users/789" class="comment-user">TechUser</a>
+                                                <span class="comment-timestamp">Feb 22, 2023</span>
+                                            </div>
+                                            <div class="comment-actions">
+                                                <a href="#" class="edit-comment-link">Edit</a>
+                                                <a href="#" class="delete-comment-link">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a class="add-comment-link">Add a comment</a>
+
+                                    <div class="comment-form">
+                                        <form class="answer-comment-form">
+                                            <input type="hidden" name="answerId" value="${answer.id}">
+                                            <textarea name="comment" placeholder="Use comments to ask for clarification or add more information. Avoid answering questions in comments."></textarea>
+                                            <div class="comment-form-actions">
+                                                <button type="button" class="comment-cancel-button">Cancel</button>
+                                                <button type="submit" class="comment-submit-button">Add Comment</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -1174,6 +1550,216 @@
             const answerHtml = renderer.render(parsedAnswer);
             console.log('Rendered HTML:', answerHtml);
             element.innerHTML = answerHtml;
+        }
+    });
+
+    // Add this to your existing script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle showing/hiding comment forms
+        document.querySelectorAll('.add-comment-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const commentForm = this.nextElementSibling;
+                commentForm.classList.add('active');
+                commentForm.querySelector('textarea').focus();
+            });
+        });
+
+        // Handle comment cancel buttons
+        document.querySelectorAll('.comment-cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.comment-form');
+                form.classList.remove('active');
+                form.querySelector('textarea').value = '';
+            });
+        });
+
+        // Handle comment submission
+        document.querySelectorAll('.comment-submit-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const commentText = form.querySelector('textarea').value.trim();
+
+                if (commentText === '') {
+                    showErrorToast('Comment cannot be empty');
+                    return;
+                }
+
+                // Determine if this is a question comment or answer comment
+                const isQuestionComment = form.id === 'question-comment-form';
+                const answerId = isQuestionComment ? null : form.querySelector('input[name="answerId"]').value;
+
+                // This would be replaced with actual API call
+                simulateAddComment(commentText, isQuestionComment, answerId, form);
+            });
+        });
+
+        // Handle edit comment links
+        document.querySelectorAll('.edit-comment-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const comment = this.closest('.comment');
+                const commentText = comment.querySelector('.comment-content').textContent.trim();
+                const commentId = comment.dataset.commentId || '1'; // In real app, use actual ID
+
+                // Find the closest edit form in this comment section
+                const commentSection = comment.closest('.comments-section');
+                const editForm = commentSection.querySelector('.edit-comment-form');
+
+                // Position the form after this specific comment
+                comment.after(editForm);
+
+                // Set the form values and show it
+                editForm.querySelector('input[name="commentId"]').value = commentId;
+                editForm.querySelector('textarea').value = commentText;
+                editForm.classList.add('active');
+
+                // Hide the comment temporarily
+                comment.style.display = 'none';
+            });
+        });
+
+        // Handle edit cancel buttons
+        document.querySelectorAll('.edit-comment-cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.edit-comment-form');
+                form.classList.remove('active');
+
+                // Show the comment again
+                const commentId = form.querySelector('input[name="commentId"]').value;
+                const comment = document.querySelector(`.comment[data-comment-id="${commentId}"]`) ||
+                    form.previousElementSibling;
+
+                if (comment) {
+                    comment.style.display = 'flex';
+                }
+            });
+        });
+
+        // Handle edit submission
+        document.querySelectorAll('.edit-comment-submit-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const editedText = form.querySelector('textarea').value.trim();
+                const commentId = form.querySelector('input[name="commentId"]').value;
+
+                if (editedText === '') {
+                    showErrorToast('Comment cannot be empty');
+                    return;
+                }
+
+                // This would be replaced with actual API call
+                simulateEditComment(commentId, editedText, form);
+            });
+        });
+
+        // Handle delete comment links
+        document.querySelectorAll('.delete-comment-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    const comment = this.closest('.comment');
+                    const commentId = comment.dataset.commentId || '1'; // In real app, use actual ID
+
+                    // This would be replaced with actual API call
+                    simulateDeleteComment(commentId, comment);
+                }
+            });
+        });
+
+        // Simulation functions for frontend testing
+        function simulateAddComment(text, isQuestionComment, answerId, form) {
+            // In a real application, this would be an API call
+            console.log(`Adding ${isQuestionComment ? 'question' : 'answer'} comment: ${text}`);
+
+            // Create a new comment element
+            const commentsList = form.closest('.comments-section').querySelector('.comments-list');
+            const newComment = document.createElement('div');
+            newComment.className = 'comment';
+            newComment.dataset.commentId = Math.floor(Math.random() * 1000); // Simulate a new ID
+
+            const currentUser = 'CurrentUser'; // This would come from your auth system
+            const currentDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            newComment.innerHTML = `
+            <div class="comment-content">
+                ${text}
+                <a href="/users/current" class="comment-user">${currentUser}</a>
+                <span class="comment-timestamp">${currentDate}</span>
+            </div>
+            <div class="comment-actions">
+                <a href="#" class="edit-comment-link">Edit</a>
+                <a href="#" class="delete-comment-link">Delete</a>
+            </div>
+        `;
+
+            // Add event listeners to the new comment
+            newComment.querySelector('.edit-comment-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Same edit logic as above
+                const comment = this.closest('.comment');
+                const commentText = comment.querySelector('.comment-content').textContent.trim();
+                const commentId = comment.dataset.commentId;
+
+                const commentSection = comment.closest('.comments-section');
+                const editForm = commentSection.querySelector('.edit-comment-form');
+
+                comment.after(editForm);
+
+                editForm.querySelector('input[name="commentId"]').value = commentId;
+                editForm.querySelector('textarea').value = commentText;
+                editForm.classList.add('active');
+
+                comment.style.display = 'none';
+            });
+
+            newComment.querySelector('.delete-comment-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    const comment = this.closest('.comment');
+                    const commentId = comment.dataset.commentId;
+
+                    simulateDeleteComment(commentId, comment);
+                }
+            });
+
+            // Add the new comment to the list
+            commentsList.appendChild(newComment);
+
+            // Reset and hide the form
+            form.querySelector('textarea').value = '';
+            form.classList.remove('active');
+        }
+
+        function simulateEditComment(commentId, editedText, form) {
+            // In a real application, this would be an API call
+            console.log(`Editing comment ${commentId}: ${editedText}`);
+
+            // Find the comment (in a real app, you might reload it from the server)
+            const comment = document.querySelector(`.comment[data-comment-id="${commentId}"]`) ||
+                form.previousElementSibling;
+
+            if (comment) {
+                // Update the comment text
+                const contentDiv = comment.querySelector('.comment-content');
+                const userPart = contentDiv.innerHTML.substring(contentDiv.innerHTML.indexOf('<a'));
+                contentDiv.innerHTML = editedText + ' ' + userPart;
+
+                // Show the comment again
+                comment.style.display = 'flex';
+            }
+
+            // Hide the edit form
+            form.classList.remove('active');
+        }
+
+        function simulateDeleteComment(commentId, commentElement) {
+            // In a real application, this would be an API call
+            console.log(`Deleting comment ${commentId}`);
+
+            // Remove the comment from the DOM
+            commentElement.remove();
         }
     });
 </script>

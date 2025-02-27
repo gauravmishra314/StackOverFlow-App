@@ -10,50 +10,55 @@
     }
     .sidebar {
       width: 220px;
-      background-color: #2d2d2d;
-      color: #ffffff;
+      background-color: #ffffff; /* White background */
+      color: #333333; /* Dark text for contrast */
       padding: 10px;
       height: 100vh;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     }
     .sidebar-item {
-      padding: 10px;
-      margin: 5px 0;
+      padding: 8px;
+      margin: 4px 0;
       border-radius: 4px;
       display: flex;
       align-items: center;
     }
     .sidebar-item.active {
-      background-color: #3d3d3d;
+      background-color: #e9ecef; /* Light gray for active item */
     }
     .sidebar-item span {
-      margin-right: 10px;
+      margin-right: 8px;
       filter: grayscale(100%);
     }
     .sidebar-item a {
       text-decoration: none;
       color: inherit;
     }
+    .sidebar-item a:hover {
+      text-decoration: underline;
+    }
     .sidebar-section {
-      margin-top: 20px;
+      margin-top: 15px;
     }
     .sidebar-section-header {
       font-size: 12px;
-      color: #a0a0a0;
-      margin-bottom: 10px;
+      color: #6c757d; /* Gray for section headers */
+      margin-bottom: 8px;
     }
     .sidebar-item a {
-      color: #ffffff;
+      margin-top: 4px;
+      color: #333333; /* Dark text for links */
     }
     .sidebar-item a:hover {
       text-decoration: underline;
     }
     .sidebar-section .sidebar-item {
-      background-color: #3d3d3d;
-      padding: 15px;
-      margin: 10px 0;
+      background-color: #f8f9fa; /* Light gray for section items */
+      padding: 10px;
+      margin: 8px 0;
     }
     .sidebar-section .sidebar-item a {
-      color: #ffffff;
+      color: #333333; /* Dark text for links */
       text-decoration: none;
     }
     .sidebar-section .sidebar-item a:hover {
