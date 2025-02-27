@@ -1,6 +1,9 @@
 package com.springapp.stackoverflow.controller;
 
 import com.springapp.stackoverflow.dto.AnswerDTO;
+import com.springapp.stackoverflow.dto.QuestionDTO;
+import com.springapp.stackoverflow.model.Question;
+import com.springapp.stackoverflow.repository.QuestionRepository;
 import com.springapp.stackoverflow.service.AnswerService;
 import com.springapp.stackoverflow.service.CloudinaryService;
 import com.springapp.stackoverflow.service.TagService;
@@ -18,6 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AnswerController {
@@ -26,15 +30,18 @@ public class AnswerController {
     private final TagService tagService;
     private final CloudinaryService cloudinaryService;
     private static final Logger logger = LoggerFactory.getLogger(AnswerController.class);
+    private QuestionRepository questionRepository;
 
     @Autowired
     public AnswerController(
             AnswerService answerService,
             TagService tagService,
-            CloudinaryService cloudinaryService) {
+            CloudinaryService cloudinaryService,
+            QuestionRepository questionRepository) {
         this.answerService = answerService;
         this.tagService = tagService;
         this.cloudinaryService = cloudinaryService;
+        this.questionRepository = questionRepository;
     }
 
     @PostMapping("/answers/{id}")
@@ -110,7 +117,9 @@ public class AnswerController {
             String finalContent = contentBuilder.toString().trim();
             logger.info("Final answer content: {}", finalContent);
             answerDTO.setBody(finalContent);
-
+            Optional<Question> questionOptional = questionRepository.findById(id);
+            Question questionOp = questionOptional.get();
+            questionOp.setAnswerCount(questionOp.getAnswerCount()+1);
             answerService.createAnswer(answerDTO, null, id);
             return "redirect:/questions/" + id;
 
