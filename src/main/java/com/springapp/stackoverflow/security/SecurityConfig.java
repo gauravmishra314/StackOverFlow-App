@@ -45,7 +45,8 @@ public class SecurityConfig {
                                 "/signup/**",
                                 "/logout/**",
                                 "/profile/**",
-                                "/change-password/**"
+                                "/change-password/**",
+                                "questions/**"
                         ).permitAll()
                         .requestMatchers(
                                "/questions/{id}/comment/**",
@@ -55,7 +56,6 @@ public class SecurityConfig {
                                 "/answer/{answerId}/comment/{commentId}/**",
                                 "/questions/{id}/comment/{deleteID}/**",
                                 "/questions/{questionId}/edit/{commentId}/**",
-                                "/questions/ask/**",
                                 "/profile/update/**"
                         ).hasAnyRole("ADMIN","AUTHOR")
                         .requestMatchers("/comment/reply/**").authenticated()

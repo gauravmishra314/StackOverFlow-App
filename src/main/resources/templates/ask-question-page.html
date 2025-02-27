@@ -2,19 +2,153 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="${isEditMode} ? 'Edit Question - Stack Overflow' : 'Ask a Question - Stack Overflow'">Ask a Question - Stack Overflow</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        /* Header Styles */
+        .header {
+            background-color: #fff;
+            border-top: 3px solid #f48024;
+            border-bottom: 1px solid #e4e6e8;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 50px;
+        }
+        .logo {
+            height: 30px;
+            margin-right: 20px;
+        }
+        .nav-items {
+            display: flex;
+            gap: 15px;
+            margin-right: auto;
+            font-size: 14px;
+            color: #535a60;
+        }
+        .nav-items span {
+            cursor: pointer;
+        }
+        .nav-items span:hover {
+            color: #0c0d0e;
+        }
+        .search-bar {
+            flex-grow: 1;
+            max-width: 700px;
+            margin: 0 15px;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .search-bar input:focus {
+            outline: none;
+            border-color: #6c757d;
+            box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.3);
+        }
+        .icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 14px;
+            color: #535a60;
+        }
+        .icons span {
+            cursor: pointer;
+        }
+        .icons span:hover {
+            color: #0c0d0e;
+        }
+        .reputation {
+            color: #535a60;
+            font-weight: bold;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 164px;
+            background-color: #ffffff;
+            color: #333333;
+            padding: 10px;
+            height: calc(100vh - 50px);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 50px;
+            left: 0;
+            z-index: 900;
+        }
+        .sidebar-item {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        .sidebar-item.active {
+            background-color: #e9ecef;
+            font-weight: 500;
+        }
+        .sidebar-item span {
+            margin-right: 8px;
+            filter: grayscale(100%);
+        }
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .sidebar-item a:hover {
+            color: #0c0d0e;
+        }
+        .sidebar-section {
+            margin-top: 15px;
+        }
+        .sidebar-section-header {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 8px;
+            font-weight: bold;
+            padding-left: 8px;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 184px; /* Increased from 164px to add gap */
+            margin-right: 20px; /* Gap on right side */
+            margin-top: 70px; /* Increased to create space below header */
+            max-width: 1200px;
+        }
+        .info-box {
+            background-color: #e7f3fe;
+            border: 1px solid #d0e3f1;
+            border-radius: 3px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
         .content-block {
             margin-bottom: 1rem;
             position: relative;
         }
-
         .content-block img {
             max-width: 100%;
             height: auto;
         }
-
         .content-controls {
             position: absolute;
             top: 0;
@@ -24,12 +158,10 @@
             padding: 4px;
             border-radius: 4px;
         }
-
         .content-block:hover .content-controls {
             display: flex;
             gap: 4px;
         }
-
         .tag {
             background-color: #e1ecf4;
             color: #39739d;
@@ -41,7 +173,6 @@
             margin-right: 4px;
             margin-bottom: 4px;
         }
-
         .tag button {
             margin-left: 6px;
             color: #39739d;
@@ -51,158 +182,334 @@
             background: none;
             padding: 0 2px;
         }
-
-        .sidebar-item {
-            padding: 8px 16px;
-            color: #535a60;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-        }
-
         .toolbar-button {
             padding: 6px 10px;
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 4px;
             cursor: pointer;
+            margin: 0 2px;
         }
-
         .toolbar-button:hover {
             background: #e9ecef;
         }
-
         .image-preview {
             max-width: 200px;
             max-height: 200px;
             object-fit: contain;
             margin: 8px 0;
         }
+        .next-button {
+            background-color: #0a95ff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .next-button:hover {
+            background-color: #0074cc;
+        }
+        .card {
+            background-color: white;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .card-content {
+            color: #3b4045;
+        }
+        h1.page-title {
+            font-size: 27px;
+            margin-bottom: 24px;
+            font-weight: 400;
+            color: #232629;
+        }
+        .form-label {
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .form-hint {
+            color: #6a737c;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #6bbbf7;
+            box-shadow: 0 0 0 4px rgba(0, 149, 255, 0.15);
+        }
+        .editor-toolbar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 8px;
+            border: 1px solid #d6d9dc;
+            border-radius: 3px 3px 0 0;
+            padding: 8px;
+            background-color: #f8f9fa;
+        }
+        .title-tip {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 16px;
+            background-color: white;
+            border: 1px solid #e3e6e8;
+            border-radius: 3px;
+        }
+        .title-tip-icon {
+            color: #0074cc;
+            font-size: 24px;
+        }
+        .title-tip-content h3 {
+            color: #232629;
+            font-size: 15px;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .title-tip-content p {
+            color: #3b4045;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .questions-list {
+            list-style-type: disc;
+            margin-left: 30px;
+        }
+        .questions-list li {
+            margin-bottom: 8px;
+        }
+        .editor-container {
+            border: 1px solid #d6d9dc;
+            border-top: none;
+            border-radius: 0 0 3px 3px;
+            min-height: 200px;
+        }
+        .editor-placeholder {
+            padding: 16px;
+            color: #6a737c;
+        }
+        .form-section {
+            margin-bottom: 24px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        /* Formatting buttons */
+        .format-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2px;
+        }
+        .content-blocks {
+            border: 1px solid #d6d9dc;
+            border-top: none;
+            min-height: 200px;
+            padding: 16px;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
-<!-- Navigation -->
-<nav class="bg-white border-b border-gray-300 fixed w-full top-0 z-50">
-    <div class="max-w-full mx-auto px-4">
-        <div class="flex justify-between items-center h-14">
-            <div class="flex items-center space-x-4">
-                <img src="/api/placeholder/150/30" alt="Stack Overflow" class="h-8">
-                <a href="#" class="text-gray-600 hover:text-gray-900">Products</a>
-            </div>
-            <div class="flex-1 max-w-xl px-4">
-                <input type="text" placeholder="Search..." class="w-full px-4 py-1 border border-gray-300 rounded-md">
-            </div>
-            <div class="flex items-center space-x-4">
-                <span class="text-gray-500">1</span>
-                <span class="text-gray-500">📫</span>
-                <span class="text-gray-500">🏆</span>
-            </div>
+<body>
+<!-- Header -->
+<div class="header">
+    <img src="https://stackoverflow.design/assets/img/logos/so/logo-stackoverflow.svg" alt="Stack Overflow" class="logo">
+    <div class="nav-items">
+        <span>Products</span>
+        <span>OverflowAI</span>
+    </div>
+    <div class="search-bar">
+        <input type="text" placeholder="Search...">
+    </div>
+    <div class="icons">
+        <span class="reputation">🔶 1</span>
+        <span>📩</span>
+        <span>🏆</span>
+        <span>❓</span>
+        <span>☰</span>
+    </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="sidebar-item">
+        <span>🏠</span><a href="/">Home</a>
+    </div>
+    <div class="sidebar-item active">
+        <span>❓</span><a href="/questions">Questions</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🏷️</span><a href="/tags">Tags</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🔖</span><a href="/saves">Saves</a>
+    </div>
+    <div class="sidebar-item">
+        <span>👥</span><a href="/users">Users</a>
+    </div>
+    <div class="sidebar-item">
+        <span>🏢</span><a href="/companies">Companies</a>
+    </div>
+
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">LABS</div>
+        <div class="sidebar-item">
+            <span>💬</span><a href="/discussions">Discussions</a>
         </div>
     </div>
-</nav>
 
-<div class="flex mt-14">
-    <!-- Left Sidebar -->
-    <div class="w-52 fixed h-full border-r border-gray-300 bg-white">
-        <nav class="pt-4">
-            <a href="/" class="sidebar-item">
-                <span class="mr-2">🏠</span> Home
-            </a>
-            <a href="/questions" class="sidebar-item">
-                <span class="mr-2">❓</span> Questions
-            </a>
-            <a href="/tags" class="sidebar-item">
-                <span class="mr-2">🏷️</span> Tags
-            </a>
-        </nav>
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">COLLECTIVES</div>
+        <div class="sidebar-item">
+            <span>📚</span><a href="/collectives">Explore Collectives</a>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="ml-52 p-6 flex-1 max-w-4xl">
-        <h1 class="text-2xl font-bold mb-4" th:text="${isEditMode} ? 'Edit Question' : 'Ask a question'">Ask a question</h1>
-
-        <form id="questionForm"
-              th:action="${isEditMode} ? @{/questions/edit/{id}(id=${questionDTO.id})} : @{/questions/ask}"
-              th:object="${questionDTO}"
-              method="post"
-              enctype="multipart/form-data"
-              class="space-y-6">
-
-            <!-- Hidden fields for content blocks -->
-            <input type="hidden" name="contentBlocksData" id="contentBlocksData">
-            <input type="hidden" name="contentBlockTypes" id="contentBlockTypes">
-            <input type="hidden" th:if="${isEditMode}" th:field="*{id}">
-
-            <div class="bg-white p-6 rounded-lg border border-gray-200 space-y-6">
-                <!-- Title -->
-                <div>
-                    <label for="title" class="block font-bold mb-2">Title</label>
-                    <p class="text-gray-600 text-sm mb-2">Be specific and imagine you're asking a question to another person.</p>
-                    <input type="text"
-                           id="title"
-                           th:field="*{title}"
-                           class="w-full p-2 border border-gray-300 rounded-md"
-                           required
-                           placeholder="e.g. Why is my React component not rendering?"/>
-                </div>
-
-                <!-- Content Editor -->
-                <div>
-                    <label class="block font-bold mb-2">What are the details of your problem?</label>
-                    <p class="text-gray-600 text-sm mb-2">Introduce the problem and expand on what you put in the title. Minimum 20 characters.</p>
-
-                    <!-- Toolbar -->
-                    <div class="flex gap-2 mb-2">
-                        <button type="button" class="toolbar-button" onclick="addTextBlock()">
-                            Add Text
-                        </button>
-                        <button type="button" class="toolbar-button" onclick="triggerImageUpload()">
-                            Add Image
-                        </button>
-                        <input type="file"
-                               id="imageUpload"
-                               accept="image/*"
-                               style="display: none"
-                               onchange="handleImageUpload(event)">
-                    </div>
-
-                    <!-- Content Blocks Container -->
-                    <div id="contentBlocks" class="border border-gray-300 rounded-md p-4 min-h-[200px]">
-                    </div>
-                </div>
-
-                <!-- Tags -->
-                <div>
-                    <label for="tagInput" class="block font-bold mb-2">Tags</label>
-                    <p class="text-gray-600 text-sm mb-2">Add up to 5 tags to describe what your question is about</p>
-                    <input type="text"
-                           id="tagInput"
-                           class="w-full p-2 border border-gray-300 rounded-md"
-                           placeholder="Enter tags (press Enter or comma to add)"/>
-                    <div id="selectedTags" class="flex flex-wrap gap-2 mt-2"></div>
-                    <input type="hidden" id="tagsInput" th:field="*{tags}">
-                </div>
-
-                <!-- Excerpt/Attempts -->
-                <div>
-                    <label for="attempts" class="block font-bold mb-2">What did you try and what were you expecting?</label>
-                    <p class="text-gray-600 text-sm mb-2">Describe what you tried, what you expected to happen, and what actually resulted.</p>
-                    <textarea id="attempts"
-                              th:field="*{excerpt}"
-                              class="w-full p-2 border border-gray-300 rounded-md min-h-[150px]"
-                              required></textarea>
-                </div>
-            </div>
-
-            <!-- Submit Buttons -->
-            <div class="flex justify-end gap-4">
-                <button type="submit"
-                        class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
-                    Post Your Question
-                </button>
-            </div>
-        </form>
+    <div class="sidebar-section">
+        <div class="sidebar-section-header">TEAMS</div>
+        <div class="sidebar-item">
+            <span>👥</span><a href="/teams">Explore Teams</a>
+        </div>
     </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <h1 class="page-title" th:text="${isEditMode} ? 'Edit Question' : 'Ask a public question'">Ask a public question</h1>
+
+    <!-- Writing a good question tips -->
+    <div class="info-box">
+        <h2 class="font-bold text-lg mb-2">Writing a good question</h2>
+        <p class="mb-2">You're ready to <a href="#" class="text-blue-500">ask a programming-related question</a> and this form will help guide you through the process.</p>
+        <p>Looking to ask a non-programming question? See <a href="#" class="text-blue-500">the topics here</a> to find a relevant site.</p>
+
+        <h3 class="font-bold mt-4 mb-1">Steps</h3>
+        <ul class="list-disc ml-8">
+            <li>Summarize your problem in a one-line title.</li>
+            <li>Describe your problem in more detail.</li>
+            <li>Describe what you tried and what you expected to happen.</li>
+            <li>Add "tags" which help surface your question to members of the community.</li>
+            <li>Review your question and post it to the site.</li>
+        </ul>
+    </div>
+
+    <form id="questionForm"
+          th:action="${isEditMode} ? @{/questions/edit/{id}(id=${questionDTO.id})} : @{/questions/ask}"
+          th:object="${questionDTO}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <!-- Hidden fields for content blocks -->
+        <input type="hidden" name="contentBlocksData" id="contentBlocksData">
+        <input type="hidden" name="contentBlockTypes" id="contentBlockTypes">
+        <input type="hidden" th:if="${isEditMode}" th:field="*{id}">
+        <input type="hidden" name="content" id="content">
+
+        <!-- Title Section -->
+        <div class="form-section">
+            <label for="title" class="form-label">Title</label>
+            <p class="form-hint">Be specific and imagine you're asking a question to another person.</p>
+            <input type="text"
+                   id="title"
+                   th:field="*{title}"
+                   class="form-input"
+                   required
+                   placeholder="e.g. Is there an R function for finding the index of an element in a vector?"/>
+
+            <div class="title-tip mt-4">
+                <div class="title-tip-icon">✏️</div>
+                <div class="title-tip-content">
+                    <h3>Writing a good title</h3>
+                    <p>Your title should summarize the problem.</p>
+                    <p>You might find that you have a better idea of your title after writing out the rest of the question.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Problem Details Section -->
+        <div class="form-section">
+            <label class="form-label">What are the details of your problem?</label>
+            <p class="form-hint">Introduce the problem and expand on what you put in the title. Minimum 20 characters.</p>
+
+            <!-- Toolbar -->
+            <div class="editor-toolbar">
+                <div class="format-buttons">
+                    <button type="button" class="toolbar-button">B</button>
+                    <button type="button" class="toolbar-button">I</button>
+                    <button type="button" class="toolbar-button">" "</button>
+                    <button type="button" class="toolbar-button">Link</button>
+                    <button type="button" class="toolbar-button">Image</button>
+                    <button type="button" class="toolbar-button">Code</button>
+                    <button type="button" class="toolbar-button">List</button>
+                </div>
+                <div class="ml-auto">
+                    <button type="button" class="toolbar-button" onclick="addTextBlock()">
+                        Add Text
+                    </button>
+                    <button type="button" class="toolbar-button" onclick="triggerImageUpload()">
+                        Add Image
+                    </button>
+                </div>
+                <input type="file"
+                       id="imageUpload"
+                       accept="image/*"
+                       style="display: none"
+                       onchange="handleImageUpload(event)">
+            </div>
+
+            <!-- Content Blocks Container -->
+            <div id="contentBlocks" class="content-blocks">
+                <div class="editor-placeholder">
+                    Introduce the problem and expand on what you put in the title. Minimum 20 characters.
+                </div>
+            </div>
+        </div>
+
+        <!-- Tags Section -->
+        <div class="form-section">
+            <label for="tagInput" class="form-label">Tags</label>
+            <p class="form-hint">Add up to 5 tags to describe what your question is about</p>
+            <input type="text"
+                   id="tagInput"
+                   class="form-input"
+                   placeholder="Enter tags (press Enter or comma to add)"/>
+            <div id="selectedTags" class="flex flex-wrap gap-2 mt-2"></div>
+            <input type="hidden" id="tagsInput" th:field="*{tags}" name="tags">
+        </div>
+
+        <!-- Excerpt/Attempts Section -->
+        <div class="form-section">
+            <label for="attempts" class="form-label">What did you try and what were you expecting?</label>
+            <p class="form-hint">Describe what you tried, what you expected to happen, and what actually resulted.</p>
+            <textarea id="attempts"
+                      name="excerpt"
+                      th:field="*{excerpt}"
+                      class="form-input min-h-[150px]"
+                      required></textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="flex justify-end gap-4 mb-8">
+            <button type="submit" class="next-button">
+                Post Your Question
+            </button>
+        </div>
+    </form>
 </div>
 
 <script>
@@ -211,6 +518,12 @@
     const contentBlocksContainer = document.getElementById('contentBlocks');
 
     function addTextBlock() {
+        // Clear placeholder if it exists
+        const placeholder = contentBlocksContainer.querySelector('.editor-placeholder');
+        if (placeholder) {
+            placeholder.remove();
+        }
+
         const blockId = `block-${Date.now()}`;
         const block = {
             id: blockId,
@@ -236,6 +549,9 @@
 
         contentBlocksContainer.appendChild(blockDiv);
         textarea.focus();
+
+        // Update hidden content field
+        updateContentField();
     }
 
     function createBlockControls(blockId) {
@@ -272,6 +588,12 @@
         const file = event.target.files[0];
         if (!file) return;
 
+        // Clear placeholder if it exists
+        const placeholder = contentBlocksContainer.querySelector('.editor-placeholder');
+        if (placeholder) {
+            placeholder.remove();
+        }
+
         const blockId = `block-${Date.now()}`;
         const block = {
             id: blockId,
@@ -297,12 +619,17 @@
         const reader = new FileReader();
         reader.onload = (e) => img.src = e.target.result;
         reader.readAsDataURL(file);
+
+        // Update hidden content field
+        updateContentField();
     }
 
     function updateBlockContent(blockId, content) {
         const block = contentBlocks.find(b => b.id === blockId);
         if (block) {
             block.content = content;
+            // Update hidden content field
+            updateContentField();
         }
     }
 
@@ -326,6 +653,16 @@
 
     function renderBlocks() {
         contentBlocksContainer.innerHTML = '';
+
+        if (contentBlocks.length === 0) {
+            // Add placeholder back if no blocks left
+            const placeholder = document.createElement('div');
+            placeholder.className = 'editor-placeholder';
+            placeholder.textContent = 'Introduce the problem and expand on what you put in the title. Minimum 20 characters.';
+            contentBlocksContainer.appendChild(placeholder);
+            return;
+        }
+
         contentBlocks.forEach(block => {
             const blockDiv = document.createElement('div');
             blockDiv.className = 'content-block';
@@ -378,8 +715,6 @@
 
     function addTag(tag) {
         tag = tag.trim().toLowerCase();
-        if (tag && !tags.includes(tag) && tags.length < 5)
-            tag = tag.trim().toLowerCase();
         if (tag && !tags.includes(tag) && tags.length < 5) {
             tags.push(tag);
             updateTags();
@@ -473,24 +808,31 @@
             submitButton.disabled = true;
             submitButton.textContent = 'Posting...';
 
-            await fetch(this.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                return response.text();
-            }).then(htmlResponse => {
+
+                const htmlResponse = await response.text();
+
                 // Check if response contains redirect URL
                 const match = htmlResponse.match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/);
                 if (match) {
                     window.location.href = match[1];
                 } else {
-                    // If no redirect found, reload the page
-                    window.location.reload();
+                    // If no redirect found, show success message
+                    alert('Question submitted successfully!');
+                    window.location.href = '/questions';
                 }
-            });
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting question. Please try again.');
+            }
 
         } catch (error) {
             console.error('Error:', error);
@@ -533,19 +875,6 @@
             renderBlocks();
         }
     }
-
-    // Initialize tags if in edit mode
-    if (tagsInput.value) {
-        const existingTags = tagsInput.value.split(',');
-        existingTags.forEach(tag => addTag(tag));
-    }
-
-    // Call initialization function
-    initializeExistingContent();
-
-    // Add a hidden input for the content field
-    document.querySelector('#questionForm').insertAdjacentHTML('afterbegin',
-        '<input type="hidden" name="content" id="content">');
 
     function updateContentField() {
         const contentField = document.querySelector('input[name="content"]');
