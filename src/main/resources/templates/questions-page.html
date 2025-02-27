@@ -278,7 +278,7 @@
       <button class="filter-button">
         Bountied <span style="background-color: #0074cc; color: white; padding: 2px 4px; border-radius: 3px; font-size: 11px;">74</span>
       </button>
-      <form th:action="@{/questions/unanswered}" th:method="GET">
+      <form th:action="@{/questions/unanswered}" th:methodq="GET">
         <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
       </form>
       <button class="filter-button">More</button>
@@ -340,16 +340,6 @@
         </div>
       </div>
     </div>
-
-<!--    &lt;!&ndash; Pagination &ndash;&gt;-->
-<!--    <div class="pagination" th:if="${totalPages > 1}">-->
-<!--      <a th:href="@{/questions(page=0, query=${param.query}, tags=${param.tags})}">&laquo;</a>-->
-<!--      <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"-->
-<!--         th:href="@{/questions(page=${i}, query=${param.query}, tags=${param.tags})}"-->
-<!--         th:text="${i + 1}"-->
-<!--         th:class="${currentPage == i ? 'active' : ''}">1</a>-->
-<!--      <a th:href="@{/questions(page=${totalPages-1}, query=${param.query}, tags=${param.tags})}">&raquo;</a>-->
-<!--    </div>-->
 
     <!-- Pagination -->
     <div class="pagination" th:if="${totalPages > 1}">

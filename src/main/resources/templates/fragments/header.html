@@ -7,36 +7,6 @@
     <title>Stack Overflow Clone - Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-      .sidebar-item {
-        padding: 8px 16px;
-        color: #535a60;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-      }
-      .sidebar-item:hover {
-        background-color: #f8f9f9;
-      }
-      .active {
-        background-color: #f8f9f9;
-        border-right: 3px solid #f48225;
-        font-weight: bold;
-        color: black;
-      }
-      .tag {
-        background-color: #e1ecf4;
-        color: #39739d;
-        padding: 4px 8px;
-        border-radius: 3px;
-        font-size: 12px;
-        text-decoration: none;
-      }
-      .tag:hover {
-        background-color: #d0e3f1;
-      }
-      .filter-button.active {
-        background-color: #e3e6e8;
-      }
       body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -50,6 +20,7 @@
         padding: 8px 20px;
         display: flex;
         align-items: center;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
       .logo {
         height: 30px;
@@ -59,6 +30,14 @@
         display: flex;
         gap: 15px;
         margin-right: auto;
+        font-size: 14px;
+        color: #535a60;
+      }
+      .nav-items span {
+        cursor: pointer;
+      }
+      .nav-items span:hover {
+        color: #0c0d0e;
       }
       .search-bar {
         flex-grow: 1;
@@ -70,11 +49,29 @@
         padding: 8px;
         border: 1px solid #babfc4;
         border-radius: 3px;
+        font-size: 14px;
+      }
+      .search-bar input:focus {
+        outline: none;
+        border-color: #6c757d;
+        box-shadow: 0 0 0 3px rgba(108, 117, 125, 0.3);
       }
       .icons {
         display: flex;
         gap: 15px;
         align-items: center;
+        font-size: 14px;
+        color: #535a60;
+      }
+      .icons span {
+        cursor: pointer;
+      }
+      .icons span:hover {
+        color: #0c0d0e;
+      }
+      .reputation {
+        color: #535a60;
+        font-weight: bold;
       }
     </style>
   </th:block>
@@ -93,8 +90,8 @@
       </form>
     </div>
     <div class="icons">
-      <span th:if="${user != null}" th:text="${'🔶 ' + user.reputation}">🔶 1</span>
-      <span th:unless="${user != null}">🔶 0</span>
+      <span th:if="${user != null}" class="reputation" th:text="${'🔶 ' + user.reputation}">🔶 1</span>
+      <span th:unless="${user != null}" class="reputation">🔶 0</span>
       <span>📩</span>
       <span>🏆</span>
       <span>❓</span>

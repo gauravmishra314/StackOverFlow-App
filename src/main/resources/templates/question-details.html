@@ -563,6 +563,37 @@
         .post-text table th {
             background-color: #f6f8fa;
         }
+
+        .blog-card, .meta-card {
+            background-color: #fff;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .blog-card h3, .meta-card h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e4e6e8;
+        }
+        .blog-link, .meta-link {
+            display: block;
+            margin-bottom: 10px;
+            color: #0074cc;
+            text-decoration: none;
+        }
+        .meta-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        .meta-icon {
+            margin-right: 10px;
+            color: #0074cc;
+            min-width: 16px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
@@ -776,7 +807,47 @@
                     </li>
                 </ul>
             </div>
+
+            <!-- Meta card -->
+            <div class="meta-card">
+                <h3>Featured on Meta</h3>
+
+                <div class="meta-item">
+                    <div class="meta-icon">📢</div>
+                    <a href="#" class="meta-link">Join us for our first community-wide AMA (Ask Me Anything) with Stack...</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">📢</div>
+                    <a href="#" class="meta-link">bigbird and Frog have joined us as Community Managers</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Stacks Editor development and testing</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Policy: Generative AI (e.g., ChatGPT) is banned</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Is it better to redirect users who attempt to perform actions they can't yet...</a>
+                </div>
+            </div>
+
+            <!-- Custom Filters card -->
+            <div class="blog-card">
+                <h3>Custom Filters</h3>
+                <div style="margin-bottom: 15px;">
+                    <a href="#" class="blog-link">Create a custom filter</a>
+                </div>
+            </div>
         </div>
+
+
     </div>
 </div>
 
