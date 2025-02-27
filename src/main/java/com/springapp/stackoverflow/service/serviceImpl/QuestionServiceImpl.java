@@ -228,23 +228,10 @@ public class QuestionServiceImpl implements QuestionService {
         return questions.map(this::convertToDTO);
     }
 
-//    @Override
-//    public Page<QuestionDTO> unAnsweredQuestion(String query, String tags, Pageable pageable) {
-//        Page<Question> questions = questionRepository.findAll(pageable);
-//
-//
-//        for(Question q : questions){
-//            if(!q.getAnswers().isEmpty()){
-//                questions.
-//            }
-//        }
-//        return questions.map(this::convertToDTO);
-//    }
-
     @Transactional
     @Override
     public Page<QuestionDTO> unAnsweredQuestion(String query, String tags, Pageable pageable) {
-        Page<Question> questions = questionRepository.findAll(pageable);
+        Page<Question> questions = questionRepository.findUnansweredQuestions(pageable);
 
         List<QuestionDTO> filteredQuestions = questions.getContent().stream()
                 .filter(q -> q.getAnswers().isEmpty()) // Keep only unanswered questions
