@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar">
+  <div class="sidebar">
+    <div class="sidebar-item active">
+      <span>🏠</span><a th:href="@{/}" style="text-decoration: none; color: inherit;">Home</a>
+    </div>
+    <div class="sidebar-item">
+      <span>❓</span><a th:href="@{/questions}" style="text-decoration: none; color: inherit;">Questions</a>
+    </div>
+    <div class="sidebar-item">
+      <span>🏷️</span><a th:href="@{/tags}" style="text-decoration: none; color: inherit;">Tags</a>
+    </div>
+    <div class="sidebar-item">
+      <span>🔖</span><a th:href="@{/saves}" style="text-decoration: none; color: inherit;">Saves</a>
+    </div>
+    <div class="sidebar-item">
+      <span>👥</span><a th:href="@{/users}" style="text-decoration: none; color: inherit;">Users</a>
+    </div>
+    <div class="sidebar-item">
+      <span>🏢</span><a th:href="@{/companies}" style="text-decoration: none; color: inherit;">Companies</a>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">LABS</div>
+      <div class="sidebar-item">
+        <span>💬</span><a th:href="@{/discussions}" style="text-decoration: none; color: inherit;">Discussions</a>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">COLLECTIVES</div>
+      <div class="sidebar-item">
+        Communities for your favorite technologies.
+        <a th:href="@{/collectives}">Explore all collectives</a>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-header">TEAMS</div>
+      <div class="sidebar-item">
+        Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
+        <a th:href="@{/teams}">Explore Teams</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

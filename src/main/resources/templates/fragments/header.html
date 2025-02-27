@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Overflow Clone - Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+      .sidebar-item {
+        padding: 8px 16px;
+        color: #535a60;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+      }
+      .sidebar-item:hover {
+        background-color: #f8f9f9;
+      }
+      .active {
+        background-color: #f8f9f9;
+        border-right: 3px solid #f48225;
+        font-weight: bold;
+        color: black;
+      }
+      .tag {
+        background-color: #e1ecf4;
+        color: #39739d;
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        text-decoration: none;
+      }
+      .tag:hover {
+        background-color: #d0e3f1;
+      }
+      .filter-button.active {
+        background-color: #e3e6e8;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f6f6f6;
+      }
+      .header {
+        background-color: #fff;
+        border-top: 3px solid #f48024;
+        border-bottom: 1px solid #e4e6e8;
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+      }
+      .logo {
+        height: 30px;
+        margin-right: 20px;
+      }
+      .nav-items {
+        display: flex;
+        gap: 15px;
+        margin-right: auto;
+      }
+      .search-bar {
+        flex-grow: 1;
+        max-width: 700px;
+        margin: 0 15px;
+      }
+      .search-bar input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #babfc4;
+        border-radius: 3px;
+      }
+      .icons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+    </style>
+  </th:block>
+</head>
+<body>
+<div th:fragment="header">
+  <div class="header">
+    <img src="https://stackoverflow.design/assets/img/logos/so/logo-stackoverflow.svg" alt="Stack Overflow" class="logo">
+    <div class="nav-items">
+      <span>Products</span>
+      <span>OverflowAI</span>
+    </div>
+    <div class="search-bar">
+      <form th:action="@{/search}" method="get">
+        <input type="text" name="q" placeholder="Search..." th:value="${param.q}">
+      </form>
+    </div>
+    <div class="icons">
+      <span th:if="${user != null}" th:text="${'🔶 ' + user.reputation}">🔶 1</span>
+      <span th:unless="${user != null}">🔶 0</span>
+      <span>📩</span>
+      <span>🏆</span>
+      <span>❓</span>
+      <span>☰</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
