@@ -1,427 +1,520 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <th:block th:replace="fragments/header :: head"></th:block>
-  <style>
-    body {
-      background-color: #f6f6f6;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-    }
-    .sidebar {
-      width: 220px;
-      background-color: #ffffff; /* White background */
-      color: #333333; /* Dark text for contrast */
-      padding: 10px;
-      height: 100vh;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    }
-    .sidebar-item {
-      padding: 8px;
-      margin: 4px 0;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-    }
-    .sidebar-item.active {
-      background-color: #e9ecef; /* Light gray for active item */
-    }
-    .sidebar-item span {
-      margin-right: 8px;
-      filter: grayscale(100%);
-    }
-    .sidebar-item a {
-      text-decoration: none;
-      color: inherit;
-    }
-    .sidebar-item a:hover {
-      text-decoration: underline;
-    }
-    .sidebar-section {
-      margin-top: 15px;
-    }
-    .sidebar-section-header {
-      font-size: 12px;
-      color: #6c757d; /* Gray for section headers */
-      margin-bottom: 8px;
-    }
-    .sidebar-item a {
-      margin-top: 4px;
-      color: #333333; /* Dark text for links */
-    }
-    .sidebar-item a:hover {
-      text-decoration: underline;
-    }
-    .sidebar-section .sidebar-item {
-      background-color: #f8f9fa; /* Light gray for section items */
-      padding: 10px;
-      margin: 8px 0;
-    }
-    .sidebar-section .sidebar-item a {
-      color: #333333; /* Dark text for links */
-      text-decoration: none;
-    }
-    .sidebar-section .sidebar-item a:hover {
-      text-decoration: underline;
-    }
-    .main-content {
-      flex: 1;
-      padding: 20px;
-      max-width: 750px;
-    }
-    .right-sidebar {
-      width: 300px;
-      margin-left: 20px;
-      padding-top: 20px;
-    }
-    .button {
-      background-color: #6a37be;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-    .tag {
-      display: inline-block;
-      background-color: #e1ecf4;
-      color: #39739d;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 3px;
-      margin-right: 5px;
-      text-decoration: none;
-    }
-    .tag:hover {
-      background-color: #d0e3f1;
-    }
-    .blog-card, .meta-card {
-      background-color: #fff;
-      border: 1px solid #e4e6e8;
-      border-radius: 3px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-    .blog-card h3, .meta-card h3 {
-      font-size: 16px;
-      margin-top: 0;
-      margin-bottom: 15px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid #e4e6e8;
-    }
-    .blog-link, .meta-link {
-      display: block;
-      margin-bottom: 10px;
-      color: #0074cc;
-      text-decoration: none;
-    }
-    .meta-item {
-      display: flex;
-      margin-bottom: 12px;
-      align-items: flex-start;
-    }
-    .meta-icon {
-      margin-right: 10px;
-      color: #0074cc;
-      min-width: 16px;
-    }
-    .filter-button {
-      background-color: #fff;
-      color: #6a737c;
-      border: 1px solid #e4e6e8;
-      padding: 8px 12px;
-      border-radius: 3px;
-      cursor: pointer;
-      margin-right: 8px;
-    }
-    .filter-button.active {
-      background-color: #e3e6e8;
-      color: #3b4045;
-    }
-    .questions-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .ask-button {
-      background-color: #0095ff;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 3px;
-      border: none;
-      text-decoration: none;
-    }
-    .question-stats {
-      text-align: center;
-      min-width: 60px;
-      padding: 5px 10px;
-      background-color: #f6f6f6;
-      border-radius: 3px;
-      margin-right: 16px;
-      font-size: 12px;
-      color: #6a737c;
-    }
-    .question-item {
-      background-color: #fff;
-      padding: 16px;
-      border: 1px solid #e4e6e8;
-      border-radius: 3px;
-      margin-bottom: 16px;
-      display: flex;
-    }
-    .question-content {
-      flex: 1;
-    }
-    .question-title {
-      font-size: 17px;
-      margin-bottom: 8px;
-    }
-    .question-title a {
-      color: #0074cc;
-      text-decoration: none;
-    }
-    .question-excerpt {
-      color: #6a737c;
-      margin-bottom: 12px;
-      font-size: 13px;
-    }
-    .question-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-    }
-    .user-info {
-      color: #6a737c;
-    }
-    .user-info a {
-      color: #0074cc;
-      text-decoration: none;
-    }
-    .pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .pagination a {
-      color: #0074cc;
-      padding: 8px 12px;
-      text-decoration: none;
-      border: 1px solid #e4e6e8;
-      margin: 0 4px;
-      border-radius: 3px;
-    }
-    .pagination a.active {
-      background-color: #0074cc;
-      color: white;
-    }
-    .search-container {
-      margin-bottom: 20px;
-      position: relative;
-    }
-    .search-input {
-      width: 100%;
-      padding: 8px 12px 8px 32px;
-      border: 1px solid #e4e6e8;
-      border-radius: 3px;
-    }
-    .search-icon {
-      position: absolute;
-      left: 8px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #6a737c;
-    }
-  </style>
+    <th:block th:replace="fragments/header :: head"></th:block>
+    <style>
+        body {
+            background-color: #f6f6f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff; /* White background */
+            color: #333333; /* Dark text for contrast */
+            padding: 10px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        }
+
+        .sidebar-item {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-item.active {
+            background-color: #e9ecef; /* Light gray for active item */
+        }
+
+        .sidebar-item span {
+            margin-right: 8px;
+            filter: grayscale(100%);
+        }
+
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+
+        .sidebar-section {
+            margin-top: 15px;
+        }
+
+        .sidebar-section-header {
+            font-size: 12px;
+            color: #6c757d; /* Gray for section headers */
+            margin-bottom: 8px;
+        }
+
+        .sidebar-item a {
+            margin-top: 4px;
+            color: #333333; /* Dark text for links */
+        }
+
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+
+        .sidebar-section .sidebar-item {
+            background-color: #f8f9fa; /* Light gray for section items */
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        .sidebar-section .sidebar-item a {
+            color: #333333; /* Dark text for links */
+            text-decoration: none;
+        }
+
+        .sidebar-section .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 750px;
+        }
+
+        .right-sidebar {
+            width: 300px;
+            margin-left: 20px;
+            padding-top: 20px;
+        }
+
+        .button {
+            background-color: #6a37be;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #e1ecf4; /* Light blue background */
+            color: #39739d; /* Darker blue text - more accurate shade */
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 3px;
+            margin-right: 5px;
+            text-decoration: none;
+            border: none; /* Remove any border */
+        }
+
+        .tag:hover {
+            background-color: #d0e3f1;
+            text-decoration: none;
+        }
+
+        .blog-card, .meta-card {
+            background-color: #fff;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .blog-card h3, .meta-card h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e4e6e8;
+        }
+
+        .blog-link, .meta-link {
+            display: block;
+            margin-bottom: 10px;
+            color: #0074cc;
+            text-decoration: none;
+        }
+
+        .meta-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .meta-icon {
+            margin-right: 10px;
+            color: #0074cc;
+            min-width: 16px;
+        }
+
+        .filter-button {
+            background-color: #fff;
+            color: #6a737c;
+            border: 1px solid #e4e6e8;
+            padding: 8px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 8px;
+        }
+
+        .filter-button.active {
+            background-color: #e3e6e8;
+            color: #3b4045;
+        }
+
+        .questions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .ask-button {
+            background-color: #0095ff;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 3px;
+            border: none;
+            text-decoration: none;
+        }
+
+        .question-stats {
+            text-align: center;
+            min-width: 60px;
+            padding: 5px 10px;
+            background-color: #f6f6f6;
+            border-radius: 3px;
+            margin-right: 16px;
+            font-size: 12px;
+            color: #6a737c;
+        }
+
+        .question-item {
+            background-color: #fff;
+            padding: 16px;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            margin-bottom: 16px;
+            display: flex;
+        }
+
+        .question-content {
+            flex: 1;
+        }
+
+        .question-title {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+
+        .question-title a {
+            color: #0074cc;
+            text-decoration: none;
+        }
+
+        .question-excerpt {
+            color: #6a737c;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .question-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 3px;
+            margin-right: 5px;
+            vertical-align: middle;
+            background-color: #e1ecf4; /* Light blue background for default avatar */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #39739d; /* Dark blue text */
+            font-weight: bold;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-info a {
+            color: #0074cc;
+            text-decoration: none;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #0074cc;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #e4e6e8;
+            margin: 0 4px;
+            border-radius: 3px;
+        }
+
+        .pagination a.active {
+            background-color: #0074cc;
+            color: white;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 32px;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6a737c;
+        }
+
+    </style>
 </head>
 <body>
 <!-- Header -->
 <div th:replace="fragments/header :: header"></div>
 
 <div class="container">
-  <!-- Sidebar -->
-  <div th:replace="fragments/sidebar :: sidebar"></div>
+    <!-- Sidebar -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
 
-  <!-- Main content -->
-  <div class="main-content">
-    <!-- Questions header -->
-    <div class="questions-header">
-      <h1 th:text="${param.query != null && !param.query.isEmpty()} ? 'Search Results' : 'Newest Questions'">Newest Questions</h1>
-      <a th:href="@{/questions/ask}" class="ask-button">Ask Question</a>
-    </div>
-
-    <div style="color: #6a737c; margin-bottom: 16px;" th:text="${totalQuestions + ' questions'}">24,251,770 questions</div>
-
-    <!-- Search bar (only show if not already searching) -->
-    <div class="search-container" th:if="${param.query == null || param.query.isEmpty()}">
-      <form action="/questions" method="GET" id="searchForm">
-        <span class="search-icon">🔍</span>
-        <input type="text" name="query" class="search-input" placeholder="Search in question titles...">
-      </form>
-    </div>
-
-    <!-- Filter Buttons -->
-    <div style="display: flex; margin-bottom: 20px;">
-      <button class="filter-button active">Newest</button>
-      <button class="filter-button">Active</button>
-      <button class="filter-button">
-        Bountied <span style="background-color: #0074cc; color: white; padding: 2px 4px; border-radius: 3px; font-size: 11px;">74</span>
-      </button>
-      <form th:action="@{/questions/unanswered}" th:methodq="GET">
-        <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
-      </form>
-      <button class="filter-button">More</button>
-      <button class="filter-button" style="margin-left: auto;">Filter</button>
-    </div>
-
-    <!-- Questions List -->
-    <div th:if="${questions.empty}" style="text-align: center; padding: 50px 0; color: #6a737c;">
-      <h3>No questions found</h3>
-      <p>Try different keywords or remove tag filters</p>
-    </div>
-
-    <div th:unless="${questions.empty}">
-      <div th:each="question : ${questions}" class="question-item">
-        <!-- Vote stats -->
-        <div class="question-stats">
-          <div th:text="${question.voteCount + ' votes'}" style="margin-bottom: 4px;">0 votes</div>
-          <div th:text="${question.answerCount + ' answers'}" style="margin-bottom: 4px;">0 answers</div>
-          <div th:text="${question.viewsCount + ' views'}">2 views</div>
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Questions header -->
+        <div class="questions-header">
+            <h1 th:text="${param.query != null && !param.query.isEmpty()} ? 'Search Results' : 'Newest Questions'">
+                Newest Questions</h1>
+            <a th:href="@{/questions/ask}" class="ask-button">Ask Question</a>
         </div>
 
-        <!-- Question content -->
-        <div class="question-content">
-          <h2 class="question-title">
-            <a th:href="@{'/questions/' + ${question.id}}" th:text="${question.title}">
-              How to set the path to root media folder in Django?
-            </a>
-          </h2>
-          <p class="question-excerpt" th:text="${question.excerpt}">
-            I have a media folder outside the APP, in the project folder (to share media with other apps). [[Project structure][1]] How to set up Django, to set media path to a folder in the project folder?
-          </p>
+        <div style="color: #6a737c; margin-bottom: 16px;" th:text="${totalQuestions + ' questions'}">24,251,770
+            questions
+        </div>
 
-          <!-- Tags and user info -->
-          <div class="question-meta">
-            <div>
-              <a th:each="tag : ${question.tags}" th:href="@{'/tags/' + ${tag}}" th:text="${tag}" class="tag">python</a>
-            </div>
+        <!-- Search bar (only show if not already searching) -->
+        <div class="search-container" th:if="${param.query == null || param.query.isEmpty()}">
+            <form action="/questions" method="GET" id="searchForm">
+                <span class="search-icon">🔍</span>
+                <input type="text" name="query" class="search-input" placeholder="Search in question titles...">
+            </form>
+        </div>
 
-            <div class="user-info">
+        <!-- Filter Buttons -->
+        <div style="display: flex; margin-bottom: 20px;">
+            <button class="filter-button active">Newest</button>
+            <button class="filter-button">Active</button>
+            <button class="filter-button">
+                Bountied <span
+                    style="background-color: #0074cc; color: white; padding: 2px 4px; border-radius: 3px; font-size: 11px;">74</span>
+            </button>
+            <form th:action="@{/questions/unanswered}" th:methodq="GET">
+                <button class="px-3 py-1 rounded-full border filter-button">Unanswered</button>
+            </form>
+            <button class="filter-button">More</button>
+            <button class="filter-button" style="margin-left: auto;">Filter</button>
+        </div>
+
+        <!-- Questions List -->
+        <div th:if="${questions.empty}" style="text-align: center; padding: 50px 0; color: #6a737c;">
+            <h3>No questions found</h3>
+            <p>Try different keywords or remove tag filters</p>
+        </div>
+
+        <div th:unless="${questions.empty}">
+            <div th:each="question : ${questions}" class="question-item">
+                <!-- Vote stats -->
+                <div class="question-stats">
+                    <div th:text="${question.voteCount + ' votes'}" style="margin-bottom: 4px; color: #0c0d0e; font-weight: bold;">0 votes</div>
+
+                    <div th:if="${question.answerCount > 0}"
+                         th:text="${question.answerCount + ' answers'}"
+                         style="margin-bottom: 4px; background-color: white; color: #5eba7d; border: 1px solid #5eba7d; border-radius: 3px; padding: 4px 8px; display: inline-block; min-width: 44px; text-align: center; font-weight: bold;">
+                        1 answers
+                    </div>
+
+                    <div th:unless="${question.answerCount > 0}"
+                         th:text="${question.answerCount + ' answers'}"
+                         style="margin-bottom: 4px; color: #6a737c; display: inline-block; min-width: 44px; text-align: center;">
+                        0 answers
+                    </div>
+
+                    <div th:text="${question.viewsCount + ' views'}" style="color: #6a737c;">2 views</div>
+                </div>
+                <!-- Question content -->
+                <div class="question-content">
+                    <h2 class="question-title">
+                        <a th:href="@{'/questions/' + ${question.id}}" th:text="${question.title}">
+                            How to set the path to root media folder in Django?
+                        </a>
+                    </h2>
+                    <p class="question-excerpt" th:text="${question.excerpt}">
+                        I have a media folder outside the APP, in the project folder (to share media with other apps).
+                        [[Project structure][1]] How to set up Django, to set media path to a folder in the project
+                        folder?
+                    </p>
+
+                    <!-- Tags and user info -->
+                    <div class="question-meta">
+                        <div>
+                            <a th:each="tag : ${question.tags}" th:href="@{'/tags/' + ${tag}}" th:text="${tag}"
+                               class="tag">python</a>
+                        </div>
+
+                        <div class="user-info">
                             <span th:if="${question.user != null}">
+                                <!-- Add default avatar -->
+                                <span class="user-avatar" th:if="${question.user.profileImage == null}"
+                                      th:text="${#strings.substring(question.user.username, 0, 1).toUpperCase()}">U</span>
+                                <img th:if="${question.user.profileImage != null}" th:src="${question.user.profileImage}" alt="User avatar"
+                                     class="user-avatar">
+
                                 <a th:href="@{'/users/' + ${question.user.id}}" th:text="${question.user.username}">Libor P</a>
                                 <span th:text="${'asked ' + question.createdAt}">asked 2 mins ago</span>
-                            </span>
-              <span th:unless="${question.user != null}">
-                                Posted anonymously
+                              </span>
+                            <span th:unless="${question.user != null}">
+                                <!-- Default anonymous avatar -->
+                                <span class="user-avatar">J</span>
+                                Jasar Orion
                                 <span th:text="${'asked ' + question.createdAt}">asked 2 mins ago</span>
-                            </span>
+                              </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+
+        <!-- Pagination -->
+        <div class="pagination" th:if="${totalPages > 1}">
+            <a th:href="@{/questions(page=0, query=${param.query}, tags=${param.tags})}">&laquo;</a>
+            <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+               th:href="@{/questions(page=${i}, query=${param.query}, tags=${param.tags})}"
+               th:text="${i + 1}"
+               th:class="${currentPage == i ? 'active' : ''}">1</a>
+            <a th:href="@{/questions(page=${totalPages-1}, query=${param.query}, tags=${param.tags})}">&raquo;</a>
+        </div>
     </div>
 
-    <!-- Pagination -->
-    <div class="pagination" th:if="${totalPages > 1}">
-      <a th:href="@{/questions(page=0, query=${param.query}, tags=${param.tags})}">&laquo;</a>
-      <a th:each="i : ${#numbers.sequence(0, totalPages-1)}"
-         th:href="@{/questions(page=${i}, query=${param.query}, tags=${param.tags})}"
-         th:text="${i + 1}"
-         th:class="${currentPage == i ? 'active' : ''}">1</a>
-      <a th:href="@{/questions(page=${totalPages-1}, query=${param.query}, tags=${param.tags})}">&raquo;</a>
+    <!-- Right sidebar -->
+    <div class="right-sidebar">
+        <!-- Blog card -->
+        <div class="blog-card">
+            <h3>The Overflow Blog</h3>
+            <a href="#" class="blog-link">Writing tests with AI, but not LLMs</a>
+            <a href="#" class="blog-link">Variants of LoRA</a>
+        </div>
+
+        <!-- Meta card -->
+        <div class="meta-card">
+            <h3>Featured on Meta</h3>
+
+            <div class="meta-item">
+                <div class="meta-icon">📢</div>
+                <a href="#" class="meta-link">Join us for our first community-wide AMA (Ask Me Anything) with
+                    Stack...</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">📢</div>
+                <a href="#" class="meta-link">bigbird and Frog have joined us as Community Managers</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Stacks Editor development and testing</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Policy: Generative AI (e.g., ChatGPT) is banned</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Is it better to redirect users who attempt to perform actions they can't
+                    yet...</a>
+            </div>
+        </div>
+
+        <!-- Custom Filters card -->
+        <div class="blog-card">
+            <h3>Custom Filters</h3>
+            <div style="margin-bottom: 15px;">
+                <a href="#" class="blog-link">Create a custom filter</a>
+            </div>
+        </div>
+
+        <!-- Watched Tags card -->
+        <div class="blog-card">
+            <h3>Watched Tags</h3>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <img src="/api/placeholder/60/60" alt="Watch tag icon" style="opacity: 0.5;">
+                <p style="color: #6a737c; margin-top: 8px;">Watch tags to curate your list of questions.</p>
+            </div>
+            <a href="#" class="button"
+               style="display: block; text-align: center; background-color: #f8f9f9; color: #0074cc; border: 1px solid #0074cc;">Watch
+                a tag</a>
+        </div>
+
+        <!-- Ignored Tags card -->
+        <div class="blog-card">
+            <h3>Ignored Tags</h3>
+            <a href="#" class="button"
+               style="display: block; text-align: center; background-color: #f8f9f9; color: #0074cc; border: 1px solid #0074cc;">Add
+                an ignored tag</a>
+        </div>
     </div>
-  </div>
-
-  <!-- Right sidebar -->
-  <div class="right-sidebar">
-    <!-- Blog card -->
-    <div class="blog-card">
-      <h3>The Overflow Blog</h3>
-      <a href="#" class="blog-link">Writing tests with AI, but not LLMs</a>
-      <a href="#" class="blog-link">Variants of LoRA</a>
-    </div>
-
-    <!-- Meta card -->
-    <div class="meta-card">
-      <h3>Featured on Meta</h3>
-
-      <div class="meta-item">
-        <div class="meta-icon">📢</div>
-        <a href="#" class="meta-link">Join us for our first community-wide AMA (Ask Me Anything) with Stack...</a>
-      </div>
-
-      <div class="meta-item">
-        <div class="meta-icon">📢</div>
-        <a href="#" class="meta-link">bigbird and Frog have joined us as Community Managers</a>
-      </div>
-
-      <div class="meta-item">
-        <div class="meta-icon">⚙️</div>
-        <a href="#" class="meta-link">Stacks Editor development and testing</a>
-      </div>
-
-      <div class="meta-item">
-        <div class="meta-icon">⚙️</div>
-        <a href="#" class="meta-link">Policy: Generative AI (e.g., ChatGPT) is banned</a>
-      </div>
-
-      <div class="meta-item">
-        <div class="meta-icon">⚙️</div>
-        <a href="#" class="meta-link">Is it better to redirect users who attempt to perform actions they can't yet...</a>
-      </div>
-    </div>
-
-    <!-- Custom Filters card -->
-    <div class="blog-card">
-      <h3>Custom Filters</h3>
-      <div style="margin-bottom: 15px;">
-        <a href="#" class="blog-link">Create a custom filter</a>
-      </div>
-    </div>
-
-    <!-- Watched Tags card -->
-    <div class="blog-card">
-      <h3>Watched Tags</h3>
-      <div style="text-align: center; margin-bottom: 15px;">
-        <img src="/api/placeholder/60/60" alt="Watch tag icon" style="opacity: 0.5;">
-        <p style="color: #6a737c; margin-top: 8px;">Watch tags to curate your list of questions.</p>
-      </div>
-      <a href="#" class="button" style="display: block; text-align: center; background-color: #f8f9f9; color: #0074cc; border: 1px solid #0074cc;">Watch a tag</a>
-    </div>
-
-    <!-- Ignored Tags card -->
-    <div class="blog-card">
-      <h3>Ignored Tags</h3>
-      <a href="#" class="button" style="display: block; text-align: center; background-color: #f8f9f9; color: #0074cc; border: 1px solid #0074cc;">Add an ignored tag</a>
-    </div>
-  </div>
 </div>
 
 <script>
-  // Submit search form on Enter key
-  document.getElementById('searchForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const query = this.querySelector('input[name="query"]').value;
-    if (query.trim()) {
-      window.location.href = `/questions?query=${encodeURIComponent(query.trim())}`;
-    }
-  });
-
-  // Filter button click event
-  document.querySelectorAll('.filter-button').forEach(button => {
-    button.addEventListener('click', function() {
-      document.querySelectorAll('.filter-button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      this.classList.add('active');
+    // Submit search form on Enter key
+    document.getElementById('searchForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const query = this.querySelector('input[name="query"]').value;
+        if (query.trim()) {
+            window.location.href = `/questions?query=${encodeURIComponent(query.trim())}`;
+        }
     });
-  });
+
+    // Filter button click event
+    document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', function () {
+            document.querySelectorAll('.filter-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
 </script>
 </body>
 </html>
