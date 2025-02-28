@@ -174,6 +174,12 @@
     <div class="main-content">
         <!-- Welcome section -->
         <div class="welcome-section">
+            <div class="welcome-hand">👋</div>
+            <div>
+                <h1 th:if="${user != null}" th:text="'Welcome back, ' + ${user.username}">Welcome back, Karthik</h1>
+                <h1 th:unless="${user != null}">Welcome to Stack Overflow Clone</h1>
+                <p>Find answers to your technical questions and help others answer theirs.</p>
+            </div>
             <a th:href="@{/questions/ask}" style="margin-left: auto;">
                 <button class="ask-button">Ask Question</button>
             </a>
@@ -336,6 +342,45 @@
                         <button class="button">Ask a Question</button>
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right sidebar for blog and meta -->
+    <div class="right-sidebar">
+        <!-- Blog card -->
+        <div class="blog-card">
+            <h3>The Overflow Blog</h3>
+            <a href="#" class="blog-link">Writing tests with AI, but not LLMs</a>
+            <a href="#" class="blog-link">Variants of LoRA</a>
+        </div>
+        <!-- Meta card -->
+        <div class="meta-card">
+            <h3>Featured on Meta</h3>
+
+            <div class="meta-item">
+                <div class="meta-icon">📢</div>
+                <a href="#" class="meta-link">Join us for our first community-wide AMA (Ask Me Anything) with Stack...</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">📢</div>
+                <a href="#" class="meta-link">bigbird and Frog have joined us as Community Managers</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Stacks Editor development and testing</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Policy: Generative AI (e.g., ChatGPT) is banned</a>
+            </div>
+
+            <div class="meta-item">
+                <div class="meta-icon">⚙️</div>
+                <a href="#" class="meta-link">Is it better to redirect users who attempt to perform actions they can't yet...</a>
             </div>
         </div>
     </div>

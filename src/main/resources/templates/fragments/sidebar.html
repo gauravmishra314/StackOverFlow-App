@@ -1,47 +1,117 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      width: 220px;
+      background-color: #ffffff; /* White background */
+      color: #333333; /* Dark text for contrast */
+      padding: 10px;
+      height: 100vh;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+    .sidebar-item {
+      padding: 8px;
+      margin: 4px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+    }
+    .sidebar-item.active {
+      background-color: #e9ecef; /* Light gray for active item */
+    }
+    .sidebar-item span {
+      margin-right: 8px;
+      filter: grayscale(100%);
+    }
+    .sidebar-item a {
+      text-decoration: none;
+      color: inherit;
+    }
+    .sidebar-item a:hover {
+      text-decoration: underline;
+    }
+    .sidebar-section {
+      margin-top: 15px;
+    }
+    .sidebar-section-header {
+      font-size: 12px;
+      color: #6c757d; /* Gray for section headers */
+      margin-bottom: 8px;
+    }
+    .sidebar-item a {
+      margin-top: 4px;
+      color: #333333; /* Dark text for links */
+    }
+    .sidebar-item a:hover {
+      text-decoration: underline;
+    }
+    .sidebar-section .sidebar-item {
+      background-color: #f8f9fa; /* Light gray for section items */
+      padding: 10px;
+      margin: 8px 0;
+    }
+    .sidebar-section .sidebar-item a {
+      color: #333333; /* Dark text for links */
+      text-decoration: none;
+    }
+    .sidebar-section .sidebar-item a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
 <div th:fragment="sidebar">
   <div class="sidebar">
     <div class="sidebar-item active">
-      <span>🏠</span><a th:href="@{/}" style="text-decoration: none; color: inherit;">Home</a>
+      <span>🏠</span><a th:href="@{/questions/home}">Home</a>
     </div>
     <div class="sidebar-item">
-      <span>❓</span><a th:href="@{/questions}" style="text-decoration: none; color: inherit;">Questions</a>
+      <span>❓</span><a th:href="@{/questions}">Questions</a>
     </div>
     <div class="sidebar-item">
-      <span>🏷️</span><a th:href="@{/tags}" style="text-decoration: none; color: inherit;">Tags</a>
+      <span>🏷️</span><a th:href="@{/tags}">Tags</a>
     </div>
     <div class="sidebar-item">
-      <span>🔖</span><a th:href="@{/saves}" style="text-decoration: none; color: inherit;">Saves</a>
+      <span>🔖</span><a th:href="@{/saves}">Saves</a>
     </div>
     <div class="sidebar-item">
-      <span>👥</span><a th:href="@{/users}" style="text-decoration: none; color: inherit;">Users</a>
+      <span>👥</span><a th:href="@{/users}">Users</a>
     </div>
     <div class="sidebar-item">
-      <span>🏢</span><a th:href="@{/companies}" style="text-decoration: none; color: inherit;">Companies</a>
+      <span>🏢</span><a th:href="@{/companies}">Companies</a>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-header">LABS</div>
       <div class="sidebar-item">
-        <span>💬</span><a th:href="@{/discussions}" style="text-decoration: none; color: inherit;">Discussions</a>
+        <span>💬</span><a th:href="@{/discussions}">Discussions</a>
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-header">COLLECTIVES</div>
       <div class="sidebar-item">
-        Communities for your favorite technologies.
-        <a th:href="@{/collectives}">Explore all collectives</a>
+        <div>
+          Communities for your favorite technologies.
+          <a th:href="@{/collectives}">Explore all collectives</a>
+        </div>
       </div>
     </div>
 
     <div class="sidebar-section">
       <div class="sidebar-section-header">TEAMS</div>
       <div class="sidebar-item">
-        Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
-        <a th:href="@{/teams}">Explore Teams</a>
+        <div>
+          Ask questions, find answers and collaborate at work with Stack Overflow for Teams.
+          <a th:href="@{/teams}">Explore Teams</a>
+        </div>
       </div>
     </div>
   </div>

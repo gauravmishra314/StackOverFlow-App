@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<!--    <meta name="_csrf" th:content="${_csrf.token}"/>-->
-<!--    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>-->
     <title th:text="${question.title} + ' - Stack Overflow Clone'">Question Title - Stack Overflow Clone</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <th:block th:replace="fragments/header :: head"></th:block>
+
     <style>
         /* Base styles */
         * {
@@ -20,91 +20,68 @@
             line-height: 1.5;
             color: #232629;
             background-color: #fff;
+            padding-top: 50px; /* Reduced padding for smaller header */
+        }
+
+        .nav-items span {
+            cursor: pointer;
+        }
+
+        .nav-items span:hover {
+            color: #0c0d0e;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 6px 8px; /* Reduced padding */
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            font-size: 13px; /* Smaller font */
+        }
+
+        .icons span {
+            cursor: pointer;
+        }
+
+        .icons span:hover {
+            color: #0c0d0e;
         }
 
         /* Container layout */
         .container {
             max-width: 1264px;
             margin: 0 auto;
-            padding: 0 24px;
+            padding: 0 16px;
         }
 
         .page-container {
             display: grid;
             grid-template-columns: 1fr 3fr;
-            gap: 24px;
-            margin-top: 50px;
+            gap: 24px; /* Increased gap between columns */
+            margin-top: 16px;
         }
 
         @media (min-width: 1100px) {
             .page-container {
-                grid-template-columns: 164px 1fr 300px;
+                grid-template-columns: 164px minmax(0, 1fr) 300px;
+                gap: 24px; /* Consistent gap for all columns */
             }
         }
 
-        /* Header styles */
-        .top-bar {
-            display: flex;
-            align-items: center;
-            height: 50px;
-            background-color: #f8f9f9;
-            border-top: 3px solid #f48024;
-            border-bottom: 1px solid #e3e6e8;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            padding: 0 8px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 30px;
-        }
-
-        .search-container {
-            flex-grow: 1;
-            max-width: 700px;
-            margin: 0 8px;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 8px 8px 8px 32px;
-            border: 1px solid #babfc4;
-            border-radius: 3px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23838C95" d="M12.2 13.6a7 7 0 1 1 1.4-1.4l3.1 3.1a1 1 0 1 1-1.4 1.4l-3.1-3.1zM7 12A5 5 0 1 0 7 2a5 5 0 0 0 0 10z"/></svg>');
-            background-position: 8px center;
-            background-repeat: no-repeat;
-        }
-
         /* Question header */
-        .question-header {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #e3e6e8;
-        }
-
         .question-header h1 {
-            font-size: 27px;
-            margin-bottom: 8px;
+            font-size: 22px; /* Smaller heading */
+            margin-bottom: 0; /* Removed bottom margin */
             font-weight: 400;
             color: #242729;
         }
 
         .question-metadata {
             display: flex;
-            gap: 16px;
-            font-size: 13px;
+            gap: 12px;
+            font-size: 12px; /* Smaller font */
             color: #6a737c;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .ask-button {
@@ -115,22 +92,45 @@
             background-color: #0a95ff;
             color: white;
             border: 1px solid #0a95ff;
-            padding: 8px 10px;
+            padding: 8px 12px;
             border-radius: 3px;
             cursor: pointer;
             font-size: 13px;
             text-decoration: none;
+            box-shadow: inset 0 1px 0 0 rgba(255,255,255,0.4);
+            white-space: nowrap; /* Prevent button text from wrapping */
         }
 
         .button:hover {
             background-color: #0074cc;
+            border-color: #0074cc;
         }
 
-        /* Question layout */
+        .secondary-button {
+            background-color: #e1ecf4;
+            color: #39739d;
+            border-color: #7aa7c7;
+        }
+
+        .secondary-button:hover {
+            background-color: #d0e3f1;
+        }
+
+        .danger-button {
+            background-color: #d9534f;
+            border-color: #d43f3a;
+        }
+
+        .danger-button:hover {
+            background-color: #c9302c;
+            border-color: #ac2925;
+        }
+
+        /* Post layout */
         .post-layout {
             display: grid;
             grid-template-columns: max-content 1fr;
-            gap: 16px;
+            gap: 12px; /* Reduced gap */
         }
 
         /* Vote controls */
@@ -145,127 +145,129 @@
             background: none;
             border: none;
             color: #babfc4;
-            font-size: 30px;
+            font-size: 24px; /* Smaller icons */
             cursor: pointer;
             padding: 0;
             margin: 2px 0;
+            transition: color 0.2s;
         }
 
-        .vote-cell button:hover {
-            color: #838c95;
+        .vote-cell button.active {
+            color: #f48024;
         }
 
         .vote-count {
-            font-size: 21px;
+            font-size: 18px; /* Smaller text */
             color: #6a737c;
             margin: 2px 0;
+            text-align: center;
+            min-width: 32px; /* Reduced width */
         }
 
-        .bookmark-button, .history-button {
-            font-size: 16px !important;
-            margin-top: 8px !important;
+        /* Sidebar Styles (Left) */
+        .sidebar {
+            width: 220px;
+            background-color: #ffffff; /* White background */
+            color: #333333; /* Dark text for contrast */
+            padding: 10px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         }
-
-        /* Post content */
-        .post-text {
-            font-size: 15px;
-            line-height: 1.5;
-            overflow-wrap: break-word;
-            margin-bottom: 24px;
-        }
-
-        /* Code blocks */
-        .post-text pre {
-            background-color: #f6f6f6;
-            padding: 12px;
-            border-radius: 3px;
-            overflow-x: auto;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            margin: 16px 0;
-        }
-
-        .post-text code {
-            background-color: #f6f6f6;
-            padding: 2px 5px;
-            border-radius: 3px;
-            font-family: Consolas, Monaco, 'Courier New', monospace;
-            font-size: 13px;
-        }
-
-        /* Tags */
-        .post-tags {
+        .sidebar-item {
+            padding: 8px;
+            margin: 4px 0;
+            border-radius: 4px;
             display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-bottom: 12px;
+            align-items: center;
         }
-
-        .post-tag {
-            background-color: #e1ecf4;
-            color: #39739d;
-            padding: 4px 6px;
-            border-radius: 3px;
+        .sidebar-item.active {
+            background-color: #e9ecef; /* Light gray for active item */
+        }
+        .sidebar-item span {
+            margin-right: 8px;
+            filter: grayscale(100%);
+        }
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-section {
+            margin-top: 15px;
+        }
+        .sidebar-section-header {
             font-size: 12px;
+            color: #6c757d; /* Gray for section headers */
+            margin-bottom: 8px;
+        }
+        .sidebar-item a {
+            margin-top: 4px;
+            color: #333333; /* Dark text for links */
+        }
+        .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        .sidebar-section .sidebar-item {
+            background-color: #f8f9fa; /* Light gray for section items */
+            padding: 10px;
+            margin: 8px 0;
+        }
+        .sidebar-section .sidebar-item a {
+            color: #333333; /* Dark text for links */
             text-decoration: none;
         }
-
-        .post-tag:hover {
-            background-color: #d0e3f1;
-            color: #2c5877;
+        .sidebar-section .sidebar-item a:hover {
+            text-decoration: underline;
+        }
+        /* Right sidebar */
+        .right-sidebar {
+            width: 300px;
+            padding-left: 8px;
         }
 
-        /* Post actions */
-        .post-actions {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: #6a737c;
-            margin-bottom: 16px;
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .page-container {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+
+            .sidebar, .right-sidebar {
+                display: none; /* Hide sidebars on mobile */
+            }
         }
 
-        .post-menu {
-            display: flex;
-            gap: 12px;
-        }
-
-        .post-menu a {
-            color: #6a737c;
-            text-decoration: none;
-        }
-
-        .post-menu a:hover {
-            color: #0074cc;
+        /* Main content area with padding */
+        .content {
+            padding: 1rem;
+            margin: 20px;
         }
 
         /* User card */
         .user-info {
             display: flex;
             align-items: center;
-            padding: 5px 6px 7px 7px;
+            gap: 6px;
+            padding: 5px 7px;
+            margin-top: 12px;
             background-color: #f8f9f9;
             border-radius: 3px;
         }
 
-        .user-action-time {
-            color: #6a737c;
-            font-size: 12px;
-            margin-right: 8px;
-        }
-
-        .user-gravatar {
-            margin-right: 8px;
-        }
-
         .user-gravatar img {
-            width: 32px;
-            height: 32px;
+            width: 28px; /* Smaller avatar */
+            height: 28px;
             border-radius: 3px;
         }
 
         .user-details {
-            font-size: 12px;
+            display: flex;
+            flex-direction: column;
         }
 
         .user-details a {
@@ -278,189 +280,111 @@
             color: #6a737c;
         }
 
-        /* Answers section */
+        /* Post tags */
+        .post-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px; /* Reduced margin */
+        }
+
+        .post-tag {
+            background-color: #e1ecf4;
+            color: #39739d;
+            padding: 3px 5px; /* Reduced padding */
+            border-radius: 3px;
+            font-size: 11px; /* Smaller font */
+            text-decoration: none;
+        }
+
+        .post-tag:hover {
+            background-color: #d0e3f1;
+            color: #2c5777;
+        }
+
+        /* Post content formatting */
+        .post-text {
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            word-wrap: break-word;
+        }
+
+        .post-text p {
+            margin-bottom: 1.1em;
+        }
+
+        .post-text h1, .post-text h2, .post-text h3, .post-text h4 {
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+        }
+
+        .post-text code {
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            background-color: #f6f6f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .post-text pre {
+            background-color: #f6f6f6;
+            padding: 12px;
+            border-radius: 3px;
+            overflow-x: auto;
+            margin-bottom: 1.1em;
+        }
+
+        .post-text pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Answer section styling */
         .answers-header {
             font-size: 19px;
+            padding: 20px 0 10px;
+            margin-top: 10px;
+            border-top: 1px solid #e3e6e8;
+            color: #232629;
             font-weight: 400;
-            margin: 20px 0;
-            padding-top: 20px;
+        }
+
+        .answer {
+            padding: 16px 0;
+            border-bottom: 1px solid #e3e6e8;
+        }
+
+        /* Answer form styling */
+        .post-form {
+            margin-top: 30px;
+            padding: 20px 0;
             border-top: 1px solid #e3e6e8;
         }
 
-        /* Answer form */
         .post-form h2 {
             font-size: 19px;
+            margin-bottom: 16px;
             font-weight: 400;
-            margin: 20px 0;
-            padding-top: 20px;
-            border-top: 1px solid #e3e6e8;
         }
 
-        .form-group {
-            margin-bottom: 12px;
-        }
-
-        .form-group textarea {
+        .post-form textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid #babfc4;
             border-radius: 3px;
             font-family: inherit;
             font-size: 15px;
-            resize: vertical;
-        }
-
-        /* Delete modal */
-        .delete-question {
-            background: none;
-            border: none;
-            color: #0077cc; /* Match the link color */
-            font-size: inherit;
-            text-decoration: none;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .delete-question:hover {
-            text-decoration: underline;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
-            border-radius: 3px;
-            max-width: 400px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .danger-button {
-            background-color: #d0393e;
-            border-color: #d0393e;
-        }
-
-        .danger-button:hover {
-            background-color: #c23030;
-        }
-
-        .secondary-button {
-            background-color: #f8f9f9;
-            color: #3b4045;
-            border-color: #d6d9dc;
-        }
-
-        .secondary-button:hover {
-            background-color: #e3e6e8;
-        }
-
-        .login-prompt {
-            margin: 20px 0;
-            padding: 16px;
-            background-color: #fdf7e3;
-            border: 1px solid #e6dcae;
-            border-radius: 3px;
-        }
-
-        .login-prompt a {
-            color: #0074cc;
-            text-decoration: none;
-        }
-
-        .comment-link {
-            margin-right: 8px;
-        }
-
-        /* Ensure content renders properly */
-        .post-text p {
-            margin-bottom: 15px;
-        }
-
-        .post-text pre {
-            margin: 15px 0;
-            padding: 12px;
-            background-color: #f6f6f6;
-            border-radius: 3px;
-            overflow-x: auto;
-        }
-
-        .comment-link {
-            margin-right: 8px;
-        }
-
-        /* Ensure content renders properly */
-        .post-text p {
-            margin-bottom: 15px;
-        }
-
-        .post-text pre {
-            margin: 15px 0;
-            padding: 12px;
-            background-color: #f6f6f6;
-            border-radius: 3px;
-            overflow-x: auto;
-        }
-
-        .post-text img {
-            max-width: 100%;
-            height: auto;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-
-        .answer-editor {
-            border: 1px solid #babfc4;
-            border-radius: 3px;
-            margin-bottom: 16px;
-        }
-
-        .content-block {
-            padding: 8px;
-            margin-bottom: 8px;
-        }
-
-        .content-block textarea {
-            width: 100%;
-            border: 1px solid #e3e6e8;
-            border-radius: 3px;
-            padding: 8px;
-            resize: vertical;
-        }
-
-        .image-block {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .image-preview {
-            max-width: 200px;
-            max-height: 150px;
-            margin-top: 8px;
         }
 
         .editor-toolbar {
+            margin: 10px 0;
             display: flex;
-            gap: 8px;
-            padding: 8px;
-            background-color: #f8f9f9;
-            border-top: 1px solid #e3e6e8;
+            gap: 10px;
         }
 
         .editor-button {
@@ -477,138 +401,409 @@
             background-color: #d0e3f1;
         }
 
-        .remove-block-button {
-            background-color: #f8f9f9;
-            color: #d0393e;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-top: 4px;
-            align-self: flex-end;
+        .content-block {
+            margin-bottom: 16px;
+            position: relative;
         }
 
-        /* Answer styles */
-        .answer {
-            padding-top: 20px;
-            border-top: 1px solid #e3e6e8;
+        .remove-block-button {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background-color: #f8f9f9;
+            border: 1px solid #d6d9dc;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #6a737c;
+            cursor: pointer;
+        }
+
+        .remove-block-button:hover {
+            background-color: #f1f2f3;
+        }
+
+        /* Image preview styling */
+        .image-preview-container {
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            border: 1px solid #e3e6e8;
+            border-radius: 3px;
+        }
+
+        /* Login prompt styling */
+        .login-prompt {
+            margin: 20px 0;
+            padding: 16px;
+            background-color: #fdf7e3;
+            border: 1px solid #f1e5bc;
+            border-radius: 3px;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 3px;
+            width: 400px;
+            max-width: 80%;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
             margin-top: 20px;
         }
 
-        .answer-count {
-            color: #232629;
-            font-size: 19px;
-            margin-bottom: 15px;
+        /* Toast notification styling */
+        #error-toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f44336;
+            color: white;
+            padding: 16px;
+            border-radius: 4px;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
-        .vote-cell button {
-    background: none;
-    border: none;
-    color: #babfc4;
-    font-size: 30px;
-    cursor: pointer;
-    padding: 0;
-    margin: 2px 0;
-    transition: color 0.2s;
-}
 
-.vote-cell button:hover {
-    color: #838c95;
-}
+        /* Post actions styling */
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
 
-.vote-cell button.active {
-    color: #f48024;
-}
+        .post-menu {
+            display: flex;
+            gap: 8px;
+        }
 
-.vote-count {
-    font-size: 21px;
-    color: #6a737c;
-    margin: 2px 0;
-    text-align: center;
-    min-width: 40px;
-}
+        .post-menu a {
+            color: #6a737c;
+            text-decoration: none;
+            font-size: 13px;
+        }
 
-/* Ensure voting arrows are properly sized and centered */
-.fa-caret-up, .fa-caret-down {
-    display: block;
-    font-size: 36px;
-    line-height: 1;
-}
+        .post-menu a:hover {
+            color: #0074cc;
+        }
 
-/* Login prompt */
-.login-prompt {
-    margin: 20px 0;
-    padding: 16px;
-    background-color: #fdf7e3;
-    border: 1px solid #e6dcae;
-    border-radius: 3px;
-}
+        /* Make code blocks responsive */
+        @media (max-width: 768px) {
+            .post-text pre {
+                max-width: calc(100vw - 80px);
+            }
+        }
 
-/* Error toast */
-#error-toast {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #f44336;
-    color: white;
-    padding: 16px;
-    border-radius: 4px;
-    z-index: 1000;
-    max-width: 300px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-}
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .question-header h1 {
+            flex: 1 1 100%;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+
+        /* Add some styles for blockquotes */
+        .post-text blockquote {
+            padding: 10px;
+            margin: 0 0 16px;
+            border-left: 4px solid #e1e4e8;
+            color: #6a737c;
+            background-color: #f6f8fa;
+        }
+
+        /* Add styles for lists */
+        .post-text ul, .post-text ol {
+            margin-bottom: 16px;
+            padding-left: 30px;
+        }
+
+        .post-text li {
+            margin-bottom: 8px;
+        }
+
+        /* Add styles for tables */
+        .post-text table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        .post-text table th,
+        .post-text table td {
+            border: 1px solid #e1e4e8;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .post-text table th {
+            background-color: #f6f8fa;
+        }
+
+        /* Blog and Meta cards */
+        .blog-card, .meta-card {
+            background-color: #fff;
+            border: 1px solid #e4e6e8;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .blog-card h3, .meta-card h3 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e4e6e8;
+        }
+
+        .blog-link, .meta-link {
+            display: block;
+            margin-bottom: 10px;
+            color: #0074cc;
+            text-decoration: none;
+        }
+
+        .meta-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .meta-icon {
+            margin-right: 10px;
+            color: #0074cc;
+            min-width: 16px;
+        }
+
+        /* Comment styles */
+        .comments-section {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #e3e6e8;
+        }
+
+        .comment {
+            padding: 6px 0;
+            display: flex;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 13px;
+        }
+
+        .comment-content {
+            flex-grow: 1;
+            color: #3b4045;
+        }
+
+        .comment-user {
+            color: #0074cc;
+            text-decoration: none;
+            margin-left: 4px;
+        }
+
+        .comment-timestamp {
+            color: #9199a1;
+            margin-left: 4px;
+        }
+
+        .comment-actions {
+            display: none;
+            margin-left: 8px;
+        }
+
+        .comment:hover .comment-actions {
+            display: block;
+        }
+
+        .comment-actions a {
+            color: #9199a1;
+            margin-left: 6px;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .comment-actions a:hover {
+            color: #0074cc;
+        }
+
+        .add-comment-link {
+            color: #9199a1;
+            text-decoration: none;
+            font-size: 13px;
+            display: inline-block;
+            margin-top: 8px;
+            cursor: pointer;
+        }
+
+        .add-comment-link:hover {
+            color: #0074cc;
+        }
+
+        .comment-form {
+            display: none;
+            margin-top: 8px;
+        }
+
+        .comment-form.active {
+            display: block;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+            height: 80px;
+            font-family: inherit;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .comment-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .comment-submit-button {
+            background-color: #0a95ff;
+            color: white;
+            border: 1px solid #0a95ff;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .comment-cancel-button {
+            background-color: #f8f9f9;
+            color: #6a737c;
+            border: 1px solid #d6d9dc;
+            padding: 6px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-comment-form {
+            display: none;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        .edit-comment-form.active {
+            display: block;
+        }
+
+        /* Delete button styling */
+        .delete-question {
+            background: none;
+            border: none;
+            color: #6a737c;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .delete-question:hover {
+            color: #0074cc;
+        }
+
+        /* Header styles for navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #f8f9f9;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 1px 4px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 1000;
+        }
+
+        .header-logo {
+            height: 30px;
+            margin-right: 16px;
+        }
+
+        .header-navigation {
+            display: flex;
+            gap: 16px;
+            flex-grow: 1;
+            align-items: center;
+        }
+
+        .header-navigation a {
+            color: #535a60;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .header-navigation a:hover {
+            color: #0c0d0e;
+        }
+
+        .header-search {
+            flex-grow: 1;
+            max-width: 700px;
+            margin: 0 16px;
+        }
+
+        .header-search input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #babfc4;
+            border-radius: 3px;
+        }
+
+        .header-auth {
+            display: flex;
+            gap: 8px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/commonmark/0.29.3/commonmark.min.js"></script>
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">
-        <img src="https://cdn.sstatic.net/Img/unified/sprites.svg?v=e5e58ae7df45" alt="Stack Overflow">
-    </div>
-
-    <div class="flex-1 max-w-xl px-4">
-        <form action="/questions" method="GET" id="searchForm">
-            <div class="relative">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                </div>
-                <input type="text" name="query" id="query" placeholder="Search in question titles..."
-                       th:value="${searchQuery}"
-                       class="w-full pl-10 pr-4 py-1 border border-gray-300 rounded-md">
-            </div>
-        </form>
-    </div>
-
-
-    <div class="user-nav">
-        <!-- User navigation would go here -->
-    </div>
-</header>
+<div th:replace="fragments/header :: header"></div>
 
 <div class="container">
     <div class="page-container">
         <!-- Left Sidebar -->
-        <div class="left-sidebar">
-            <nav>
-                <ul style="list-style-type: none;">
-                    <li><a href="/"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-                        <i class="fas fa-home" style="margin-right: 8px;"></i> Home
-                    </a></li>
-                    <li><a href="/questions"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px; font-weight: bold; background-color: #f1f2f3;">
-                        <i class="fas fa-question" style="margin-right: 8px;"></i> Questions
-                    </a></li>
-                    <li><a href="/tags"
-                           style="text-decoration: none; color: #525960; display: flex; align-items: center; padding: 8px;">
-                        <i class="fas fa-tag" style="margin-right: 8px;"></i> Tags
-                    </a></li>
-                </ul>
-            </nav>
-        </div>
+        <div th:replace="fragments/sidebar :: sidebar"></div>
 
         <!-- Main Content -->
         <div class="content">
@@ -620,6 +815,7 @@
                             th:text="${#temporals.format(question.updatedAt, 'MMM d, yyyy')}">Feb 20, 2023</span></span>
                     <span class="viewed">Viewed <span th:text="${question.viewsCount}">6</span> times</span>
                 </div>
+
                 <div class="ask-button">
                     <a href="/questions/ask" class="button">Ask Question</a>
                 </div>
@@ -647,11 +843,6 @@
 
                     <!-- Question content -->
                     <div class="post-cell">
-                        <!-- Main question image if present -->
-<!--                        <div class="post-image" th:if="${question.imageURL != null}">-->
-<!--                            <img th:src="${question.imageURL}" alt="Question image"-->
-<!--                                 style="max-width: 100%; margin-bottom: 16px;">-->
-<!--                        </div>-->
 
                         <!-- Question content -->
                         <div class="post-text" id="question-content">
@@ -662,18 +853,13 @@
                         <div class="post-tags">
                             <a th:each="tag : ${tag}" th:href="@{/tags/{tag}(tag=${tag})}" class="post-tag"
                                th:text="${tag.name}">postgresql</a>
-                            <!--              <a href="/tags/spring-boot" class="post-tag">spring-boot</a>-->
-                            <!--              <a href="/tags/hibernate" class="post-tag">hibernate</a>-->
                         </div>
 
                         <!-- Question actions -->
                         <div class="post-actions">
                             <div class="post-menu">
                                 <a href="#" class="share-link">Share</a>
-                                <a href="#" class="comment-link">Add a comment</a>
                                 <a th:href="@{/questions/edit/{id}(id=${question.id})}" class="edit-link">Edit</a>
-                                <a href="#" class="follow-link">Follow</a>
-                                <!--                <a href="#" class="delete-question" th:attr="data-question-id=${question.id}">Delete</a>-->
                                 <form th:action="@{/questions/delete/{id}(id=${question.id})}" method="post">
                                     <input type="hidden" name="_method" value="DELETE"/>
                                     <button type="submit" class="delete-question">Delete</button>
@@ -699,6 +885,58 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="comments-section">
+                            <div class="comments-list">
+                                <!-- Sample comments - these will be replaced by actual comments from the backend -->
+                                <div class="comment">
+                                    <div class="comment-content">
+                                        This is a helpful question. I've been struggling with a similar issue.
+                                        <a href="/users/123" class="comment-user">JohnDoe</a>
+                                        <span class="comment-timestamp">Feb 20, 2023</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <a href="#" class="edit-comment-link">Edit</a>
+                                        <a href="#" class="delete-comment-link">Delete</a>
+                                    </div>
+                                </div>
+                                <div class="comment">
+                                    <div class="comment-content">
+                                        Have you tried using a different approach to this problem?
+                                        <a href="/users/456" class="comment-user">JaneSmith</a>
+                                        <span class="comment-timestamp">Feb 21, 2023</span>
+                                    </div>
+                                    <div class="comment-actions">
+                                        <a href="#" class="edit-comment-link">Edit</a>
+                                        <a href="#" class="delete-comment-link">Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a class="add-comment-link">Add a comment</a>
+
+                            <div class="comment-form">
+                                <form id="question-comment-form">
+                                    <textarea name="comment" placeholder="Use comments to ask for clarification or add more information. Avoid answering questions in comments."></textarea>
+                                    <div class="comment-form-actions">
+                                        <button type="button" class="comment-cancel-button">Cancel</button>
+                                        <button type="submit" class="comment-submit-button">Add Comment</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <div class="edit-comment-form">
+                                <form id="edit-comment-form">
+                                    <input type="hidden" name="commentId" value="">
+                                    <textarea name="editedComment" placeholder="Edit your comment here"></textarea>
+                                    <div class="comment-form-actions">
+                                        <button type="button" class="edit-comment-cancel-button">Cancel</button>
+                                        <button type="submit" class="edit-comment-submit-button">Save Edits</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -731,12 +969,6 @@
 
                             <!-- Answer actions -->
                             <div class="post-actions">
-                                <div class="post-menu">
-                                    <a href="#" class="share-link">Share</a>
-                                    <a href="#" class="comment-link">Add a comment</a>
-                                    <!-- Add edit/delete links as needed -->
-                                </div>
-
                                 <!-- User card for answer -->
                                 <div class="user-info" th:if="${answer.userName != null}">
                                     <div class="user-action-time">
@@ -744,6 +976,36 @@
                                     </div>
                                     <div class="user-details">
                                         <a href="#" th:text="${answer.userName}">Username</a>
+                                    </div>
+                                </div>
+
+                                <div class="comments-section">
+                                    <div class="comments-list">
+                                        <!-- Sample comments for answer -->
+                                        <div class="comment">
+                                            <div class="comment-content">
+                                                This is a well-explained answer. Thanks!
+                                                <a href="/users/789" class="comment-user">TechUser</a>
+                                                <span class="comment-timestamp">Feb 22, 2023</span>
+                                            </div>
+                                            <div class="comment-actions">
+                                                <a href="#" class="edit-comment-link">Edit</a>
+                                                <a href="#" class="delete-comment-link">Delete</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <a class="add-comment-link">Add a comment</a>
+
+                                    <div class="comment-form">
+                                        <form class="answer-comment-form">
+                                            <input type="hidden" name="answerId" value="${answer.id}">
+                                            <textarea name="comment" placeholder="Use comments to ask for clarification or add more information. Avoid answering questions in comments."></textarea>
+                                            <div class="comment-form-actions">
+                                                <button type="button" class="comment-cancel-button">Cancel</button>
+                                                <button type="submit" class="comment-submit-button">Add Comment</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
@@ -811,7 +1073,47 @@
                     </li>
                 </ul>
             </div>
+
+            <!-- Meta card -->
+            <div class="meta-card">
+                <h3>Featured on Meta</h3>
+
+                <div class="meta-item">
+                    <div class="meta-icon">📢</div>
+                    <a href="#" class="meta-link">Join us for our first community-wide AMA (Ask Me Anything) with Stack...</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">📢</div>
+                    <a href="#" class="meta-link">bigbird and Frog have joined us as Community Managers</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Stacks Editor development and testing</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Policy: Generative AI (e.g., ChatGPT) is banned</a>
+                </div>
+
+                <div class="meta-item">
+                    <div class="meta-icon">⚙️</div>
+                    <a href="#" class="meta-link">Is it better to redirect users who attempt to perform actions they can't yet...</a>
+                </div>
+            </div>
+
+            <!-- Custom Filters card -->
+            <div class="blog-card">
+                <h3>Custom Filters</h3>
+                <div style="margin-bottom: 15px;">
+                    <a href="#" class="blog-link">Create a custom filter</a>
+                </div>
+            </div>
         </div>
+
+
     </div>
 </div>
 
@@ -1138,6 +1440,216 @@
             const answerHtml = renderer.render(parsedAnswer);
             console.log('Rendered HTML:', answerHtml);
             element.innerHTML = answerHtml;
+        }
+    });
+
+    // Add this to your existing script
+    document.addEventListener('DOMContentLoaded', function() {
+        // Handle showing/hiding comment forms
+        document.querySelectorAll('.add-comment-link').forEach(link => {
+            link.addEventListener('click', function() {
+                const commentForm = this.nextElementSibling;
+                commentForm.classList.add('active');
+                commentForm.querySelector('textarea').focus();
+            });
+        });
+
+        // Handle comment cancel buttons
+        document.querySelectorAll('.comment-cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.comment-form');
+                form.classList.remove('active');
+                form.querySelector('textarea').value = '';
+            });
+        });
+
+        // Handle comment submission
+        document.querySelectorAll('.comment-submit-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const commentText = form.querySelector('textarea').value.trim();
+
+                if (commentText === '') {
+                    showErrorToast('Comment cannot be empty');
+                    return;
+                }
+
+                // Determine if this is a question comment or answer comment
+                const isQuestionComment = form.id === 'question-comment-form';
+                const answerId = isQuestionComment ? null : form.querySelector('input[name="answerId"]').value;
+
+                // This would be replaced with actual API call
+                simulateAddComment(commentText, isQuestionComment, answerId, form);
+            });
+        });
+
+        // Handle edit comment links
+        document.querySelectorAll('.edit-comment-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const comment = this.closest('.comment');
+                const commentText = comment.querySelector('.comment-content').textContent.trim();
+                const commentId = comment.dataset.commentId || '1'; // In real app, use actual ID
+
+                // Find the closest edit form in this comment section
+                const commentSection = comment.closest('.comments-section');
+                const editForm = commentSection.querySelector('.edit-comment-form');
+
+                // Position the form after this specific comment
+                comment.after(editForm);
+
+                // Set the form values and show it
+                editForm.querySelector('input[name="commentId"]').value = commentId;
+                editForm.querySelector('textarea').value = commentText;
+                editForm.classList.add('active');
+
+                // Hide the comment temporarily
+                comment.style.display = 'none';
+            });
+        });
+
+        // Handle edit cancel buttons
+        document.querySelectorAll('.edit-comment-cancel-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const form = this.closest('.edit-comment-form');
+                form.classList.remove('active');
+
+                // Show the comment again
+                const commentId = form.querySelector('input[name="commentId"]').value;
+                const comment = document.querySelector(`.comment[data-comment-id="${commentId}"]`) ||
+                    form.previousElementSibling;
+
+                if (comment) {
+                    comment.style.display = 'flex';
+                }
+            });
+        });
+
+        // Handle edit submission
+        document.querySelectorAll('.edit-comment-submit-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const form = this.closest('form');
+                const editedText = form.querySelector('textarea').value.trim();
+                const commentId = form.querySelector('input[name="commentId"]').value;
+
+                if (editedText === '') {
+                    showErrorToast('Comment cannot be empty');
+                    return;
+                }
+
+                // This would be replaced with actual API call
+                simulateEditComment(commentId, editedText, form);
+            });
+        });
+
+        // Handle delete comment links
+        document.querySelectorAll('.delete-comment-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    const comment = this.closest('.comment');
+                    const commentId = comment.dataset.commentId || '1'; // In real app, use actual ID
+
+                    // This would be replaced with actual API call
+                    simulateDeleteComment(commentId, comment);
+                }
+            });
+        });
+
+        // Simulation functions for frontend testing
+        function simulateAddComment(text, isQuestionComment, answerId, form) {
+            // In a real application, this would be an API call
+            console.log(`Adding ${isQuestionComment ? 'question' : 'answer'} comment: ${text}`);
+
+            // Create a new comment element
+            const commentsList = form.closest('.comments-section').querySelector('.comments-list');
+            const newComment = document.createElement('div');
+            newComment.className = 'comment';
+            newComment.dataset.commentId = Math.floor(Math.random() * 1000); // Simulate a new ID
+
+            const currentUser = 'CurrentUser'; // This would come from your auth system
+            const currentDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+            newComment.innerHTML = `
+            <div class="comment-content">
+                ${text}
+                <a href="/users/current" class="comment-user">${currentUser}</a>
+                <span class="comment-timestamp">${currentDate}</span>
+            </div>
+            <div class="comment-actions">
+                <a href="#" class="edit-comment-link">Edit</a>
+                <a href="#" class="delete-comment-link">Delete</a>
+            </div>
+        `;
+
+            // Add event listeners to the new comment
+            newComment.querySelector('.edit-comment-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                // Same edit logic as above
+                const comment = this.closest('.comment');
+                const commentText = comment.querySelector('.comment-content').textContent.trim();
+                const commentId = comment.dataset.commentId;
+
+                const commentSection = comment.closest('.comments-section');
+                const editForm = commentSection.querySelector('.edit-comment-form');
+
+                comment.after(editForm);
+
+                editForm.querySelector('input[name="commentId"]').value = commentId;
+                editForm.querySelector('textarea').value = commentText;
+                editForm.classList.add('active');
+
+                comment.style.display = 'none';
+            });
+
+            newComment.querySelector('.delete-comment-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to delete this comment?')) {
+                    const comment = this.closest('.comment');
+                    const commentId = comment.dataset.commentId;
+
+                    simulateDeleteComment(commentId, comment);
+                }
+            });
+
+            // Add the new comment to the list
+            commentsList.appendChild(newComment);
+
+            // Reset and hide the form
+            form.querySelector('textarea').value = '';
+            form.classList.remove('active');
+        }
+
+        function simulateEditComment(commentId, editedText, form) {
+            // In a real application, this would be an API call
+            console.log(`Editing comment ${commentId}: ${editedText}`);
+
+            // Find the comment (in a real app, you might reload it from the server)
+            const comment = document.querySelector(`.comment[data-comment-id="${commentId}"]`) ||
+                form.previousElementSibling;
+
+            if (comment) {
+                // Update the comment text
+                const contentDiv = comment.querySelector('.comment-content');
+                const userPart = contentDiv.innerHTML.substring(contentDiv.innerHTML.indexOf('<a'));
+                contentDiv.innerHTML = editedText + ' ' + userPart;
+
+                // Show the comment again
+                comment.style.display = 'flex';
+            }
+
+            // Hide the edit form
+            form.classList.remove('active');
+        }
+
+        function simulateDeleteComment(commentId, commentElement) {
+            // In a real application, this would be an API call
+            console.log(`Deleting comment ${commentId}`);
+
+            // Remove the comment from the DOM
+            commentElement.remove();
         }
     });
 </script>
