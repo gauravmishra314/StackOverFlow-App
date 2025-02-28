@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -282,8 +284,9 @@ public class QuestionController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") String direction,
-            Model model) {
-        System.out.println("------------------Is I am inside the home-----------------");
+            Model model,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        System.out.println("this is user details"+userDetails.getUsername());
         Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
