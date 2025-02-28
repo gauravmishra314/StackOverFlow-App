@@ -170,7 +170,7 @@ public class QuestionController {
         model.addAttribute("currentPage", page);
         model.addAttribute("searchQuery", query != null ? query : "");
         model.addAttribute("searchTags", tags != null ? tags : "");
-
+        model.addAttribute("totalQuestions", questions.getTotalElements());
         return "questions-page";
     }
 
