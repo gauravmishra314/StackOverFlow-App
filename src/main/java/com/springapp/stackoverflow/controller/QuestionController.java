@@ -286,7 +286,7 @@ public class QuestionController {
             @RequestParam(defaultValue = "DESC") String direction,
             Model model,
             @AuthenticationPrincipal UserDetails userDetails) {
-        System.out.println("this is user details"+userDetails.getUsername());
+
         Sort.Direction sortDirection = Sort.Direction.fromString(direction.toUpperCase());
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortDirection, sortBy));
 
