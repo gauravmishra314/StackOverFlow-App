@@ -194,7 +194,7 @@ public class QuestionController {
         List<Tag> tags = questionService.findTagsByQuestionId(id);
         List<AnswerDTO> answers = answerService.getAnswersByQuestionId(id);
 
-        System.out.println("Question content: " + questionDTO.getContent());
+        //System.out.println("Question content: " + questionDTO.getContent());
         model.addAttribute("question", questionDTO);
         model.addAttribute("tag", tags);
         model.addAttribute("answers", answers);
@@ -305,7 +305,7 @@ public class QuestionController {
                              @RequestParam(required = false) String tags,
                              @RequestParam(defaultValue = "0") int page,
                              @RequestParam(defaultValue = "10") int size,Model model){
-        System.out.println("--------------------------- is I am hiting");
+        //System.out.println("--------------------------- is I am hiting");
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
         Page<QuestionDTO> questions;
